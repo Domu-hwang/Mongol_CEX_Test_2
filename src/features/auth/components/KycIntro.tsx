@@ -17,29 +17,43 @@ interface KycIntroProps {
 
 export const KycIntro: React.FC<KycIntroProps> = ({ onStart }) => {
     return (
-        <div className="space-y-6 rounded-2xl bg-white p-6 shadow-sm">
-            <div className="space-y-3">
-                <p className="text-sm uppercase tracking-wide text-blue-600">KYC-01 안내</p>
-                <h2 className="text-2xl font-bold">Compliance kickoff</h2>
-                <p className="text-slate-600">
-                    EU/UK/Swiss/Australia 거주자는 온보딩 중 Proof of Address(POA)가 필수입니다. 기타 국가는 추후 한도 상향 혹은 규제
-                    요청 시 제출 가능합니다.
+        <div className="space-y-8">
+            <div className="space-y-4">
+                <div className="inline-block px-3 py-1 rounded-full bg-primary-600/10 text-primary-600 text-xs font-bold uppercase tracking-widest">
+                    Step 1: Introduction
+                </div>
+                <h2 className="text-3xl font-bold text-white">Compliance & Security</h2>
+                <p className="text-gray-400 leading-relaxed">
+                    To ensure a secure trading environment and comply with international regulations, we require identity verification.
+                    Depending on your residence, additional documents like Proof of Address (POA) may be required.
                 </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 p-4">
-                <h3 className="text-lg font-semibold">레지던스별 CMP 요약</h3>
-                <ul className="mt-3 space-y-2 text-sm text-slate-600">
-                    <li>・ EU / UK / Swiss / Australia → POA + Selfie + ID</li>
-                    <li>・ 기타 국가 → Selfie + ID (POA는 한도 상향 시 요청)</li>
-                    <li>・ 제재 국가(Iran, Cuba, North Korea 등) → 가입 불가</li>
+            <div className="rounded-xl border border-gray-800 bg-[#181a20] p-6 space-y-4">
+                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <svg className="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Verification Requirements
+                </h3>
+                <ul className="space-y-3 text-sm text-gray-400">
+                    <li className="flex items-start gap-3">
+                        <span className="text-primary-600 font-bold">•</span>
+                        <span><b>EU / UK / Swiss / AU:</b> Require ID + Selfie + Proof of Address (POA).</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <span className="text-primary-600 font-bold">•</span>
+                        <span><b>Global:</b> Require ID + Selfie. POA may be requested for higher limits.</span>
+                    </li>
+                    <li className="flex items-start gap-3 text-danger-600">
+                        <span className="font-bold">•</span>
+                        <span><b>Restricted Countries:</b> Access is prohibited for certain jurisdictions.</span>
+                    </li>
                 </ul>
             </div>
 
-            <Stepper steps={steps} currentStepId="kyc-01" />
-
-            <Button className="w-full" onClick={onStart}>
-                KYC 시작하기
+            <Button size="lg" className="w-full h-14 text-lg font-bold" onClick={onStart}>
+                Start Verification
             </Button>
         </div>
     );

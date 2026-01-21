@@ -37,7 +37,7 @@ export const Tabs: React.FC<TabsProps> = ({ defaultValue, value, onValueChange, 
 };
 
 export const TabsList: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-    <div className={classNames('flex w-full gap-2 rounded-xl bg-slate-100 p-1', className)}>{children}</div>
+    <div className={classNames('flex w-full gap-1 rounded-xl bg-[#2b3139] p-1.5', className)}>{children}</div>
 );
 
 interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -59,8 +59,8 @@ export const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, ...pr
                 context.setValue(value);
             }}
             className={classNames(
-                'flex-1 rounded-lg px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-500',
-                isActive ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500 hover:text-slate-900'
+                'flex-1 rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 focus-visible:outline-none',
+                isActive ? 'bg-[#1e2329] text-primary-600 shadow-lg' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
             )}
             {...props}
         >

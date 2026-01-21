@@ -16,36 +16,51 @@ export const AuthLayout: React.FC<AuthLayoutProps> = ({
     sideContent,
 }) => {
     return (
-        <div className="min-h-[600px] overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg md:grid md:grid-cols-2">
-            <div className="flex flex-col justify-between bg-gradient-to-br from-slate-900 to-slate-800 p-8 text-white">
+        <div className="min-h-[500px] w-full max-w-[1000px] overflow-hidden rounded-2xl border border-gray-800 bg-[#1e2329] shadow-2xl md:grid md:grid-cols-2">
+            <div className="hidden flex-col justify-between bg-[#181a20] p-10 text-white md:flex">
                 <div>
-                    <p className="text-sm uppercase tracking-wide text-blue-200">Mongol CEX Pilot</p>
-                    <h2 className="mt-4 text-3xl font-bold">Institutional-grade security</h2>
-                    <p className="mt-2 text-slate-200">
-                        Zero-knowledge KYC & biometric safeguards tailored for multi-jurisdiction compliance.
+                    <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-md bg-primary-600"></div>
+                        <p className="text-xl font-bold tracking-tight">Mongol CEX</p>
+                    </div>
+                    <h2 className="mt-8 text-4xl font-bold leading-tight">Secure & Trusted <br /><span className="text-primary-600">Crypto Exchange</span></h2>
+                    <p className="mt-6 text-gray-400 text-lg leading-relaxed">
+                        Join the future of finance with institutional-grade security and multi-jurisdiction compliance.
                     </p>
                 </div>
-                <div className="space-y-4 rounded-2xl bg-slate-800/60 p-4">
-                    <h3 className="text-lg font-semibold">Why verify?</h3>
-                    <ul className="space-y-2 text-sm text-slate-200">
-                        <li>✔ Higher fiat limits & same-day withdrawals</li>
-                        <li>✔ Regulatory coverage for EU/UK/Swiss/Australia</li>
-                        <li>✔ Tiered access to OTC & derivatives</li>
-                    </ul>
+                <div className="space-y-6">
+                    <div className="flex items-start gap-4">
+                        <div className="mt-1 rounded-full bg-primary-600/10 p-2 text-primary-600">
+                            <span className="block h-2 w-2 rounded-full bg-current"></span>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold">Professional Performance</h4>
+                            <p className="text-sm text-gray-400">High-speed matching engine with low latency.</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start gap-4">
+                        <div className="mt-1 rounded-full bg-primary-600/10 p-2 text-primary-600">
+                            <span className="block h-2 w-2 rounded-full bg-current"></span>
+                        </div>
+                        <div>
+                            <h4 className="font-semibold">Compliant & Secure</h4>
+                            <p className="text-sm text-gray-400">Restricted jurisdiction filtering and AML screening.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div className="flex flex-col gap-6 p-8">
-                <header className="space-y-2">
-                    <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
-                    {subtitle && <p className="text-slate-600">{subtitle}</p>}
-                    {helperText && <p className="text-sm text-slate-500">{helperText}</p>}
+            <div className="flex flex-col gap-8 p-10 bg-[#1e2329]">
+                <header className="space-y-3">
+                    <h1 className="text-3xl font-bold text-white">{title}</h1>
+                    {subtitle && <p className="text-gray-400">{subtitle}</p>}
+                    {helperText && <p className="text-sm text-gray-500 bg-gray-800/50 p-3 rounded-lg border border-gray-700">{helperText}</p>}
                 </header>
 
-                <div className="space-y-4">{children}</div>
+                <div className="space-y-6">{children}</div>
 
                 {sideContent && (
-                    <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-600">
+                    <div className="rounded-xl border border-gray-700 bg-gray-800/30 p-5 text-sm text-gray-300">
                         {sideContent}
                     </div>
                 )}

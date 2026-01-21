@@ -15,9 +15,10 @@ const registerSchema = z.object({
 
 interface RegisterFormProps {
     onSubmit?: (payload: { email: string; password: string }) => Promise<void> | void;
+    onSuccess?: () => void; // Add onSuccess callback
 }
 
-export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit, onSuccess }) => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,6 +41,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
 
         try {
             await onSubmit?.(result.data);
+            onSuccess?.(); // Call onSuccess if provided
         } finally {
             setIsSubmitting(false);
         }

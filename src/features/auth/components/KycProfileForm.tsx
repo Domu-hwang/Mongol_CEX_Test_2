@@ -49,9 +49,10 @@ const getDocumentOptions = (residence: string, nationality: string): string[] =>
 
 interface KycProfileFormProps {
     onSubmit?: (payload: z.infer<typeof profileSchema>) => Promise<void> | void;
+    onSuccess?: () => void; // Add onSuccess callback
 }
 
-export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit }) => {
+export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSuccess }) => {
     const [formData, setFormData] = useState({
         residenceCountry: '',
         nationality: '',
@@ -96,6 +97,7 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit }) => {
 
         try {
             await onSubmit?.(result.data);
+            onSuccess?.(); // Call onSuccess if provided
         } finally {
             setIsSubmitting(false);
         }
@@ -130,14 +132,22 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit }) => {
     );
 
     return (
-        <div className="space-y-6 rounded-2xl bg-white p-6 shadow-sm">
-            <div className="space-y-3">
-                <p className="text-sm uppercase tracking-wide text-blue-600">KYC-02 정보 입력</p>
-                <h2 className="text-2xl font-bold">Identity & document details</h2>
-                <p className="text-slate-600">거주 국가와 국적에 따라 필요한 문서가 실시간으로 안내됩니다.</p>
+        <div className="space-y-8">
+            <div className="space-y-4">
+                <div className="inline-block px-3 py-1 rounded-full bg-primary-600/10 text-primary-600 text-xs font-bold uppercase tracking-widest">
+                    Step 2: Identity & Basic Details
+                </div>
+                <h2 className="text-3xl font-bold text-white">Verification Profile</h2>
+                <p className="text-gray-400 leading-relaxed">
+                    Provide your legal information as it appears on your identity documents.
+                    Verification requirements adjust dynamically based on your residence.
+                </p>
             </div>
 
-            {countryTabs}
+            <div className="space-y-4">
+                <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Residence & Nationality</p>
+                {countryTabs}
+            </div>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid gap-4 md:grid-cols-2">
@@ -173,14 +183,14 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit }) => {
                 </div>
 
                 <div>
-                    <label className="flex items-center gap-2 text-sm text-slate-600">
+                    <label className="flex items-center gap-3 text-sm text-gray-400 cursor-pointer group">
                         <input
                             type="checkbox"
                             checked={hasMiddleName}
                             onChange={(e) => setHasMiddleName(e.target.checked)}
-                            className="h-4 w-4 rounded border-slate-300"
+                            className="h-5 w-5 rounded border-gray-700 bg-[#1e2329] text-primary-600 focus:ring-primary-600 focus:ring-offset-0"
                         />
-                        I have a middle name
+                        <span className="group-hover:text-gray-200 transition-colors">I have a middle name</span>
                     </label>
                     {hasMiddleName && (
                         <Input
@@ -193,29 +203,37 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit }) => {
                     )}
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-6 md:grid-cols-2">
                     <Input
                         label="Date of birth"
                         type="date"
+                        className="[appearance:none] [color-scheme:dark]" // Standardize date picker
                         value={formData.dob}
                         onChange={(e) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
                         error={errors.dob}
                     />
                     <div>
-                        <label className="mb-2 block text-sm font-medium text-slate-700">ID document type</label>
-                        <select
-                            className="w-full rounded-lg border border-slate-300 px-4 py-2 text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
-                            value={formData.idType}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, idType: e.target.value }))}
-                        >
-                            <option value="">문서 유형 선택</option>
-                            {documentOptions.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.idType && <p className="mt-1 text-sm text-rose-600">{errors.idType}</p>}
+                        <label className="mb-1.5 block text-sm font-medium text-gray-400">ID Document Type</label>
+                        <div className="relative">
+                            <select
+                                className="w-full h-[44px] rounded-lg border border-gray-800 bg-[#1e2329] px-4 py-2 text-[#eaecef] appearance-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-600"
+                                value={formData.idType}
+                                onChange={(e) => setFormData((prev) => ({ ...prev, idType: e.target.value }))}
+                            >
+                                <option value="">Select type</option>
+                                {documentOptions.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
+                        {errors.idType && <p className="mt-1.5 text-xs text-danger-600">{errors.idType}</p>}
                     </div>
                 </div>
 

@@ -10,9 +10,10 @@ const loginSchema = z.object({
 
 interface LoginFormProps {
     onSubmit?: (payload: { email: string; password: string }) => Promise<void> | void;
+    onSuccess?: () => void;
 }
 
-export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
+export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, onSuccess }) => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +36,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
 
         try {
             await onSubmit?.(result.data);
+            onSuccess?.();
         } finally {
             setIsSubmitting(false);
         }
