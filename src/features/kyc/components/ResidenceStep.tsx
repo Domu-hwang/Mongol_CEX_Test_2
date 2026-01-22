@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Terminal } from 'lucide-react'; // Example icon for Alert
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useOnboardingStore } from '../store/useOnboardingStore'; // Corrected relative import path
 import { REGULATED_COUNTRIES } from '@/constants/policy';
 
 const residenceSchema = z.object({

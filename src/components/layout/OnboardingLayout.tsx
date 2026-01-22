@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card'; // Assuming Card is in ui
 import { Stepper } from '../ui/Stepper'; // Assuming Stepper is in ui
-import { useOnboardingStore } from '../../store/useOnboardingStore';
+import { useOnboardingStore } from '../../features/kyc/store/useOnboardingStore'; // Corrected relative import path
 import { getOnboardingSteps, REGULATED_COUNTRIES } from '../../constants/policy';
 
 interface OnboardingLayoutProps {

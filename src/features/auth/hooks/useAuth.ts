@@ -97,5 +97,5 @@ export const useAuth = () => {
         completeKyc,
         logout,
         isAuthenticated: !!user,
-    };
+    } as const; // Add as const assertion
 };

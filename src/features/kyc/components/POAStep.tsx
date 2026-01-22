@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/form';
 import { FileUploader } from '@/components/ui/file-uploader';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useOnboardingStore } from '../store/useOnboardingStore'; // Corrected relative import path
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_DOCUMENT_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "application/pdf"];

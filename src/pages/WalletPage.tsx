@@ -9,10 +9,10 @@ const WalletPage: React.FC = () => {
 
     // Mock data for assets (expanded to include 24h change)
     const mockAssets = [
-        { id: '1', name: 'Bitcoin', symbol: 'BTC', balance: 0.5, usdValue: 35000 * 0.5, price: 35000, change24h: 0.20 },
-        { id: '2', name: 'Ethereum', symbol: 'ETH', balance: 2.0, usdValue: 2000 * 2.0, price: 2000, change24h: -0.05 },
-        { id: '3', name: 'Ripple', symbol: 'XRP', balance: 1000, usdValue: 0.5 * 1000, price: 0.5, change24h: 0.10 },
-        { id: '4', name: 'Litecoin', symbol: 'LTC', balance: 10, usdValue: 70 * 10, price: 70, change24h: 0.02 },
+        { id: '1', name: 'Bitcoin', symbol: 'BTC', balance: 0.5, usdValue: 35000 * 0.5, price: 35000, change24h: 0.20, logoUrl: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=026' },
+        { id: '2', name: 'Ethereum', symbol: 'ETH', balance: 2.0, usdValue: 2000 * 2.0, price: 2000, change24h: -0.05, logoUrl: 'https://cryptologos.cc/logos/ethereum-eth-logo.png?v=026' },
+        { id: '3', name: 'Ripple', symbol: 'XRP', balance: 1000, usdValue: 0.5 * 1000, price: 0.5, change24h: 0.10, logoUrl: 'https://cryptologos.cc/logos/xrp-xrp-logo.png?v=026' },
+        { id: '4', name: 'Litecoin', symbol: 'LTC', balance: 10, usdValue: 70 * 10, price: 70, change24h: 0.02, logoUrl: 'https://cryptologos.cc/logos/litecoin-ltc-logo.png?v=026' },
     ];
 
     const totalBalanceUSD = mockAssets.reduce((sum, asset) => sum + asset.usdValue, 0);
@@ -27,11 +27,6 @@ const WalletPage: React.FC = () => {
         // Implement navigation to Withdraw page or open a modal
         navigate('/wallet/withdraw');
         console.log('Navigate to Withdraw');
-    };
-
-    const handleTransferClick = () => {
-        // Implement navigation to Transfer page or open a modal
-        console.log('Navigate to Transfer');
     };
 
     return (
@@ -56,14 +51,11 @@ const WalletPage: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="flex gap-4">
-                <Button onClick={handleDepositClick} className="flex-1 py-3 text-lg bg-black text-white hover:bg-gray-800">
+                <Button onClick={handleDepositClick} className="flex-1 py-6 text-lg bg-black text-white hover:bg-gray-800 border border-white">
                     Deposit
                 </Button>
-                <Button onClick={handleWithdrawClick} className="flex-1 py-3 text-lg bg-black text-white hover:bg-gray-800">
+                <Button onClick={handleWithdrawClick} className="flex-1 py-6 text-lg bg-black text-white hover:bg-gray-800 border border-white">
                     Withdraw
-                </Button>
-                <Button onClick={handleTransferClick} className="flex-1 py-3 text-lg bg-black text-white hover:bg-gray-800">
-                    Transfer
                 </Button>
             </div>
 

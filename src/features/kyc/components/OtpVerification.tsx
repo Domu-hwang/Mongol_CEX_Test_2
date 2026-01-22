@@ -14,9 +14,9 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '../hooks/useAuth';
-import OnboardingLayout from '@/components/layout/OnboardingLayout'; // Corrected import path
-import { useOnboardingStore } from '@/store/useOnboardingStore'; // Corrected import path
+import { useAuth } from '../../auth/hooks/useAuth';
+import OnboardingLayout from '@/components/layout/OnboardingLayout';
+import { useOnboardingStore } from '../store/useOnboardingStore';
 
 const otpSchema = z.object({
     otp: z.string().min(6, 'OTP must be 6 digits.').max(6, 'OTP must be 6 digits.'),
@@ -31,7 +31,7 @@ interface OtpVerificationProps {
 
 export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) => {
     const navigate = useNavigate();
-    const { verifyOtp, resendOtp, isLoading } = useAuth();
+    const { verifyOtp, sendOtp, isLoading } = useAuth();
     const [countdown, setCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [serverError, setServerError] = useState('');
@@ -45,7 +45,8 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) 
     });
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        // Use 'any' or 'number' for timer to bypass NodeJS namespace error in browser context
+        let timer: any;
         if (isResendDisabled && countdown > 0) {
             timer = setTimeout(() => setCountdown(countdown - 1), 1000);
         } else if (countdown === 0) {
@@ -57,7 +58,7 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) 
     const handleResend = async () => {
         setServerError('');
         try {
-            await resendOtp(identifier || '');
+            await sendOtp(identifier || '');
             setCountdown(60);
             setIsResendDisabled(true);
             form.setValue('otp', '');

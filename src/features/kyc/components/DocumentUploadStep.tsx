@@ -24,7 +24,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useOnboardingStore } from '../store/useOnboardingStore'; // Corrected relative import path
 import { SANCTIONED_COUNTRIES, ID_DOCUMENT_TYPES } from '@/constants/policy';
 import { FileUploader } from '@/components/ui/file-uploader'; // Import FileUploader
 

@@ -6,11 +6,11 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import MainLayout from './layouts/MainLayout';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
-import OnboardingFlow from '@/features/auth/components/OnboardingFlow'; // New onboarding flow component
 import WalletPage from '@/pages/WalletPage'; // Import WalletPage
 import DepositPage from '@/pages/DepositPage';
 import WithdrawPage from '@/pages/WithdrawPage';
-import { QuickSwapPage } from '@/pages/QuickSwapPage'; // Keep QuickSwapPage
+import { QuickSwapPage } from '@/pages/QuickSwapPage';
+import OnboardingFlow from '@/features/kyc/components/OnboardingFlow'; // Import OnboardingFlow
 
 function App() {
     return (
@@ -18,14 +18,13 @@ function App() {
             <Routes>
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
-                {/* Redirect /register to /onboarding/register to start the flow */}
-                <Route path="/register" element={<Navigate to="/onboarding/register" replace />} />
-                <Route path="/onboarding/*" element={<OnboardingFlow />} />
+                <Route path="/register" element={<RegisterPage />} />
                 <Route path="/trade" element={<TradePage />} />
                 <Route path="/quick-swap" element={<QuickSwapPage />} />
                 <Route path="/wallet" element={<WalletPage />} />
                 <Route path="/wallet/deposit" element={<DepositPage />} />
                 <Route path="/wallet/withdraw" element={<WithdrawPage />} />
+                <Route path="/onboarding/intro" element={<OnboardingFlow />} /> {/* Add Onboarding Flow route */}
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </MainLayout>

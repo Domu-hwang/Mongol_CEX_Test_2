@@ -6,7 +6,7 @@ import { getOnboardingSteps } from '@/constants/policy';
 import { Stepper } from '@/components/ui/Stepper'; // Re-added Stepper import
 
 import { RegisterForm } from '@/features/auth/components/RegisterForm'; // Assuming RegisterForm and OtpVerification remain in auth
-import { OtpVerification } from '@/features/auth/components/OtpVerification'; // Assuming RegisterForm and OtpVerification remain in auth
+import { OtpVerification } from './OtpVerification'; // Corrected import path, as OtpVerification is in the same directory
 import { ResidenceStep } from './ResidenceStep';
 import { ProfileStep } from './ProfileStep';
 import { DocumentUploadStep } from './DocumentUploadStep';

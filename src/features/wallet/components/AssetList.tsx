@@ -7,6 +7,7 @@ interface Asset {
     symbol: string;
     balance: number;
     usdValue: number;
+    logoUrl?: string; // Optional URL for the asset logo
 }
 
 interface AssetListProps {
@@ -27,6 +28,9 @@ const AssetList: React.FC<AssetListProps> = ({ assets }) => {
                                     Asset
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
+                                    Logo
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
                                     Quantity
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">
@@ -38,6 +42,9 @@ const AssetList: React.FC<AssetListProps> = ({ assets }) => {
                             {assets.map((asset) => (
                                 <tr key={asset.id}>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-white">{asset.name} ({asset.symbol})</td>
+                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                                        {asset.logoUrl && <img src={asset.logoUrl} alt={`${asset.name} logo`} className="h-6 w-6 rounded-full inline-block mr-2" />}
+                                    </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">{asset.balance.toFixed(8)}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">${asset.usdValue.toFixed(2)}</td>
                                 </tr>

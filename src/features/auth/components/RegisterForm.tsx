@@ -62,17 +62,16 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         resolver: zodResolver(registerSchema),
         defaultValues: {
             authType: 'email',
-            email: '',
-            phone: '',
+            email: undefined,
+            phone: undefined,
             password: '',
         },
-        mode: 'onChange', // Restored onChange mode
+        mode: 'onChange',
     });
 
     const authType = form.watch('authType');
     const password = form.watch('password');
 
-    // Real-time password validation logic (restored)
     const passwordRequirements = useMemo(() => {
         const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
         return [
@@ -84,7 +83,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     }, [password]);
 
     const onSubmit = async (values: RegisterFormValues) => {
-        console.log('Form values on submit:', values);
         setServerError('');
         try {
             const identifier = values.authType === 'email' ? values.email! : values.phone!;
@@ -109,83 +107,85 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
                     <TabsTrigger value="email">Email</TabsTrigger>
                     <TabsTrigger value="phone">Phone</TabsTrigger>
                 </TabsList>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
-                    {authType === 'email' ? (
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input type="email" placeholder="example@cex.mn" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    ) : (
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Phone Number</FormLabel>
-                                    <FormControl>
-                                        <Input type="tel" placeholder="+976 ..." {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    )}
-
-                    <FormField
-                        control={form.control}
-                        name="password"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                    <Input
-                                        type="password"
-                                        placeholder="Create a strong password"
-                                        {...field}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {/* Password Requirements Checklist */}
-                    <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 text-foreground">
-                        {passwordRequirements.map((req, idx) => (
-                            <div key={idx} className="flex items-center gap-1.5 transition-colors">
-                                {req.met ? (
-                                    <Check size={12} className="text-success-foreground" />
-                                ) : (
-                                    <div className="w-2.5 h-2.5 rounded-full border border-muted" />
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 mt-4">
+                        {authType === 'email' ? (
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <FormControl>
+                                            <Input type="email" placeholder="example@cex.mn" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
                                 )}
-                                <span className={req.met ? 'text-foreground' : 'text-muted-foreground'}>
-                                    {req.label}
-                                </span>
-                            </div>
-                        ))}
-                    </div>
+                            />
+                        ) : (
+                            <FormField
+                                control={form.control}
+                                name="phone"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Phone Number</FormLabel>
+                                        <FormControl>
+                                            <Input type="tel" placeholder="+976 ..." {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        )}
 
-                    {serverError && (
-                        <p className="text-destructive text-sm text-center">{serverError}</p>
-                    )}
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="password"
+                                            placeholder="Create a strong password"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <Button
-                        type="submit"
-                        className="w-full mt-4"
-                        disabled={isLoading || !form.formState.isValid}
-                    >
-                        Create Account
-                    </Button>
-                </form>
+                        {/* Password Requirements Checklist */}
+                        <div className="grid grid-cols-2 gap-2 text-[11px] pt-1 text-foreground">
+                            {passwordRequirements.map((req, idx) => (
+                                <div key={idx} className="flex items-center gap-1.5 transition-colors">
+                                    {req.met ? (
+                                        <Check size={12} className="text-success-foreground" />
+                                    ) : (
+                                        <div className="w-2.5 h-2.5 rounded-full border border-muted" />
+                                    )}
+                                    <span className={req.met ? 'text-foreground' : 'text-muted-foreground'}>
+                                        {req.label}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {serverError && (
+                            <p className="text-destructive text-sm text-center">{serverError}</p>
+                        )}
+
+                        <Button
+                            type="submit"
+                            className="w-full mt-4"
+                            disabled={isLoading || !form.formState.isValid}
+                        >
+                            Create Account
+                        </Button>
+                    </form>
+                </Form>
             </Tabs>
         </div>
     );

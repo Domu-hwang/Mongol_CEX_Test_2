@@ -5,7 +5,11 @@
         "moduleResolution": "Node",
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "esModuleInterop": true
+        "esModuleInterop": true,
+        "types": [
+            "node"
+        ], // Explicitly include Node.js types
+        "skipLibCheck": true // Add skipLibCheck to avoid issues with node_modules types
     },
     "include": [
         "vite.config.ts"

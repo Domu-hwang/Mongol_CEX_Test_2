@@ -19,7 +19,7 @@ import {
     FormDescription, // Added FormDescription
 } from '@/components/ui/form';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useOnboardingStore } from '../store/useOnboardingStore'; // Corrected relative import path
 import { subYears, isBefore } from 'date-fns';
 
 const profileSchema = z.object({

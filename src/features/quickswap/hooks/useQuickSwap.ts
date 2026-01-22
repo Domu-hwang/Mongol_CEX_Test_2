@@ -1,37 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { quickSwapService } from '../services/quickSwapService';
+import { QuickSwapAsset, QuickSwapQuote, QuickSwapHistoryItem } from '../types'; // Import types
 
-interface Asset {
-    fromAsset: string;
-    toAsset: string;
-    minAmount: string;
-    maxAmount: string;
-}
-
-interface Quote {
-    quoteId: string;
-    fromAsset: string;
-    toAsset: string;
-    fromAmount: string;
-    toAmount: string;
-    rate: string;
-    spread: string;
-    expiresAt: string;
-}
-
-interface SwapHistoryItem {
-    transactionId: string;
-    fromAsset: string;
-    toAsset: string;
-    fromAmount: string;
-    toAmount: string;
-    timestamp: string;
-}
+// Remove local interface definitions as they are now imported
 
 export const useQuickSwap = (userId: string) => {
-    const [assets, setAssets] = useState<Asset[]>([]);
-    const [currentQuote, setCurrentQuote] = useState<Quote | null>(null);
-    const [swapHistory, setSwapHistory] = useState<SwapHistoryItem[]>([]);
+    const [assets, setAssets] = useState<QuickSwapAsset[]>([]);
+    const [currentQuote, setCurrentQuote] = useState<QuickSwapQuote | null>(null);
+    const [swapHistory, setSwapHistory] = useState<QuickSwapHistoryItem[]>([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -40,9 +16,9 @@ export const useQuickSwap = (userId: string) => {
         setLoading(true);
         setError(null);
         try {
-            const fetchedAssets = await quickSwapService.getAssets();
+            const fetchedAssets: QuickSwapAsset[] = await quickSwapService.getAssets() as QuickSwapAsset[]; // Explicit cast
             setAssets(fetchedAssets);
-        } catch (err: any) { // Explicitly type err as any
+        } catch (err: any) {
             setError('Failed to fetch assets.');
             console.error(err);
         } finally {
@@ -55,10 +31,10 @@ export const useQuickSwap = (userId: string) => {
         setLoading(true);
         setError(null);
         try {
-            const quote = await quickSwapService.requestQuote(fromAsset, toAsset, amount);
+            const quote: QuickSwapQuote = await quickSwapService.requestQuote(fromAsset, toAsset, amount) as QuickSwapQuote; // Explicit cast
             setCurrentQuote(quote);
             return quote;
-        } catch (err: any) { // Explicitly type err as any
+        } catch (err: any) {
             setError('Failed to get quote. Please try again.');
             console.error(err);
             setCurrentQuote(null);
@@ -73,9 +49,9 @@ export const useQuickSwap = (userId: string) => {
         setLoading(true);
         setError(null);
         try {
-            const history = await quickSwapService.getSwapHistory(userId);
+            const history: QuickSwapHistoryItem[] = await quickSwapService.getSwapHistory(userId) as QuickSwapHistoryItem[]; // Explicit cast
             setSwapHistory(history);
-        } catch (err: any) { // Explicitly type err as any
+        } catch (err: any) {
             setError('Failed to fetch swap history.');
             console.error(err);
         } finally {
