@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Routes, Route, useParams } from 'react-router-dom';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '@/store/useOnboardingStore';
+import { useOnboardingStore } from '@/features/kyc/store/useOnboardingStore';
 import { getOnboardingSteps } from '@/constants/policy';
 import { Stepper } from '@/components/ui/Stepper'; // Re-added Stepper import
 
-import { RegisterForm } from './RegisterForm';
-import { OtpVerification } from './OtpVerification';
+import { RegisterForm } from '@/features/auth/components/RegisterForm'; // Assuming RegisterForm and OtpVerification remain in auth
+import { OtpVerification } from '@/features/auth/components/OtpVerification'; // Assuming RegisterForm and OtpVerification remain in auth
 import { ResidenceStep } from './ResidenceStep';
 import { ProfileStep } from './ProfileStep';
 import { DocumentUploadStep } from './DocumentUploadStep';

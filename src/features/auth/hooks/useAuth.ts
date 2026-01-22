@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import authService from '../services/authService';
+import { KycSubmissionData } from '../../kyc/types'; // Import the new type
 
 export const useAuth = () => {
     const [user, setUser] = useState<any>(null);
@@ -59,7 +60,7 @@ export const useAuth = () => {
         }
     }, []);
 
-    const completeKyc = useCallback(async (profileData: any) => { // Use 'any' for profileData for now
+    const completeKyc = useCallback(async (profileData: KycSubmissionData) => { // Use KycSubmissionData type
         setIsLoading(true);
         try {
             await authService.completeKyc(profileData);

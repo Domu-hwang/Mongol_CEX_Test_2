@@ -8,6 +8,8 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import OnboardingFlow from '@/features/auth/components/OnboardingFlow'; // New onboarding flow component
 import WalletPage from '@/pages/WalletPage'; // Import WalletPage
+import DepositPage from '@/pages/DepositPage';
+import WithdrawPage from '@/pages/WithdrawPage';
 import { QuickSwapPage } from '@/pages/QuickSwapPage'; // Keep QuickSwapPage
 
 function App() {
@@ -22,6 +24,8 @@ function App() {
                 <Route path="/trade" element={<TradePage />} />
                 <Route path="/quick-swap" element={<QuickSwapPage />} />
                 <Route path="/wallet" element={<WalletPage />} />
+                <Route path="/wallet/deposit" element={<DepositPage />} />
+                <Route path="/wallet/withdraw" element={<WithdrawPage />} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </MainLayout>

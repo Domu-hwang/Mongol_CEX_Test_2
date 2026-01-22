@@ -2,12 +2,14 @@ import React, { FormEvent, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import { COUNTRIES, ID_DOCUMENT_TYPES, KycPolicyKey, getKycPolicyKeyForCountry } from '@/constants/policy';
+import { useOnboardingStore } from '@/features/kyc/store/useOnboardingStore';
 
 const MIN_AGE = 18;
 
-const profileSchema = z.object({
+export const profileSchema = z.object({
     residenceCountry: z.string().min(1, 'Please select your country of residence'),
     nationality: z.string().min(1, 'Please select your nationality'),
     firstName: z.string().min(1, 'Please enter your first name'),
@@ -30,34 +32,36 @@ const profileSchema = z.object({
     idType: z.string().min(1, 'Please select an ID document type'),
 });
 
-const documentGuide: Record<string, string[]> = {
-    EU: ['Passport', 'National ID card', 'Residence permit'],
-    UK: ['Passport', 'Driving license', 'Biometric residence permit'],
-    Swiss: ['Passport', 'Swiss ID', 'B permit'],
-    Australia: ['Passport', 'Driver license', 'Medicare card'],
-    default: ['Passport', 'National ID card'],
-};
-
 const getDocumentOptions = (residence: string, nationality: string): string[] => {
-    const target = [residence, nationality].find((country) =>
-        ['EU', 'UK', 'Swiss', 'Australia'].includes(country)
-    );
-    if (target) {
-        return documentGuide[target];
+    const residenceKycKey = getKycPolicyKeyForCountry(residence);
+    const nationalityKycKey = getKycPolicyKeyForCountry(nationality);
+
+    if (ID_DOCUMENT_TYPES[residenceKycKey]) {
+        return ID_DOCUMENT_TYPES[residenceKycKey];
     }
-    return documentGuide.default;
+    if (ID_DOCUMENT_TYPES[nationalityKycKey]) {
+        return ID_DOCUMENT_TYPES[nationalityKycKey];
+    }
+    return ID_DOCUMENT_TYPES.default;
 };
 
 interface KycProfileFormProps {
     onSubmit?: (payload: z.infer<typeof profileSchema>) => Promise<void> | void;
-    onSuccess?: () => void; // Add onSuccess callback
-    isLoading?: boolean; // Add isLoading prop
+    onSuccess?: () => void;
+    isLoading?: boolean;
 }
 
 export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSuccess, isLoading }) => {
+    const { residenceCountry, nationality, setResidenceCountry, setNationality, isPOARequired } = useOnboardingStore((state) => ({
+        residenceCountry: state.residenceCountry,
+        nationality: state.nationality,
+        setResidenceCountry: state.setResidenceCountry,
+        setNationality: state.setNationality,
+        isPOARequired: state.isPOARequired,
+    }));
+
     const [formData, setFormData] = useState({
-        residenceCountry: '',
-        nationality: '',
+        // residenceCountry and nationality are managed by Zustand, but other fields are local
         firstName: '',
         familyName: '',
         middleName: '',
@@ -69,15 +73,20 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
     const [hasMiddleName, setHasMiddleName] = useState(false);
 
     const documentOptions = useMemo(
-        () => getDocumentOptions(formData.residenceCountry, formData.nationality),
-        [formData.residenceCountry, formData.nationality]
+        () => getDocumentOptions(residenceCountry, nationality),
+        [residenceCountry, nationality]
     );
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
         const result = profileSchema.safeParse({
-            ...formData,
+            residenceCountry, // Use residenceCountry from Zustand
+            nationality, // Use nationality from Zustand
+            firstName: formData.firstName,
+            familyName: formData.familyName,
             middleName: hasMiddleName ? formData.middleName : undefined,
+            dob: formData.dob,
+            idType: formData.idType,
         });
 
         if (!result.success) {
@@ -99,39 +108,11 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
 
         try {
             await onSubmit?.(result.data);
-            onSuccess?.(); // Call onSuccess if provided
+            onSuccess?.();
         } finally {
             setIsSubmitting(false);
         }
     };
-
-    const countryTabs = (
-        <Tabs defaultValue="EU" value={formData.residenceCountry || undefined}>
-            <TabsList className="mb-3">
-                {['EU', 'UK', 'Swiss', 'Australia', 'Other'].map((region) => (
-                    <TabsTrigger
-                        key={region}
-                        value={region === 'Other' ? 'Other' : region}
-                        onClick={() =>
-                            setFormData((prev) => ({
-                                ...prev,
-                                residenceCountry: region === 'Other' ? 'Other' : region,
-                            }))
-                        }
-                    >
-                        {region}
-                    </TabsTrigger>
-                ))}
-            </TabsList>
-            <TabsContent value={formData.residenceCountry || 'EU'}>
-                <p className="text-sm text-muted-foreground">
-                    {formData.residenceCountry === 'Other'
-                        ? 'Please prepare Selfie + ID submission. POA may be requested if needed.'
-                        : 'POA + Selfie + ID submission is required.'}
-                </p>
-            </TabsContent>
-        </Tabs>
-    );
 
     return (
         <div className="space-y-8">
@@ -146,30 +127,42 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                 </p>
             </div>
 
-            <div className="space-y-4">
-                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">Residence & Nationality</p>
-                {countryTabs}
-            </div>
-
             <form className="space-y-5" onSubmit={handleSubmit}>
                 <div className="grid gap-2">
                     <Label htmlFor="residenceCountry">Residence country</Label>
-                    <Input
-                        id="residenceCountry"
-                        placeholder="e.g., EU, UK, Swiss"
-                        value={formData.residenceCountry}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, residenceCountry: e.target.value }))}
-                    />
+                    <Select onValueChange={setResidenceCountry} value={residenceCountry}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select your country of residence" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {COUNTRIES.map((country) => (
+                                <SelectItem key={country.value} value={country.name}>
+                                    {country.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     {errors.residenceCountry && <p className="text-destructive-foreground text-sm">{errors.residenceCountry}</p>}
+                    <p className="text-sm text-muted-foreground mt-2">
+                        {isPOARequired
+                            ? 'Proof of Address + Selfie + ID submission is required.'
+                            : 'Please prepare Selfie + ID submission. Proof of Address may be requested if needed.'}
+                    </p>
                 </div>
                 <div className="grid gap-2">
                     <Label htmlFor="nationality">Nationality</Label>
-                    <Input
-                        id="nationality"
-                        placeholder="e.g., Mongolia"
-                        value={formData.nationality}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, nationality: e.target.value }))}
-                    />
+                    <Select onValueChange={setNationality} value={nationality}>
+                        <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select your nationality" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {COUNTRIES.map((country) => (
+                                <SelectItem key={country.value} value={country.name}>
+                                    {country.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                     {errors.nationality && <p className="text-destructive-foreground text-sm">{errors.nationality}</p>}
                 </div>
 
@@ -223,7 +216,7 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                         <Input
                             id="dob"
                             type="date"
-                            className="[appearance:none] [color-scheme:dark]" // Standardize date picker
+                            className="[appearance:none] [color-scheme:dark]"
                             value={formData.dob}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
                         />

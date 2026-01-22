@@ -17,6 +17,19 @@ export const ID_DOCUMENT_TYPES: Record<string, string[]> = {
     default: ['Passport', 'National ID Card'],
 };
 
+export const COUNTRIES = [
+    { name: 'Australia', value: 'AU' },
+    { name: 'France', value: 'EU' },
+    { name: 'Germany', value: 'EU' },
+    { name: 'South Korea', value: 'KR' },
+    { name: 'Switzerland', value: 'CH' },
+    { name: 'United Kingdom', value: 'UK' },
+    { name: 'United States', value: 'US' },
+    { name: 'Other', value: 'default' },
+];
+
+export type KycPolicyKey = keyof typeof KYC_POLICIES;
+
 export const KYC_POLICIES = {
     EU: {
         minAge: 18,
@@ -48,6 +61,11 @@ export const KYC_POLICIES = {
         poaRequired: false,
         additionalVerification: 'Please prepare your Selfie + ID submission. Proof of Address may be requested if needed.',
     },
+};
+
+export const getKycPolicyKeyForCountry = (countryName: string): KycPolicyKey => {
+    const country = COUNTRIES.find(c => c.name === countryName);
+    return (country?.value as KycPolicyKey) || 'default';
 };
 
 // Stepper configuration based on policy
