@@ -20,6 +20,76 @@
 * **일반 국가:** 바로 심사 대기 화면(`KYC-06`)으로 진입.
 * **규제 국가 (EU, UK, Swiss, AU 등):** 심사 대기 전 **주소 증빙(POA)** 단계로 강제 전환.
 
+**전체 흐름  상세내용** 
+**1. Sign-up (계정 생성 단계) :** 
+
+1. 이메일/ 휴대전화 혹은
+SNS sign up도 제공: Google, Apple, Telegram 
+2. Verification code 인증 (digit- 6자리 verification code 입력) 
+3. 비밀번호 설정 
+( 8자 이상 / 1자 이상의 대문자, 소문자, 특수문자 입력) 
+
+**2. KYC -1 
+KYC level 1.1** 
+
+- Residence Country
+
+**KYC level 1.2**
+
+- Full name
+- Date of birth
+- Nationality
+- ID Document
+
+⇒  Residence country, Nationality country are requested in the same page. 
+→ Depend on those two factors ( Residence, Nationality), requesting ID document types can be changed. 
+
+### KYC Level 2
+
+- Selfie / Liveness
+- Address Proof (Proof of Address - POA) 
+**화면**
+- KYC-01: 안내
+- KYC-02: 정보 입력
+- KYC-03: 문서 제출
+- KYC-04: 라이브니스
+- KYC-05: 주소 증빙
+- KYC-06: 진행 상태
+
+**Detail description
+
+KYC 1
+
+KYC1.1** 
+
+- Residence country select menu input → Depend on country, process and document to prepare guide card shows differently.→ Show all countries list in acordian menu 
+( EU, UK, Swiss, Australia citizen should prepare Proof of address document. Depend on the country, allowable types of POA document are also different.) 
+→ brief CMP should be noticed on guide card.
+
+**KYC 1.2**
+
+- full name part is consisted of first name input and family name input. 
+If user check I have a middle name, user can also add their middle name.
+- This exchange accept only for user who is more than 18 years old. If the year of birth shows that user is under 18 years old, show error message, and disable continue button.
+- Nationality supports as many as countries. Show all countries list in acordian menu. 
+For example, North Korea, Iran, Cuba, Sudan, Russia, Afghanistan, Yemen. 
+Also, depend on internal policy, supported nationality can be changed.
+- types of ID document are requested depend on country.
+
+**KYC 2**  
+
+User can proceed KYC 2 from their dashboard, when they get trigger where 
+(1. User wants to user Fiat 2. tries to raise withdraw amount, 3. user’s address is not same as POI issue country. etc)
+
+- For EU, UK, Swiss, Australia countries, Proof of Address asking page will be shown during the onboarding. → but don’t highlight those countries. Show all countries list in acordian menu
+- First page of POA : asking Residential address by form
+    - Residential address
+    - City
+    - Postal code (Optional)
+    - Country/ region
+- Second page of POA : uploading POA document.
+- Other countries show reviewing state page. These countries will be requested their POA after being onboarded in their dashboard.
+
 
 4. **KYC Level 2 (심화):** 라이브니스(Selfie) 및 추가 증빙 → 모든 권한 해제.
 

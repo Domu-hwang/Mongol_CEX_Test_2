@@ -3,9 +3,10 @@ import { useNavigate, Routes, Route, useParams } from 'react-router-dom';
 import { KycIntro } from './KycIntro';
 import { KycProfileForm } from './KycProfileForm';
 import { AuthLayout } from './AuthLayout';
-import { Stepper, Step } from '@/components/ui/Stepper';
+import { Stepper } from '@/components/ui/Stepper';
 import { Button } from '@/components/ui/Button';
 import { KYC_POLICIES, getOnboardingSteps } from '@/constants/policy'; // Import policy constants
+import { useAuth } from '../hooks/useAuth'; // Import useAuth hook
 
 // Redefine onboardingSteps here to remove the conflicting local definition
 // const onboardingSteps = [
@@ -25,6 +26,7 @@ const OnboardingFlow: React.FC = () => {
 
     const { '*': currentPath = onboardingSteps[0].id } = useParams<{ '*': string }>();
     const navigate = useNavigate();
+    const { completeKyc, isLoading } = useAuth(); // Get completeKyc and isLoading from useAuth
 
     const currentStepIndex = onboardingSteps.findIndex(step => currentPath.startsWith(step.id));
     const currentStepId = onboardingSteps[currentStepIndex !== -1 ? currentStepIndex : 0].id;
@@ -34,12 +36,16 @@ const OnboardingFlow: React.FC = () => {
         navigate('profile');
     };
 
-    const handleKycProfileSubmit = (data: any) => {
+    const handleKycProfileSubmit = async (data: any) => {
         console.log('KYC Profile Submitted:', data);
-        alert('KYC 정보가 제출되었습니다!');
-        // For now, redirect to Trade page after KYC profile submission
-        navigate('/trade', { replace: true });
-        // In a real scenario, this would lead to 'document' or 'review' steps
+        try {
+            await completeKyc(data); // Call completeKyc from useAuth
+            alert('KYC information submitted successfully!');
+            navigate('/trade', { replace: true });
+        } catch (error) {
+            console.error('KYC submission failed:', error);
+            alert('KYC information submission failed. Please try again.');
+        }
     };
 
     const handleBack = () => {
@@ -52,50 +58,50 @@ const OnboardingFlow: React.FC = () => {
     };
 
     return (
-        <div className="mx-auto flex min-h-screen max-w-6xl flex-col items-center justify-center px-4 py-12">
+        <div className="mx-auto flex flex-grow max-w-6xl flex-col items-center justify-center px-4 py-12"> {/* Removed min-h-screen and bg-[#0b0e11] */}
             <div className="w-full max-w-5xl space-y-12">
                 <div className="px-10">
-                    <Stepper steps={onboardingSteps} currentStepId={currentStepId} />
+                    <Stepper steps={onboardingSteps} currentStep={currentStepNumber} />
                 </div>
 
                 <Routes>
                     <Route path="intro" element={
                         <AuthLayout
-                            title="KYC 시작"
-                            subtitle="본인 인증을 시작하여 거래 권한을 얻으세요."
+                            title="Start KYC"
+                            subtitle="Begin your identity verification to gain trading privileges."
                         >
                             <KycIntro onStart={handleKycIntroStart} />
                         </AuthLayout>
                     } />
                     <Route path="profile" element={
                         <AuthLayout
-                            title="KYC 기본 정보"
-                            subtitle="개인 정보를 입력하여 본인 인증을 진행합니다."
+                            title="KYC Basic Information"
+                            subtitle="Enter your personal information to proceed with identity verification."
                             sideContent={
                                 <div>
-                                    <p className="font-semibold">KYC 단계</p>
+                                    <p className="font-semibold">KYC Steps</p>
                                     <p className="text-sm text-slate-500">
-                                        Stepper 구성으로 언제든 진행 상태 확인 가능
+                                        Stepper for tracking your progress.
                                     </p>
                                     {currentStepNumber > 0 && (
                                         <Button variant="outline" onClick={handleBack} className="mt-4">
-                                            이전 단계로
+                                            Previous Step
                                         </Button>
                                     )}
                                 </div>
                             }
                         >
-                            <KycProfileForm onSubmit={handleKycProfileSubmit} />
+                            <KycProfileForm onSubmit={handleKycProfileSubmit} isLoading={isLoading} />
                         </AuthLayout>
                     } />
                     {/* Future routes for document upload and review */}
                     <Route path="*" element={
-                        <AuthLayout title="온보딩 진행 중" subtitle="현재 온보딩 단계를 처리하고 있습니다.">
-                            <p className="text-center text-slate-600">잠시 기다려주세요...</p>
+                        <AuthLayout title="Onboarding in Progress" subtitle="We are processing your onboarding steps.">
+                            <p className="text-center text-slate-600">Please wait...</p>
                             {currentStepNumber > 0 && (
                                 <div className="text-center mt-4">
-                                    <Button variant="outline" onClick={handleBack}>
-                                        이전 단계로
+                                    <Button variant="outline" onClick={handleBack} disabled={isLoading}>
+                                        Previous Step
                                     </Button>
                                 </div>
                             )}

@@ -1,27 +1,17 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/Button'; // Assuming Button component is in src/components/ui
+import { Link } from 'react-router-dom';
 
 const CTASection: React.FC = () => {
-    const navigate = useNavigate();
-
     return (
-        <section className="bg-primary-600 text-[#181a20] py-24 text-center">
-            <div className="container mx-auto px-4 max-w-4xl space-y-8">
-                <h2 className="text-4xl md:text-5xl font-extrabold">Start Trading Now</h2>
-                <p className="text-xl md:text-2xl font-medium opacity-80">
-                    Register an account today and start trading with the most secure platform in Mongolia.
+        <section className="py-20 bg-gray-800 text-white text-center">
+            <div className="container mx-auto px-4">
+                <h2 className="text-4xl font-bold mb-4 text-text">Ready to Start Your Crypto Journey?</h2>
+                <p className="text-lg text-text-dark mb-8">
+                    Join Mongol CEX today and experience the future of digital asset trading.
                 </p>
-                <div className="pt-4">
-                    <Button
-                        size="lg"
-                        variant="secondary"
-                        className="h-16 px-12 text-xl font-bold rounded-2xl bg-[#181a20] text-primary-600 hover:bg-[#1e2329]"
-                        onClick={() => navigate('/register')}
-                    >
-                        Register Now
-                    </Button>
-                </div>
+                <Link to="/register" className="btn-primary text-xl">
+                    Sign Up Now
+                </Link>
             </div>
         </section>
     );

@@ -1,25 +1,29 @@
 import React from 'react';
 
-interface OrderBookEntry {
+interface OrderBookRowProps {
     price: number;
     amount: number;
     total: number;
-}
-
-interface OrderBookRowProps {
-    entry: OrderBookEntry;
     type: 'bid' | 'ask';
+    maxTotal: number;
 }
 
-const OrderBookRow: React.FC<OrderBookRowProps> = ({ entry, type }) => {
-    const colorClass = type === 'bid' ? 'text-success-600' : 'text-danger-600';
-    const bgColorClass = type === 'bid' ? 'bg-success-600/10' : 'bg-danger-600/10';
+const OrderBookRow: React.FC<OrderBookRowProps> = ({ price, amount, total, type, maxTotal }) => {
+    const isBid = type === 'bid';
+    const rowColor = isBid ? 'text-success' : 'text-destructive';
+    const barColor = isBid ? 'bg-success/20' : 'bg-destructive/20';
+    const barWidth = (total / maxTotal) * 100;
 
     return (
-        <div className={`flex justify-between text-xs p-1 px-2 rounded-sm transition-colors hover:bg-secondary-500/50 ${bgColorClass}`}>
-            <span className={`${colorClass} font-bold font-mono`}>${entry.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
-            <span className="text-[#eaecef] font-mono">{entry.amount.toFixed(4)}</span>
-            <span className="text-gray-500 font-mono">${entry.total.toLocaleString()}</span>
+        <div className={`relative flex justify-between py-0.5 text-xs ${rowColor}`}>
+            {/* Background bar for depth visualization */}
+            <div
+                className={`absolute inset-y-0 ${isBid ? 'left-0' : 'right-0'} ${barColor}`}
+                style={{ width: `${barWidth}%` }}
+            />
+            <span className="relative z-10 w-1/3 text-left">{price.toFixed(2)}</span>
+            <span className="relative z-10 w-1/3 text-right">{amount.toFixed(4)}</span>
+            <span className="relative z-10 w-1/3 text-right">{total.toFixed(2)}</span>
         </div>
     );
 };

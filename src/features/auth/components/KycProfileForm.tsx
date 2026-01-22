@@ -7,14 +7,14 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 const MIN_AGE = 18;
 
 const profileSchema = z.object({
-    residenceCountry: z.string().min(1, '거주 국가를 선택하세요'),
-    nationality: z.string().min(1, '국적을 선택하세요'),
-    firstName: z.string().min(1, 'First name을 입력하세요'),
-    familyName: z.string().min(1, 'Family name을 입력하세요'),
+    residenceCountry: z.string().min(1, 'Please select your country of residence'),
+    nationality: z.string().min(1, 'Please select your nationality'),
+    firstName: z.string().min(1, 'Please enter your first name'),
+    familyName: z.string().min(1, 'Please enter your family name'),
     middleName: z.string().optional(),
     dob: z
         .string()
-        .min(1, '생년월일을 입력하세요')
+        .min(1, 'Please enter your date of birth')
         .refine((value) => {
             const birthDate = new Date(value);
             const today = new Date();
@@ -25,8 +25,8 @@ const profileSchema = z.object({
                     ? age - 1
                     : age;
             return adjustedAge >= MIN_AGE;
-        }, `${MIN_AGE}세 이상만 가입할 수 있습니다.`),
-    idType: z.string().min(1, '신분증 타입을 선택하세요'),
+        }, `You must be at least ${MIN_AGE} years old to register.`),
+    idType: z.string().min(1, 'Please select an ID document type'),
 });
 
 const documentGuide: Record<string, string[]> = {
@@ -50,9 +50,10 @@ const getDocumentOptions = (residence: string, nationality: string): string[] =>
 interface KycProfileFormProps {
     onSubmit?: (payload: z.infer<typeof profileSchema>) => Promise<void> | void;
     onSuccess?: () => void; // Add onSuccess callback
+    isLoading?: boolean; // Add isLoading prop
 }
 
-export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSuccess }) => {
+export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSuccess, isLoading }) => {
     const [formData, setFormData] = useState({
         residenceCountry: '',
         nationality: '',
@@ -124,8 +125,8 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
             <TabsContent value={formData.residenceCountry || 'EU'}>
                 <p className="text-sm text-slate-500">
                     {formData.residenceCountry === 'Other'
-                        ? 'Selfie + ID 제출을 준비해주세요. 필요 시 POA 요청이 있을 수 있습니다.'
-                        : 'POA + Selfie + ID 제출이 필요합니다.'}
+                        ? 'Please prepare Selfie + ID submission. POA may be requested if needed.'
+                        : 'POA + Selfie + ID submission is required.'}
                 </p>
             </TabsContent>
         </Tabs>
@@ -153,14 +154,14 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                 <div className="grid gap-4 md:grid-cols-2">
                     <Input
                         label="Residence country"
-                        placeholder="예: EU, UK, Swiss"
+                        placeholder="e.g., EU, UK, Swiss"
                         value={formData.residenceCountry}
                         onChange={(e) => setFormData((prev) => ({ ...prev, residenceCountry: e.target.value }))}
                         error={errors.residenceCountry}
                     />
                     <Input
                         label="Nationality"
-                        placeholder="예: Mongolia"
+                        placeholder="e.g., Mongolia"
                         value={formData.nationality}
                         onChange={(e) => setFormData((prev) => ({ ...prev, nationality: e.target.value }))}
                         error={errors.nationality}
@@ -237,10 +238,12 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                     </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting} isLoading={isSubmitting}>
-                    다음 단계로
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} isLoading={isSubmitting || isLoading}>
+                    Next Step
                 </Button>
             </form>
         </div>
     );
 };
+
+export default KycProfileForm;

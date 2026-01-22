@@ -4,17 +4,17 @@ import { Button } from '@/components/ui/Button';
 
 const NotFoundPage: React.FC = () => {
     return (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-120px)] bg-white text-slate-900 p-8 text-center">
-            <h1 className="text-6xl font-bold text-primary-600 mb-4">404</h1>
-            <h2 className="text-3xl font-semibold mb-6">페이지를 찾을 수 없습니다</h2>
-            <p className="text-lg text-slate-600 mb-8">
-                요청하신 페이지를 찾을 수 없습니다. 주소를 확인하거나 아래 버튼을 클릭하여 홈으로 돌아가세요.
-            </p>
-            <Link to="/">
-                <Button variant="primary" size="lg">
-                    홈으로 돌아가기
-                </Button>
-            </Link>
+        <div className="flex flex-col min-h-screen bg-gray-900 text-white">
+            <main className="flex-grow flex flex-col items-center justify-center text-center p-4">
+                <h1 className="text-6xl font-extrabold text-primary-600 mb-4">404</h1>
+                <h2 className="text-3xl font-bold mb-4">Page Not Found</h2>
+                <p className="text-lg text-gray-400 mb-8">
+                    The page you requested could not be found. Please check the address or return to the main page using the link below.
+                </p>
+                <Link to="/">
+                    <Button size="lg">Return to Main</Button>
+                </Link>
+            </main>
         </div>
     );
 };

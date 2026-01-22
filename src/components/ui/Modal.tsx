@@ -1,64 +1,126 @@
-import React, { ReactNode } from 'react';
-// Assuming X icon might come from a library like 'lucide-react' or 'react-icons'
-// For now, using a simple 'X' character, or it can be added later.
-// import { X } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { cn, dialogStyles } from '@/design-system';
 
 interface ModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    title?: string;
-    children: ReactNode;
-    size?: 'sm' | 'md' | 'lg';
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  description?: string;
+  children: React.ReactNode;
+  className?: string;
+  showCloseButton?: boolean;
 }
 
-export function Modal({
-    isOpen,
-    onClose,
-    title,
-    children,
-    size = 'md',
-}: ModalProps) {
-    const sizeClasses = {
-        sm: 'max-w-md',
-        md: 'max-w-lg',
-        lg: 'max-w-2xl',
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  title,
+  description,
+  children,
+  className,
+  showCloseButton = true,
+}) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+      }
     };
 
-    if (!isOpen) return null;
+    if (isOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.body.style.overflow = 'hidden';
+    }
 
-    return (
-        <div className="fixed inset-0 z-50 overflow-y-auto">
-            {/* Backdrop */}
-            <div
-                className="fixed inset-0 bg-black bg-opacity-50"
-                onClick={onClose}
-            />
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, onClose]);
 
-            {/* Modal */}
-            <div className="flex min-h-full items-center justify-center p-4">
-                <div className={`
-          relative bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]}
-        `}>
-                    {/* Header */}
-                    {title && (
-                        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-                            <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-                            <button
-                                onClick={onClose}
-                                className="text-gray-400 hover:text-gray-600 touch-target"
-                            >
-                                {/* <X size={24} /> */}
-                                X
-                            </button>
-                        </div>
-                    )}
+  if (!isOpen) {
+    return null;
+  }
 
-                    {/* Content */}
-                    <div className="p-6">
-                        {children}
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-}
+  return createPortal(
+    <>
+      <div className={dialogStyles.overlay} onClick={onClose} aria-hidden="true" />
+      <div
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? 'modal-title' : undefined}
+        aria-describedby={description ? 'modal-description' : undefined}
+        className={cn(dialogStyles.content, className)}
+      >
+        {(title || showCloseButton) && (
+          <div className={dialogStyles.header}>
+            {title && (
+              <h2 id="modal-title" className={dialogStyles.title}>
+                {title}
+              </h2>
+            )}
+            {description && (
+              <p id="modal-description" className={dialogStyles.description}>
+                {description}
+              </p>
+            )}
+          </div>
+        )}
+
+        {showCloseButton && (
+          <button
+            onClick={onClose}
+            className={dialogStyles.closeButton}
+            aria-label="Close"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        )}
+
+        <div>{children}</div>
+      </div>
+    </>,
+    document.body
+  );
+};
+
+// Sub-components for composition
+const ModalHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...props
+}) => <div className={cn(dialogStyles.header, className)} {...props} />;
+
+const ModalTitle: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({
+  className,
+  ...props
+}) => <h2 className={cn(dialogStyles.title, className)} {...props} />;
+
+const ModalDescription: React.FC<React.HTMLAttributes<HTMLParagraphElement>> = ({
+  className,
+  ...props
+}) => <p className={cn(dialogStyles.description, className)} {...props} />;
+
+const ModalFooter: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
+  className,
+  ...props
+}) => <div className={cn(dialogStyles.footer, className)} {...props} />;
+
+export { Modal, ModalHeader, ModalTitle, ModalDescription, ModalFooter };
+export default Modal;

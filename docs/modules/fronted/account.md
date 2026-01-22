@@ -2,12 +2,13 @@
 
 ## 1. Overview
 
-The Account module handles **user profile management and security settings**.
+The Account module handles **user profile management, security settings, and quick asset exchanges**.
 
 **Purpose:**
 - Display and edit user profile information
 - Change password
 - Manage security settings
+- Perform quick cryptocurrency swaps
 - Configure notifications (future)
 - View account activity log (future)
 
@@ -15,6 +16,7 @@ The Account module handles **user profile management and security settings**.
 - ✅ Profile display and editing
 - ✅ Password change
 - ✅ Basic security settings
+- ✅ Quick Swap functionality
 - ❌ 2FA setup (structure only, not enforced)
 - ❌ KYC submission (future)
 
@@ -29,13 +31,15 @@ src/features/account/
 │   ├── ProfileSection.tsx        # User profile info
 │   ├── SecuritySection.tsx       # Security settings
 │   ├── PasswordChangeForm.tsx    # Change password
+│   ├── QuickSwapForm.tsx         # Quick swap interface
 │   ├── TwoFactorSetup.tsx        # 2FA setup (future)
 │   └── NotificationSettings.tsx  # Notification preferences
 │
 ├── hooks/
 │   ├── useProfile.ts             # User profile data
 │   ├── useUpdateProfile.ts       # Update profile mutation
-│   └── useChangePassword.ts      # Change password mutation
+│   ├── useChangePassword.ts      # Change password mutation
+│   └── useQuickSwap.ts           # Quick swap functionality
 │
 ├── services/
 │   └── accountService.ts         # Account API calls
@@ -87,6 +91,7 @@ export function AccountView() {
         <TabsList>
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="security">Security</TabsTrigger>
+          <TabsTrigger value="quick-swap">Quick Swap</TabsTrigger>
         </TabsList>
         
         <TabsContent value="profile">
@@ -95,6 +100,11 @@ export function AccountView() {
         
         <TabsContent value="security">
           <SecuritySection />
+        </TabsContent>
+
+        <TabsContent value="quick-swap">
+          {/* <QuickSwapForm /> */}
+          <p>Quick Swap functionality will be implemented here.</p>
         </TabsContent>
       </Tabs>
     </div>
@@ -174,6 +184,7 @@ export function PasswordChangeForm() {
 GET    /api/users/profile
 PUT    /api/users/profile
 POST   /api/users/change-password
+POST   /api/quick-swap/execute
 ```
 
 ---

@@ -1,238 +1,233 @@
-import React, { useState, useMemo } from 'react';
-// import { z } from 'zod'; // Will add zod later for validation
-import { Input } from '@/components/ui/Input';
+import React, { useState, FormEvent } from 'react';
 import { Button } from '@/components/ui/Button';
-// import { toast } from 'react-hot-toast'; // Will add toast later for notifications
-
-// Placeholder types
-interface Market {
-    symbol: string;
-    baseAsset: string;
-    quoteAsset: string;
-}
-
-type OrderSide = 'buy' | 'sell';
-type OrderType = 'market' | 'limit';
-type Order = any; // Placeholder
-type CreateOrderRequest = any; // Placeholder
-
+import { Input } from '@/components/ui/Input';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
 
 interface OrderFormProps {
-    market: Market;
-    balance: number;
-    currentPrice: number;
-    onSuccess?: (order: Order) => void;
+    currentMarket: string;
+    availableBalance: { base: number; quote: number };
+    onPlaceOrder: (type: 'buy' | 'sell', orderType: 'limit' | 'market' | 'stop-limit', price: number, amount: number) => void;
+    isLoading?: boolean;
 }
 
-const OrderForm: React.FC<OrderFormProps> = ({ market, balance, currentPrice, onSuccess }) => {
-    const [side, setSide] = useState<OrderSide>('buy');
-    const [type, setType] = useState<OrderType>('market');
-    const [amount, setAmount] = useState('');
-    const [price, setPrice] = useState(currentPrice.toString());
+const OrderForm: React.FC<OrderFormProps> = ({
+    currentMarket,
+    availableBalance,
+    onPlaceOrder,
+    isLoading,
+}) => {
+    const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy');
+    const [tradeType, setTradeType] = useState<'limit' | 'market' | 'stop-limit'>('limit');
+    const [price, setPrice] = useState<string>('');
+    const [amount, setAmount] = useState<string>('');
+    const [total, setTotal] = useState<string>('');
+    const [takeProfit, setTakeProfit] = useState<boolean>(false);
+    const [stopLoss, setStopLoss] = useState<boolean>(false);
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
-    // const placeOrder = usePlaceOrder(); // Placeholder
+    const [baseAsset, quoteAsset] = currentMarket.split('/');
 
-    // Calculate total cost
-    const total = useMemo(() => {
-        const amt = parseFloat(amount) || 0;
-        const prc = type === 'market' ? currentPrice : (parseFloat(price) || 0);
-        return amt * prc;
-    }, [amount, price, type, currentPrice]);
-
-    // Calculate fee (0.1%)
-    const fee = total * 0.001;
-    const totalWithFee = total + fee;
-
-    // Validation
-    const isValid = useMemo(() => {
-        const amt = parseFloat(amount);
-        if (!amt || amt <= 0) return false;
-        if (type === 'limit') {
-            const prc = parseFloat(price);
-            if (!prc || prc <= 0) return false;
+    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newPrice = e.target.value;
+        setPrice(newPrice);
+        if (newPrice && amount) {
+            setTotal((parseFloat(newPrice) * parseFloat(amount)).toFixed(2));
+        } else {
+            setTotal('');
         }
-        if (side === 'buy' && totalWithFee > balance) return false;
-        return true;
-    }, [amount, price, type, side, totalWithFee, balance]);
+        setErrors((prev) => ({ ...prev, price: '' }));
+    };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newAmount = e.target.value;
+        setAmount(newAmount);
+        if (price && newAmount) {
+            setTotal((parseFloat(price) * parseFloat(newAmount)).toFixed(2));
+        } else {
+            setTotal('');
+        }
+        setErrors((prev) => ({ ...prev, amount: '' }));
+    };
+
+    const handleTotalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newTotal = e.target.value;
+        setTotal(newTotal);
+        if (price && newTotal && parseFloat(price) > 0) {
+            setAmount((parseFloat(newTotal) / parseFloat(price)).toFixed(4));
+        } else {
+            setAmount('');
+        }
+        setErrors((prev) => ({ ...prev, total: '' }));
+    };
+
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {};
+        const numPrice = parseFloat(price);
+        const numAmount = parseFloat(amount);
+        const numTotal = parseFloat(total);
+
+        if (tradeType !== 'market' && (isNaN(numPrice) || numPrice <= 0)) {
+            newErrors.price = 'Please enter a valid price.';
+        }
+        if (isNaN(numAmount) || numAmount <= 0) {
+            newErrors.amount = 'Please enter a valid amount.';
+        }
+        if (isNaN(numTotal) || numTotal <= 0) {
+            newErrors.total = 'Please enter a valid total.';
+        }
+
+        if (orderSide === 'buy') {
+            if (numTotal > availableBalance.quote) {
+                newErrors.total = `Insufficient balance: You only have ${availableBalance.quote.toFixed(2)} ${quoteAsset}.`;
+            }
+        } else {
+            if (numAmount > availableBalance.base) {
+                newErrors.amount = `Insufficient balance: You only have ${availableBalance.base.toFixed(4)} ${baseAsset}.`;
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-        if (!isValid) return;
-
-        console.log('Order submitted:', {
-            symbol: market.symbol,
-            side,
-            type,
-            amount: parseFloat(amount),
-            ...(type === 'limit' && { price: parseFloat(price) }),
-        });
-        // try {
-        //   await placeOrder.mutateAsync({
-        //     symbol: market.symbol,
-        //     side,
-        //     type,
-        //     amount: parseFloat(amount),
-        //     ...(type === 'limit' && { price: parseFloat(price) }),
-        //   });
-
-        //   toast.success(`${side === 'buy' ? 'Buy' : 'Sell'} order placed!`);
-        //   setAmount('');
-        //   onSuccess?.();
-        // } catch (error) {
-        //   // Error handled by mutation
-        // }
-        setAmount(''); // Clear amount after mock submission
-        onSuccess?.(null); // Call onSuccess with null for mock
+        if (validateForm()) {
+            onPlaceOrder(orderSide, tradeType, parseFloat(price), parseFloat(amount));
+            setPrice('');
+            setAmount('');
+            setTotal('');
+            setErrors({});
+        }
     };
 
-    const handlePercentageClick = (percentage: number) => {
-        const targetPrice = type === 'market' ? currentPrice : (parseFloat(price) || 0);
-        const availableAmount = side === 'buy'
-            ? (balance * percentage) / targetPrice
-            : balance * percentage;
-        setAmount(availableAmount.toFixed(8));
-    };
+    const isPriceEditable = tradeType === 'limit' || tradeType === 'stop-limit';
 
     return (
-        <div className="space-y-4">
-            {/* Order Type Toggle */}
-            <div className="flex space-x-1 bg-secondary-600 rounded-lg p-1 border border-secondary-500">
+        <div className="bg-card p-4 rounded-lg shadow-md border border-border">
+            <div className="flex bg-muted rounded-md p-1 mb-4">
                 <Button
-                    type="button"
-                    onClick={() => setType('market')}
-                    variant={type === 'market' ? 'primary' : 'outline'}
-                    size="sm"
-                    className="flex-1 border-none bg-transparent hover:bg-secondary-500 data-[selected=true]:bg-secondary-500 data-[selected=true]:text-primary-600"
-                    data-selected={type === 'market'}
-                >
-                    Market
-                </Button>
-                <Button
-                    type="button"
-                    onClick={() => setType('limit')}
-                    variant={type === 'limit' ? 'primary' : 'outline'}
-                    size="sm"
-                    className="flex-1 border-none bg-transparent hover:bg-secondary-500 data-[selected=true]:bg-secondary-500 data-[selected=true]:text-primary-600"
-                    data-selected={type === 'limit'}
-                >
-                    Limit
-                </Button>
-            </div>
-
-            {/* Buy/Sell Tabs */}
-            <div className="flex space-x-2 p-1">
-                <Button
-                    type="button"
-                    onClick={() => setSide('buy')}
-                    variant={side === 'buy' ? 'success' : 'outline'}
-                    className="flex-1"
+                    variant="ghost"
+                    className={`flex-1 ${orderSide === 'buy' ? 'bg-success text-success-foreground' : 'text-muted-foreground'}`}
+                    onClick={() => setOrderSide('buy')}
                 >
                     Buy
                 </Button>
                 <Button
-                    type="button"
-                    onClick={() => setSide('sell')}
-                    variant={side === 'sell' ? 'danger' : 'outline'}
-                    className="flex-1"
+                    variant="ghost"
+                    className={`flex-1 ${orderSide === 'sell' ? 'bg-destructive text-destructive-foreground' : 'text-muted-foreground'}`}
+                    onClick={() => setOrderSide('sell')}
                 >
                     Sell
                 </Button>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Price input (limit orders only) */}
-                {type === 'limit' && (
-                    <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-400">
-                            Price ({market.quoteAsset})
-                        </label>
+            <Tabs value={tradeType} onValueChange={(value) => setTradeType(value as 'limit' | 'market' | 'stop-limit')} className="mb-4">
+                <TabsList className="grid w-full grid-cols-3 bg-muted p-1 rounded-md">
+                    <TabsTrigger value="limit">Limit</TabsTrigger>
+                    <TabsTrigger value="market">Market</TabsTrigger>
+                    <TabsTrigger value="stop-limit">Stop Limit</TabsTrigger>
+                </TabsList>
+                <TabsContent value={tradeType} className="mt-4">
+                    <form onSubmit={handleSubmit} className="space-y-3">
                         <Input
+                            label="Price"
                             type="number"
                             step="0.01"
+                            placeholder="0.00"
                             value={price}
-                            onChange={(e) => setPrice(e.target.value)}
-                            placeholder={currentPrice.toString()}
+                            onChange={handlePriceChange}
+                            error={errors.price}
+                            readOnly={isLoading || !isPriceEditable}
+                            suffix={quoteAsset}
                         />
-                        <p className="text-xs text-gray-500 mt-1">
-                            Market: ${currentPrice.toLocaleString()}
-                        </p>
-                    </div>
-                )}
+                        <div className="flex justify-between items-center text-sm">
+                            <Input
+                                label="Amount"
+                                type="number"
+                                step="0.0001"
+                                placeholder="0.0000"
+                                value={amount}
+                                onChange={handleAmountChange}
+                                error={errors.amount}
+                                readOnly={isLoading}
+                                suffix={baseAsset}
+                                className="flex-grow mr-2"
+                            />
+                            <div className="flex space-x-1">
+                                {[25, 50, 75, 100].map((percent) => (
+                                    <Button
+                                        key={percent}
+                                        type="button"
+                                        variant="outline"
+                                        size="xs"
+                                        onClick={() => {
+                                            const balanceToUse = orderSide === 'buy' ? availableBalance.quote : availableBalance.base;
+                                            const calculatedAmount = (balanceToUse * percent / 100) / (parseFloat(price) || 1);
+                                            setAmount(calculatedAmount.toFixed(4));
+                                            if (price) setTotal((calculatedAmount * parseFloat(price)).toFixed(2));
+                                        }}
+                                    >
+                                        {percent}%
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
 
-                {/* Amount input */}
-                <div>
-                    <label className="block text-sm font-medium mb-1 text-gray-400">
-                        Amount ({market.baseAsset})
-                    </label>
-                    <Input
-                        type="number"
-                        step="0.00000001"
-                        value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
-                        placeholder="0.00"
-                    />
+                        <Input
+                            label="Total"
+                            type="number"
+                            step="0.01"
+                            placeholder="0.00"
+                            value={total}
+                            onChange={handleTotalChange}
+                            error={errors.total}
+                            readOnly={isLoading || tradeType === 'market'}
+                            suffix={quoteAsset}
+                        />
 
-                    {/* Quick percentage buttons */}
-                    <div className="flex space-x-2 mt-2">
-                        {[0.25, 0.5, 0.75, 1.0].map((pct) => (
-                            <button
-                                key={pct}
-                                type="button"
-                                onClick={() => handlePercentageClick(pct)}
-                                className="flex-1 py-1 text-xs bg-secondary-600 text-gray-400 rounded-md hover:bg-secondary-500 transition-colors border border-secondary-500"
-                            >
-                                {(pct * 100).toFixed(0)}%
-                            </button>
-                        ))}
-                    </div>
-                </div>
+                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={takeProfit}
+                                    onChange={(e) => setTakeProfit(e.target.checked)}
+                                    className="rounded border-border bg-background"
+                                />
+                                <span>Take profit</span>
+                            </label>
+                            <label className="flex items-center space-x-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={stopLoss}
+                                    onChange={(e) => setStopLoss(e.target.checked)}
+                                    className="rounded border-border bg-background"
+                                />
+                                <span>Stop loss</span>
+                            </label>
+                        </div>
 
-                {/* Available balance */}
-                <div className="text-sm">
-                    <span className="text-gray-400">Available: </span>
-                    <span className="font-medium text-[#eaecef]">
-                        {balance.toFixed(8)} {side === 'buy' ? market.quoteAsset : market.baseAsset}
-                    </span>
-                </div>
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                            <span>Available:</span>
+                            <span>
+                                {orderSide === 'buy'
+                                    ? `${availableBalance.quote.toFixed(2)} ${quoteAsset}`
+                                    : `${availableBalance.base.toFixed(4)} ${baseAsset}`}
+                            </span>
+                        </div>
 
-                {/* Total calculation */}
-                <div className="space-y-1 text-sm border-t border-secondary-500 pt-3 mt-4">
-                    <div className="flex justify-between">
-                        <span className="text-gray-400">Total:</span>
-                        <span className="text-[#eaecef]">${total.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Fee (0.1%):</span>
-                        <span className="text-gray-500">${fee.toFixed(2)}</span>
-                    </div>
-                    <div className="flex justify-between font-medium text-primary-600 mt-1 pt-1 border-t border-dashed border-secondary-500">
-                        <span>Total with Fee:</span>
-                        <span>${totalWithFee.toLocaleString()}</span>
-                    </div>
-                </div>
-
-                {/* Submit button */}
-                <Button
-                    type="submit"
-                    variant={side === 'buy' ? 'success' : 'danger'}
-                    className="w-full"
-                    disabled={!isValid /* || placeOrder.isLoading */}
-                >
-                    {/* {placeOrder.isLoading */}
-                    {false // Mock isLoading
-                        ? 'Placing Order...'
-                        : `${side === 'buy' ? 'Buy' : 'Sell'} ${market.baseAsset}`}
-                </Button>
-
-                {/* Validation errors */}
-                {!isValid && amount && (
-                    <p className="text-sm text-danger-600">
-                        {side === 'buy' && totalWithFee > balance
-                            ? 'Insufficient balance'
-                            : 'Invalid order parameters'}
-                    </p>
-                )}
-            </form>
+                        <Button
+                            type="submit"
+                            variant={orderSide === 'buy' ? 'success' : 'destructive'}
+                            className="w-full font-bold"
+                            disabled={isLoading}
+                            isLoading={isLoading}
+                        >
+                            {orderSide === 'buy' ? `Buy ${baseAsset}` : `Sell ${baseAsset}`}
+                        </Button>
+                    </form>
+                </TabsContent>
+            </Tabs>
         </div>
     );
 };

@@ -11,7 +11,7 @@ export const RegisterPage: React.FC = () => {
     };
 
     return (
-        <div className="flex min-h-[calc(100vh-200px)] items-center justify-center py-12">
+        <div className="flex flex-grow items-center justify-center py-12"> {/* Removed specific height and background color */}
             <AuthLayout
                 title="Create Account"
                 subtitle="Join Mongol CEX and start trading today."

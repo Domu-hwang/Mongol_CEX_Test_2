@@ -1,0 +1,72 @@
+/* Trade-specific styles */
+@layer base {
+    :root {
+        --color-background-primary: #121827;
+        --color-background-secondary: #0b0e11;
+        --color-background-tertiary: #181a20;
+        --color-border-primary: #2f343c;
+        --color-text-primary: #eaecef;
+        --color-text-secondary: #a3a7ac;
+        --color-green: #0ecb81;
+        --color-red: #f6465d;
+        --color-yellow: #fcd535;
+    }
+
+    body {
+        @apply antialiased text-color-text-primary bg-color-background-secondary;
+    }
+}
+
+@layer components {
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-border-primary) var(--color-background-secondary);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: var(--color-background-secondary);
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: var(--color-border-primary);
+        border-radius: 4px;
+        border: 2px solid var(--color-background-secondary);
+    }
+}
+
+@layer utilities {
+    .bg-order-sell {
+        background-color: rgba(246, 70, 93, 0.15);
+        /* danger-600 with opacity */
+    }
+
+    .bg-order-buy {
+        background-color: rgba(14, 203, 129, 0.15);
+        /* success-600 with opacity */
+    }
+
+    /* Flash effect for recent trades */
+    @keyframes flash-trade {
+        0% {
+            background-color: transparent;
+        }
+
+        50% {
+            background-color: rgba(252, 213, 53, 0.2);
+        }
+
+        /* primary-600 with opacity */
+        100% {
+            background-color: transparent;
+        }
+    }
+
+    .animate-flash-trade {
+        animation: flash-trade 1s ease-out;
+    }
+}

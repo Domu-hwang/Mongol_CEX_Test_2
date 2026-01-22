@@ -65,7 +65,31 @@ The onboarding module follows a **Policy-Based Dynamic Workflow**, as defined in
 - **FR-KYC-002 (Age Verification):** Hard block for <18 years old.
 - **FR-KYC-003 (Document Intelligence):** Display documentation requirements based on nationality.
 
-### 5.3 Trading Terminal (Web)
+### 5.3 Quick Swap
+
+- **URL**: `/account/quick-swap`
+- **화면명**: 빠른 교환 (즉시 환전)
+- **주요 기능**:
+    - From/To 통화 선택
+    - 간편한 2-필드 폼
+    - 현재 지갑 잔액 표시
+    - 즉시 환전 실행
+
+### 5.4 Wallet Module (지갑)
+
+### Wallet Page
+
+- **URL**: `/account/wallet`
+- **화면명**: 지갑 대시보드
+- **주요 기능**:
+    - 암호화폐 잔액 목록 (USDT, BTC, ETH 등)
+    - 액션 버튼:
+        - **Deposit** (입금)
+        - **Withdrawal** (출금)
+        - **History** (거래 내역)
+    - 최근 거래 내역 섹션
+
+### 5.5 Trading Terminal (Web)
 - **FR-TRADE-001 (Advanced Dashboard):** 
   - Integrated charts (TradingView style).
   - Real-time Order Book with depth visualization.

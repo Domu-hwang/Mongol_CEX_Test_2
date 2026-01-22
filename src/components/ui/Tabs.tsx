@@ -1,81 +1,141 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
-import classNames from 'classnames';
+import React, { useState, createContext, useContext, ReactNode } from 'react';
+import { cn, tabsStyles } from '@/design-system';
 
-interface TabsContextValue {
-    value: string;
-    setValue: (value: string) => void;
+// Context to share active tab state
+interface TabsContextType {
+  activeTab: string;
+  setActiveTab: (value: string) => void;
+  variant: 'default' | 'underline';
 }
 
-const TabsContext = createContext<TabsContextValue | null>(null);
+const TabsContext = createContext<TabsContextType | undefined>(undefined);
 
+const useTabsContext = () => {
+  const context = useContext(TabsContext);
+  if (!context) {
+    throw new Error('Tabs components must be used within the Tabs parent component');
+  }
+  return context;
+};
+
+// Tabs component (parent)
 interface TabsProps {
-    defaultValue: string;
-    value?: string;
-    onValueChange?: (value: string) => void;
-    children: React.ReactNode;
+  defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
+  variant?: 'default' | 'underline';
+  className?: string;
+  children: ReactNode;
 }
 
-export const Tabs: React.FC<TabsProps> = ({ defaultValue, value, onValueChange, children }) => {
-    const [internalValue, setInternalValue] = useState(defaultValue);
+const Tabs: React.FC<TabsProps> = ({
+  defaultValue,
+  value: controlledValue,
+  onValueChange,
+  variant = 'default',
+  className,
+  children,
+}) => {
+  const [internalActiveTab, setInternalActiveTab] = useState(defaultValue || '');
 
-    const currentValue = value ?? internalValue;
+  const activeTab = controlledValue !== undefined ? controlledValue : internalActiveTab;
+  const setActiveTab = (newValue: string) => {
+    if (controlledValue === undefined) {
+      setInternalActiveTab(newValue);
+    }
+    onValueChange?.(newValue);
+  };
 
-    const contextValue = useMemo<TabsContextValue>(
-        () => ({
-            value: currentValue,
-            setValue: (nextValue: string) => {
-                if (!value) {
-                    setInternalValue(nextValue);
-                }
-                onValueChange?.(nextValue);
-            },
-        }),
-        [currentValue, value, onValueChange]
-    );
-
-    return <TabsContext.Provider value={contextValue}>{children}</TabsContext.Provider>;
+  return (
+    <TabsContext.Provider value={{ activeTab, setActiveTab, variant }}>
+      <div className={cn('w-full', className)}>{children}</div>
+    </TabsContext.Provider>
+  );
 };
 
-export const TabsList: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-    <div className={classNames('flex w-full gap-1 rounded-xl bg-[#2b3139] p-1.5', className)}>{children}</div>
-);
+// TabsList component
+interface TabsListProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: ReactNode;
+}
 
+const TabsList: React.FC<TabsListProps> = ({ children, className, ...props }) => {
+  const { variant } = useTabsContext();
+
+  return (
+    <div
+      role="tablist"
+      className={cn(
+        variant === 'underline' ? tabsStyles.listUnderline : tabsStyles.list,
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
+
+// TabsTrigger component
 interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    value: string;
-    children: React.ReactNode;
+  value: string;
+  children: ReactNode;
 }
 
-export const TabsTrigger: React.FC<TabsTriggerProps> = ({ value, children, ...props }) => {
-    const context = useContext(TabsContext);
-    if (!context) {
-        throw new Error('TabsTrigger must be used within Tabs');
-    }
-    const isActive = context.value === value;
-    return (
-        <button
-            type="button"
-            onClick={(event) => {
-                props.onClick?.(event);
-                context.setValue(value);
-            }}
-            className={classNames(
-                'flex-1 rounded-lg px-4 py-2 text-sm font-bold transition-all duration-200 focus-visible:outline-none',
-                isActive ? 'bg-[#1e2329] text-primary-600 shadow-lg' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-            )}
-            {...props}
-        >
-            {children}
-        </button>
-    );
+const TabsTrigger: React.FC<TabsTriggerProps> = ({
+  value,
+  children,
+  className,
+  ...props
+}) => {
+  const { activeTab, setActiveTab, variant } = useTabsContext();
+  const isActive = activeTab === value;
+
+  return (
+    <button
+      role="tab"
+      aria-selected={isActive}
+      data-state={isActive ? 'active' : 'inactive'}
+      onClick={() => setActiveTab(value)}
+      className={cn(
+        variant === 'underline' ? tabsStyles.triggerUnderline : tabsStyles.trigger,
+        className
+      )}
+      {...props}
+    >
+      {children}
+    </button>
+  );
 };
 
-export const TabsContent: React.FC<{ value: string; children: React.ReactNode }> = ({ value, children }) => {
-    const context = useContext(TabsContext);
-    if (!context) {
-        throw new Error('TabsContent must be used within Tabs');
-    }
-    if (context.value !== value) {
-        return null;
-    }
-    return <div className="mt-4">{children}</div>;
+// TabsContent component
+interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  value: string;
+  children: ReactNode;
+}
+
+const TabsContent: React.FC<TabsContentProps> = ({
+  value,
+  children,
+  className,
+  ...props
+}) => {
+  const { activeTab } = useTabsContext();
+
+  if (activeTab !== value) {
+    return null;
+  }
+
+  return (
+    <div
+      role="tabpanel"
+      data-state={activeTab === value ? 'active' : 'inactive'}
+      className={cn(tabsStyles.content, className)}
+      {...props}
+    >
+      {children}
+    </div>
+  );
 };
+
+export { Tabs, TabsList, TabsTrigger, TabsContent };
+export default Tabs;

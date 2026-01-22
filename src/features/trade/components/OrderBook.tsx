@@ -1,72 +1,62 @@
 import React from 'react';
 import OrderBookRow from './OrderBookRow';
 
-interface OrderBookEntry {
+interface Order {
     price: number;
     amount: number;
     total: number;
 }
 
 interface OrderBookProps {
-    symbol: string;
+    bids: Order[];
+    asks: Order[];
+    currentPrice: number;
 }
 
-const mockOrderBook = {
-    bids: [
-        { price: 44999.50, amount: 0.123, total: 5534.84 },
-        { price: 44999.00, amount: 0.250, total: 11249.75 },
-        { price: 44998.00, amount: 0.050, total: 2249.90 },
-    ],
-    asks: [
-        { price: 45000.50, amount: 0.300, total: 13500.15 },
-        { price: 45001.00, amount: 0.100, total: 4500.10 },
-        { price: 45002.00, amount: 0.080, total: 3601.76 },
-    ],
-};
-
-const OrderBook: React.FC<OrderBookProps> = ({ symbol }) => {
-    const bids = mockOrderBook.bids;
-    const asks = mockOrderBook.asks;
-    const spread = asks[0].price - bids[0].price;
-    const isLoading = false;
-
-    if (isLoading) {
-        return <div className="text-center text-slate-500 py-10">Loading Order Book...</div>;
-    }
+const OrderBook: React.FC<OrderBookProps> = ({ bids, asks, currentPrice }) => {
+    const allTotals = [...bids, ...asks].map(order => order.total);
+    const maxTotal = Math.max(...allTotals, 1);
 
     return (
-        <div className="flex flex-col h-full bg-[#181a20] overflow-hidden">
-            <div className="px-3 py-2 border-b border-gray-800/50 shrink-0">
-                <h3 className="text-[11px] font-bold text-gray-400 tracking-wider uppercase">Order Book</h3>
+        <div className="bg-card rounded-lg shadow-md p-4 h-[400px] flex flex-col">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Order Book</h3>
+            <div className="flex justify-between text-muted-foreground text-xs mb-2 px-1">
+                <span>Price</span>
+                <span>Amount</span>
+                <span>Total</span>
             </div>
-
-            <div className="flex flex-col flex-1 overflow-hidden">
-                <div className="flex justify-between text-[10px] font-bold text-gray-500 uppercase px-3 py-1.5 shrink-0">
-                    <span>Price (USDT)</span>
-                    <span>Amount (BTC)</span>
-                    <span className="text-right">Total</span>
+            <div className="flex-grow overflow-y-auto custom-scrollbar">
+                {/* Asks (Sell Orders) */}
+                <div className="flex flex-col-reverse">
+                    {asks.map((order, index) => (
+                        <OrderBookRow
+                            key={`ask-${index}`}
+                            price={order.price}
+                            amount={order.amount}
+                            total={order.total}
+                            type="ask"
+                            maxTotal={maxTotal}
+                        />
+                    ))}
                 </div>
 
-                <div className="flex-1 overflow-y-auto overflow-x-hidden">
-                    {/* Asks (Sell orders) */}
-                    <div className="flex flex-col-reverse">
-                        {asks.map((entry, idx) => (
-                            <OrderBookRow key={`ask-${idx}`} entry={entry} type="ask" />
-                        ))}
-                    </div>
+                {/* Current Price */}
+                <div className="text-center py-2 text-xl font-bold text-primary border-y border-border my-1">
+                    {currentPrice.toFixed(2)}
+                </div>
 
-                    {/* Spread */}
-                    <div className="py-2 border-y border-gray-800/50 flex justify-between px-3 text-[11px] bg-[#1e2329]/50 shrink-0 my-1">
-                        <span className="text-gray-500 font-medium tracking-tight">Spread</span>
-                        <span className="text-[#eaecef] font-bold font-mono tracking-tight">${spread.toFixed(2)}</span>
-                    </div>
-
-                    {/* Bids (Buy orders) */}
-                    <div className="flex flex-col">
-                        {bids.map((entry, idx) => (
-                            <OrderBookRow key={`bid-${idx}`} entry={entry} type="bid" />
-                        ))}
-                    </div>
+                {/* Bids (Buy Orders) */}
+                <div className="flex flex-col">
+                    {bids.map((order, index) => (
+                        <OrderBookRow
+                            key={`bid-${index}`}
+                            price={order.price}
+                            amount={order.amount}
+                            total={order.total}
+                            type="bid"
+                            maxTotal={maxTotal}
+                        />
+                    ))}
                 </div>
             </div>
         </div>

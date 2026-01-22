@@ -2,13 +2,16 @@
 
 ## 1. Overview
 
-The Wallet module handles **asset management and transactions** for users, including balance display, deposits, and withdrawal requests.
+The Wallet module handles **asset management and transactions** for users, including balance display, deposits, and withdrawal requests. It serves as the **Wallet Dashboard**.
 
 **Purpose:**
 - Display user's asset balances (available and locked)
 - Handle deposit flow (address display for Pilot)
 - Process withdrawal requests
 - Show transaction history
+
+**URL**: `/account/wallet`
+**화면명**: 지갑 대시보드
 
 **Scope:**
 - ✅ Balance overview with USD valuation
@@ -98,7 +101,9 @@ export type { Balance, Deposit, Withdrawal, Transaction } from './types';
 export function WalletView()
 ```
 
-Main wallet interface showing balances and transaction history.
+Main wallet interface (Dashboard) showing balances and transaction history.
+**URL**: `/account/wallet`
+**화면명**: 지갑 대시보드
 
 **Layout (Mobile):**
 ```
