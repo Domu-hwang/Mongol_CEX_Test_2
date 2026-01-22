@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const HeroSection: React.FC = () => {
     return (
@@ -17,11 +18,15 @@ const HeroSection: React.FC = () => {
                     From Bitcoin to emerging altcoins, learn about the benefits, security features, and the potential for high returns that digital currencies offer.
                 </p>
                 <div className="flex justify-center space-x-4">
-                    <Link to="/learn-more" className="bg-secondary-500 hover:bg-secondary-600 text-text font-bold py-3 px-6 rounded-lg transition duration-300">
-                        Learn More
+                    <Link to="/learn-more">
+                        <Button variant="secondary" className="text-foreground">
+                            Learn More
+                        </Button>
                     </Link>
-                    <Link to="/register" className="btn-primary">
-                        Get Started
+                    <Link to="/register">
+                        <Button variant="default" className="text-black">
+                            Get Started
+                        </Button>
                     </Link>
                 </div>
             </div>

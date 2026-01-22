@@ -33,6 +33,32 @@ export const useAuth = () => {
         }
     }, []);
 
+    const sendOtp = useCallback(async (identifier: string) => {
+        setIsLoading(true);
+        try {
+            await authService.sendOtp(identifier);
+            return true;
+        } catch (error) {
+            console.error('Send OTP failed:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    const verifyOtp = useCallback(async (identifier: string, otp: string) => {
+        setIsLoading(true);
+        try {
+            await authService.verifyOtp(identifier, otp);
+            return true;
+        } catch (error) {
+            console.error('Verify OTP failed:', error);
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
     const completeKyc = useCallback(async (profileData: any) => { // Use 'any' for profileData for now
         setIsLoading(true);
         try {
@@ -65,6 +91,8 @@ export const useAuth = () => {
         isLoading,
         login,
         register,
+        sendOtp,
+        verifyOtp,
         completeKyc,
         logout,
         isAuthenticated: !!user,

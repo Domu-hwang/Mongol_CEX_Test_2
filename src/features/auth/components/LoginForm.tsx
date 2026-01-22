@@ -1,8 +1,9 @@
 import React, { FormEvent, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Added Link import
 import { z } from 'zod';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label'; // Import Label
 import { useAuth } from '../hooks/useAuth';
 
 const loginSchema = z.object({
@@ -49,30 +50,39 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSuccess }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
-            {serverError && <p className="text-danger-600 text-sm">{serverError}</p>}
-            <Input
-                label="Email or Phone Number"
-                type="text"
-                placeholder="example@cex.mn or +976 ..."
-                value={formData.identifier}
-                onChange={(e) => setFormData((prev) => ({ ...prev, identifier: e.target.value }))}
-                error={errors.identifier}
-                autoComplete="username"
-            />
-            <Input
-                label="Password"
-                type="password"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={(e) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
-                error={errors.password}
-                autoComplete="current-password"
-            />
-            <Button type="submit" className="w-full mt-6" disabled={isLoading} isLoading={isLoading}>
+            {serverError && <p className="text-destructive-foreground text-sm">{serverError}</p>}
+
+            <div className="grid gap-2">
+                <Label htmlFor="identifier">Email or Phone Number</Label>
+                <Input
+                    id="identifier"
+                    type="text"
+                    placeholder="example@cex.mn or +976 ..."
+                    value={formData.identifier}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, identifier: e.target.value }))}
+                    autoComplete="username"
+                />
+                {errors.identifier && <p className="text-destructive-foreground text-sm">{errors.identifier}</p>}
+            </div>
+
+            <div className="grid gap-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, password: e.target.value }))}
+                    autoComplete="current-password"
+                />
+                {errors.password && <p className="text-destructive-foreground text-sm">{errors.password}</p>}
+            </div>
+
+            <Button type="submit" className="w-full mt-6" disabled={isLoading} variant="default">
                 Login
             </Button>
-            <p className="text-center text-sm text-gray-500 mt-4">
-                Don't have an account? <a href="/register" className="text-primary-600 hover:underline">Register</a>
+            <p className="text-center text-sm text-muted-foreground mt-4">
+                Don't have an account? <Link to="/register" className="text-primary hover:underline">Register</Link>
             </p>
         </form>
     );

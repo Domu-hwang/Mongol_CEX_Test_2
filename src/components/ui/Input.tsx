@@ -1,81 +1,22 @@
-import React from 'react';
-import { cn, inputStyles } from '@/design-system';
+import * as React from "react"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-  description?: string;
-  suffix?: string;
-  inputSize?: 'default' | 'sm' | 'lg';
-}
+import { cn } from "@/lib/utils"
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    {
-      label,
-      error,
-      description,
-      suffix,
-      inputSize = 'default',
-      className,
-      id,
-      name,
-      ...props
-    },
-    ref
-  ) => {
-    const inputId = id || name;
-
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
     return (
-      <div className="w-full">
-        {label && (
-          <label
-            htmlFor={inputId}
-            className={cn(inputStyles.label, 'mb-1.5 block')}
-          >
-            {label}
-          </label>
+      <input
+        type={type}
+        className={cn(
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
         )}
-        <div className="relative flex items-center">
-          <input
-            ref={ref}
-            id={inputId}
-            name={name}
-            className={cn(
-              inputStyles.base,
-              inputStyles.variants.size[inputSize],
-              error && inputStyles.variants.state.error,
-              suffix && 'pr-10',
-              className
-            )}
-            aria-invalid={error ? 'true' : undefined}
-            aria-describedby={
-              error ? `${inputId}-error` : description ? `${inputId}-description` : undefined
-            }
-            {...props}
-          />
-          {suffix && (
-            <span className="absolute right-3 text-muted-foreground text-sm">
-              {suffix}
-            </span>
-          )}
-        </div>
-        {description && !error && (
-          <p id={`${inputId}-description`} className={cn(inputStyles.description, 'mt-1.5')}>
-            {description}
-          </p>
-        )}
-        {error && (
-          <p id={`${inputId}-error`} className={cn(inputStyles.errorMessage, 'mt-1.5')}>
-            {error}
-          </p>
-        )}
-      </div>
-    );
+        ref={ref}
+        {...props}
+      />
+    )
   }
-);
+)
+Input.displayName = "Input"
 
-Input.displayName = 'Input';
-
-export { Input };
-export default Input;
+export { Input }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
 
 const CTASection: React.FC = () => {
     return (
@@ -9,8 +10,10 @@ const CTASection: React.FC = () => {
                 <p className="text-lg text-text-dark mb-8">
                     Join Mongol CEX today and experience the future of digital asset trading.
                 </p>
-                <Link to="/register" className="btn-primary text-xl">
-                    Sign Up Now
+                <Link to="/register">
+                    <Button variant="default" className="text-black text-xl">
+                        Sign Up Now
+                    </Button>
                 </Link>
             </div>
         </section>

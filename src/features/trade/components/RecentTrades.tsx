@@ -1,47 +1,26 @@
-import React from 'react';
-
-interface Trade {
-    time: string;
-    price: number;
-    amount: number;
-    type: 'buy' | 'sell';
-}
-
-interface RecentTradesProps {
-    trades: Trade[];
-}
-
-const RecentTrades: React.FC<RecentTradesProps> = ({ trades }) => {
+export const RecentTrades = () => {
     return (
-        <div className="bg-card rounded-lg shadow-md p-4 h-[400px] flex flex-col">
-            <h3 className="text-lg font-semibold text-foreground mb-4">Recent Trades</h3>
-            <div className="flex justify-between text-muted-foreground text-xs mb-2 px-1">
-                <span>Time</span>
-                <span>Price</span>
-                <span>Amount</span>
-            </div>
-            <div className="flex-grow overflow-y-auto custom-scrollbar">
-                {trades.length === 0 ? (
-                    <p className="text-center text-muted-foreground mt-4">No recent trades.</p>
-                ) : (
-                    <ul className="space-y-1">
-                        {trades.map((trade, index) => (
-                            <li
-                                key={index}
-                                className={`flex justify-between text-xs py-1 px-1 ${
-                                    trade.type === 'buy' ? 'text-success' : 'text-destructive'
-                                }`}
-                            >
-                                <span>{trade.time}</span>
-                                <span>{trade.price.toFixed(2)}</span>
-                                <span>{trade.amount.toFixed(4)}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+        <div className="h-full w-full p-2 text-muted-foreground text-sm flex flex-col justify-center items-center">
+            <p>Recent Trades content goes here</p>
+            {/* Example Table */}
+            <table className="w-full text-left text-xs mt-4">
+                <thead>
+                    <tr className="text-muted-foreground">
+                        <th className="py-1">Time</th>
+                        <th className="py-1">Price</th>
+                        <th className="py-1 text-right">Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <tr key={i} className={`${i % 2 === 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            <td className="py-1">13:0{i}</td>
+                            <td className="py-1">4215{i}.00</td>
+                            <td className="py-1 text-right">0.0{i} BTC</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
     );
 };
-
-export default RecentTrades;

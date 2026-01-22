@@ -1,131 +1,129 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { createChart, IChartApi, ISeriesApi } from 'lightweight-charts';
+import { useState, useEffect } from 'react';
+import { MarketSelector } from './MarketSelector';
+import { CandlestickChart } from './CandlestickChart';
 
-interface PriceChartProps {
-    market: string;
+interface MarketData {
+    price: number;
+    change24h: number;
+    changePercent: number;
+    volume24h: number;
+    high24h: number;
+    low24h: number;
 }
 
-const PriceChart: React.FC<PriceChartProps> = ({ market }) => {
-    const chartContainerRef = useRef<HTMLDivElement>(null);
-    const chartRef = useRef<IChartApi | null>(null);
-    const candlestickSeriesRef = useRef<ISeriesApi<'Candlestick'> | null>(null);
+export const PriceChart = () => {
+    const [marketData, setMarketData] = useState<MarketData>({
+        price: 43682.67,
+        change24h: -70.45,
+        changePercent: -0.16,
+        volume24h: 836879051.44,
+        high24h: 45426.45,
+        low24h: 43342.16,
+    });
 
-    const [mockData, setMockData] = useState([
-        { time: '2023-01-01', open: 10, high: 10.64, low: 9.77, close: 10.29 },
-        { time: '2023-01-02', open: 10.29, high: 10.65, low: 9.49, close: 9.61 },
-        { time: '2023-01-03', open: 9.61, high: 10.29, low: 9.50, close: 10.04 },
-        { time: '2023-01-04', open: 10.04, high: 10.39, low: 9.61, close: 9.81 },
-        { time: '2023-01-05', open: 9.81, high: 10.51, low: 9.71, close: 10.21 },
-        { time: '2023-01-06', open: 10.21, high: 10.74, low: 10.11, close: 10.37 },
-        { time: '2023-01-07', open: 10.37, high: 11.00, low: 10.21, close: 10.84 },
-        { time: '2023-01-08', open: 10.84, high: 11.23, low: 10.71, close: 10.95 },
-        { time: '2023-01-09', open: 10.95, high: 11.60, low: 10.85, close: 11.45 },
-        { time: '2023-01-10', open: 11.45, high: 11.66, low: 10.91, close: 11.05 },
-        { time: '2023-01-11', open: 11.05, high: 11.33, low: 10.79, close: 10.99 },
-        { time: '2023-01-12', open: 10.99, high: 11.45, low: 10.69, close: 11.23 },
-        { time: '2023-01-13', open: 11.23, high: 11.72, low: 11.09, close: 11.50 },
-        { time: '2023-01-14', open: 11.50, high: 11.75, low: 11.19, close: 11.25 },
-        { time: '2023-01-15', open: 11.25, high: 11.91, low: 11.11, close: 11.83 },
-        { time: '2023-01-16', open: 11.83, high: 12.00, low: 11.65, close: 11.88 },
-        { time: '2023-01-17', open: 11.88, high: 12.33, low: 11.75, close: 12.20 },
-        { time: '2023-01-18', open: 12.20, high: 12.44, low: 11.95, close: 12.03 },
-        { time: '2023-01-19', open: 12.03, high: 12.72, low: 11.99, close: 12.53 },
-        { time: '2023-01-20', open: 12.53, high: 12.87, low: 12.15, close: 12.38 },
-    ]);
-
+    // Simulate real-time price updates
     useEffect(() => {
-        if (!chartContainerRef.current) return;
-
-        // Get CSS variable values for theming
-        const styles = getComputedStyle(document.documentElement);
-        const cardBg = '#181a20'; // bg-card equivalent
-        const textColor = '#848e9c'; // text-muted-foreground equivalent
-        const borderColor = '#2f343c'; // border-border equivalent
-        const successColor = '#0ecb81'; // success color
-        const destructiveColor = '#f6465d'; // destructive color
-
-        const chart = createChart(chartContainerRef.current, {
-            width: chartContainerRef.current.clientWidth,
-            height: chartContainerRef.current.clientHeight,
-            layout: {
-                background: { color: cardBg },
-                textColor: textColor,
-            },
-            grid: {
-                vertLines: { color: borderColor },
-                horzLines: { color: borderColor },
-            },
-            timeScale: {
-                borderColor: borderColor,
-            },
-            rightPriceScale: {
-                borderColor: borderColor,
-            },
-        });
-        chartRef.current = chart;
-
-        const candlestickSeries = chart.addCandlestickSeries({
-            upColor: successColor,
-            downColor: destructiveColor,
-            borderVisible: false,
-            wickUpColor: successColor,
-            wickDownColor: destructiveColor,
-        });
-        candlestickSeriesRef.current = candlestickSeries;
-
-        candlestickSeries.setData(mockData);
-
-        const handleResize = () => {
-            if (chartContainerRef.current && chartRef.current) {
-                chartRef.current.applyOptions({
-                    width: chartContainerRef.current.clientWidth,
-                    height: chartContainerRef.current.clientHeight,
-                });
-            }
-        };
-
-        window.addEventListener('resize', handleResize);
-
         const interval = setInterval(() => {
-            setMockData((prevData) => {
-                const lastData = prevData[prevData.length - 1];
-                const newTime = (new Date(lastData.time).getTime() / 1000) + 24 * 60 * 60;
-                const newOpen = lastData.close;
-                const newHigh = newOpen + Math.random() * 0.5;
-                const newLow = newOpen - Math.random() * 0.5;
-                const newClose = newOpen + (Math.random() - 0.5) * 1;
+            setMarketData(prev => {
+                const priceChange = (Math.random() - 0.5) * 100;
+                const newPrice = prev.price + priceChange;
+                const newChange = newPrice - 43753.12; // Base price for 24h change
+                const newChangePercent = (newChange / 43753.12) * 100;
 
-                const newCandle = {
-                    time: new Date(newTime * 1000).toISOString().split('T')[0],
-                    open: parseFloat(newOpen.toFixed(2)),
-                    high: parseFloat(newHigh.toFixed(2)),
-                    low: parseFloat(newLow.toFixed(2)),
-                    close: parseFloat(newClose.toFixed(2)),
+                return {
+                    ...prev,
+                    price: parseFloat(newPrice.toFixed(2)),
+                    change24h: parseFloat(newChange.toFixed(2)),
+                    changePercent: parseFloat(newChangePercent.toFixed(2)),
                 };
-
-                candlestickSeries.update(newCandle);
-                return [...prevData, newCandle];
             });
-        }, 3000);
+        }, 2000);
 
-        return () => {
-            window.removeEventListener('resize', handleResize);
-            if (chartRef.current) {
-                chartRef.current.remove();
-                chartRef.current = null;
-            }
-            if (interval) {
-                clearInterval(interval);
-            }
-        };
-    }, [market]);
+        return () => clearInterval(interval);
+    }, []);
+
+    const isPositive = marketData.changePercent >= 0;
+    const priceColorClass = isPositive ? 'text-emerald-500' : 'text-red-500';
+
+    const formatCurrency = (value: number) => {
+        return new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(value);
+    };
+
+    const formatVolume = (value: number) => {
+        if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+        if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+        return formatCurrency(value);
+    };
 
     return (
-        <div className="bg-card rounded-lg shadow-md p-4 h-[400px] flex flex-col justify-center border border-border">
-            <h3 className="text-lg font-semibold mb-2 text-foreground">{market} Price Chart</h3>
-            <div ref={chartContainerRef} className="flex-grow w-full h-full" />
+        <div className="w-full h-full relative bg-card/50 flex flex-col">
+            {/* Header Overlay */}
+            <div className="w-full p-2 border-b border-border bg-card flex items-center justify-between z-10 text-xs">
+                <div className="flex items-center gap-4">
+                    {/* Market Pair Dropdown */}
+                    <div className="relative group">
+                        <button className="flex items-center gap-1 text-lg font-bold text-foreground cursor-pointer hover:text-primary transition-colors">
+                            <span>BTC-USD</span>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-4 w-4 transition-transform group-hover:rotate-180"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        {/* Dropdown content */}
+                        <div className="absolute top-full left-0 mt-1 bg-background border border-border rounded-md shadow-lg z-20 hidden group-hover:block">
+                            <div className="w-[280px] max-h-[300px] overflow-y-auto">
+                                <MarketSelector />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Current Price with animation */}
+                    <div className="flex items-center gap-2">
+                        <span className={`text-2xl font-bold ${priceColorClass} transition-colors duration-300`}>
+                            {formatCurrency(marketData.price)}
+                        </span>
+                        <div className={`flex items-center gap-1 ${priceColorClass}`}>
+                            <span className="text-sm">
+                                {isPositive ? '▲' : '▼'}
+                            </span>
+                            <span className="font-medium">
+                                {isPositive ? '+' : ''}{marketData.changePercent.toFixed(2)}%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Market Stats */}
+                <div className="flex items-center gap-6 text-xs">
+                    <div className="flex flex-col items-end">
+                        <span className="text-muted-foreground">24h Volume</span>
+                        <span className="text-foreground font-medium">{formatVolume(marketData.volume24h)}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-muted-foreground">24h High</span>
+                        <span className="text-emerald-500 font-medium">{formatCurrency(marketData.high24h)}</span>
+                    </div>
+                    <div className="flex flex-col items-end">
+                        <span className="text-muted-foreground">24h Low</span>
+                        <span className="text-red-500 font-medium">{formatCurrency(marketData.low24h)}</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Candlestick Chart */}
+            <div className="flex-1 relative">
+                <CandlestickChart />
+            </div>
         </div>
     );
 };
-
-export default PriceChart;

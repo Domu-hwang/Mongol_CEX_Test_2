@@ -24,7 +24,8 @@
         }
     },
     "include": [
-        "src"
+        "src",
+        "src/components/ui" // Explicitly include the shadcn/ui components directory
     ],
     "references": [
         {

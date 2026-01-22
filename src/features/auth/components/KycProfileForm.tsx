@@ -1,8 +1,9 @@
 import React, { FormEvent, useMemo, useState } from 'react';
 import { z } from 'zod';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
 
 const MIN_AGE = 18;
 
@@ -123,7 +124,7 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                 ))}
             </TabsList>
             <TabsContent value={formData.residenceCountry || 'EU'}>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-muted-foreground">
                     {formData.residenceCountry === 'Other'
                         ? 'Please prepare Selfie + ID submission. POA may be requested if needed.'
                         : 'POA + Selfie + ID submission is required.'}
@@ -135,91 +136,107 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
     return (
         <div className="space-y-8">
             <div className="space-y-4">
-                <div className="inline-block px-3 py-1 rounded-full bg-primary-600/10 text-primary-600 text-xs font-bold uppercase tracking-widest">
+                <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold uppercase tracking-widest">
                     Step 2: Identity & Basic Details
                 </div>
-                <h2 className="text-3xl font-bold text-white">Verification Profile</h2>
-                <p className="text-gray-400 leading-relaxed">
+                <h2 className="text-3xl font-bold text-foreground">Verification Profile</h2>
+                <p className="text-muted-foreground leading-relaxed">
                     Provide your legal information as it appears on your identity documents.
                     Verification requirements adjust dynamically based on your residence.
                 </p>
             </div>
 
             <div className="space-y-4">
-                <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest">Residence & Nationality</p>
+                <p className="text-sm font-semibold text-muted-foreground uppercase tracking-widest">Residence & Nationality</p>
                 {countryTabs}
             </div>
 
             <form className="space-y-5" onSubmit={handleSubmit}>
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-2">
+                    <Label htmlFor="residenceCountry">Residence country</Label>
                     <Input
-                        label="Residence country"
+                        id="residenceCountry"
                         placeholder="e.g., EU, UK, Swiss"
                         value={formData.residenceCountry}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, residenceCountry: e.target.value }))}
-                        error={errors.residenceCountry}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, residenceCountry: e.target.value }))}
                     />
+                    {errors.residenceCountry && <p className="text-destructive-foreground text-sm">{errors.residenceCountry}</p>}
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="nationality">Nationality</Label>
                     <Input
-                        label="Nationality"
+                        id="nationality"
                         placeholder="e.g., Mongolia"
                         value={formData.nationality}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, nationality: e.target.value }))}
-                        error={errors.nationality}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, nationality: e.target.value }))}
                     />
+                    {errors.nationality && <p className="text-destructive-foreground text-sm">{errors.nationality}</p>}
                 </div>
 
                 <div className="grid gap-4 md:grid-cols-2">
-                    <Input
-                        label="First name"
-                        value={formData.firstName}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, firstName: e.target.value }))}
-                        error={errors.firstName}
-                    />
-                    <Input
-                        label="Family name"
-                        value={formData.familyName}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, familyName: e.target.value }))}
-                        error={errors.familyName}
-                    />
+                    <div className="grid gap-2">
+                        <Label htmlFor="firstName">First name</Label>
+                        <Input
+                            id="firstName"
+                            value={formData.firstName}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, firstName: e.target.value }))}
+                        />
+                        {errors.firstName && <p className="text-destructive-foreground text-sm">{errors.firstName}</p>}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="familyName">Family name</Label>
+                        <Input
+                            id="familyName"
+                            value={formData.familyName}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, familyName: e.target.value }))}
+                        />
+                        {errors.familyName && <p className="text-destructive-foreground text-sm">{errors.familyName}</p>}
+                    </div>
                 </div>
 
                 <div>
-                    <label className="flex items-center gap-3 text-sm text-gray-400 cursor-pointer group">
+                    <label className="flex items-center gap-3 text-sm text-muted-foreground cursor-pointer group">
                         <input
                             type="checkbox"
                             checked={hasMiddleName}
-                            onChange={(e) => setHasMiddleName(e.target.checked)}
-                            className="h-5 w-5 rounded border-gray-700 bg-[#1e2329] text-primary-600 focus:ring-primary-600 focus:ring-offset-0"
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHasMiddleName(e.target.checked)}
+                            className="h-5 w-5 rounded border-input bg-background text-primary focus:ring-primary focus:ring-offset-0"
                         />
-                        <span className="group-hover:text-gray-200 transition-colors">I have a middle name</span>
+                        <span className="group-hover:text-foreground transition-colors">I have a middle name</span>
                     </label>
                     {hasMiddleName && (
-                        <Input
-                            className="mt-2"
-                            label="Middle name"
-                            value={formData.middleName}
-                            onChange={(e) => setFormData((prev) => ({ ...prev, middleName: e.target.value }))}
-                            error={errors.middleName}
-                        />
+                        <div className="grid gap-2 mt-2">
+                            <Label htmlFor="middleName">Middle name</Label>
+                            <Input
+                                id="middleName"
+                                value={formData.middleName}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, middleName: e.target.value }))}
+                            />
+                            {errors.middleName && <p className="text-destructive-foreground text-sm">{errors.middleName}</p>}
+                        </div>
                     )}
                 </div>
 
                 <div className="grid gap-6 md:grid-cols-2">
-                    <Input
-                        label="Date of birth"
-                        type="date"
-                        className="[appearance:none] [color-scheme:dark]" // Standardize date picker
-                        value={formData.dob}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
-                        error={errors.dob}
-                    />
-                    <div>
-                        <label className="mb-1.5 block text-sm font-medium text-gray-400">ID Document Type</label>
+                    <div className="grid gap-2">
+                        <Label htmlFor="dob">Date of birth</Label>
+                        <Input
+                            id="dob"
+                            type="date"
+                            className="[appearance:none] [color-scheme:dark]" // Standardize date picker
+                            value={formData.dob}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFormData((prev) => ({ ...prev, dob: e.target.value }))}
+                        />
+                        {errors.dob && <p className="text-destructive-foreground text-sm">{errors.dob}</p>}
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="idType">ID Document Type</Label>
                         <div className="relative">
                             <select
-                                className="w-full h-[44px] rounded-lg border border-gray-800 bg-[#1e2329] px-4 py-2 text-[#eaecef] appearance-none focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary-600"
+                                id="idType"
+                                className="w-full h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                 value={formData.idType}
-                                onChange={(e) => setFormData((prev) => ({ ...prev, idType: e.target.value }))}
+                                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setFormData((prev) => ({ ...prev, idType: e.target.value }))}
                             >
                                 <option value="">Select type</option>
                                 {documentOptions.map((option) => (
@@ -228,17 +245,17 @@ export const KycProfileForm: React.FC<KycProfileFormProps> = ({ onSubmit, onSucc
                                     </option>
                                 ))}
                             </select>
-                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                            <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground">
                                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>
                             </div>
                         </div>
-                        {errors.idType && <p className="mt-1.5 text-xs text-danger-600">{errors.idType}</p>}
+                        {errors.idType && <p className="mt-1.5 text-destructive-foreground text-sm">{errors.idType}</p>}
                     </div>
                 </div>
 
-                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} isLoading={isSubmitting || isLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || isLoading} variant="default">
                     Next Step
                 </Button>
             </form>

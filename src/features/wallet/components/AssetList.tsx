@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '@/components/ui/card';
 
 interface Asset {
     id: string;
@@ -15,7 +15,7 @@ interface AssetListProps {
 
 const AssetList: React.FC<AssetListProps> = ({ assets }) => {
     return (
-        <Card title="My Assets" className="bg-secondary-700 border border-secondary-600">
+        <Card className="bg-secondary-700 border border-secondary-600">
             {assets.length === 0 ? (
                 <p className="text-center text-gray-500">No assets held.</p>
             ) : (

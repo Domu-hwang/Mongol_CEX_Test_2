@@ -46,6 +46,28 @@ const authService = {
         });
     },
 
+    async sendOtp(identifier: string): Promise<boolean> {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                console.log(`OTP sent to ${identifier}`);
+                resolve(true); // Simulate successful OTP send
+            }, 500);
+        });
+    },
+
+    async verifyOtp(identifier: string, otp: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (otp === '123456') { // Mock OTP for testing
+                    console.log(`OTP ${otp} verified for ${identifier}`);
+                    resolve(true);
+                } else {
+                    reject(new Error('Invalid OTP'));
+                }
+            }, 500);
+        });
+    },
+
     async logout(): Promise<void> {
         return new Promise((resolve) => {
             setTimeout(() => {

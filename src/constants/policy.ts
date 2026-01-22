@@ -1,53 +1,70 @@
 // src/constants/policy.ts
-// 국가별 정책 데이터를 정의하는 더미 파일 (Placeholder for Policy Layer)
+// Defines country-specific policy data for the KYC onboarding flow.
+
+export const REGULATED_COUNTRIES = ['EU', 'UK', 'CH', 'AU']; // Example: European Union, United Kingdom, Switzerland, Australia
+
+export const SANCTIONED_COUNTRIES = ['CU', 'IR', 'KP', 'SY']; // Example: Cuba, Iran, North Korea, Syria
+
+export const ID_DOCUMENT_TYPES: Record<string, string[]> = {
+    EU: ['Passport', 'National ID Card', 'Residence Permit'],
+    UK: ['Passport', 'Driving License', 'Biometric Residence Permit'],
+    CH: ['Passport', 'Swiss ID', 'B Permit'],
+    AU: ['Passport', 'Driver License', 'Medicare Card'],
+    US: ['Passport', 'Driver License'],
+    KR: ['Passport', 'Resident Registration Card', 'Driver License'],
+    JP: ['Passport', 'My Number Card', 'Driver License'],
+    // Add more country-specific document types as needed
+    default: ['Passport', 'National ID Card'],
+};
 
 export const KYC_POLICIES = {
     EU: {
         minAge: 18,
-        documentTypes: ['Passport', 'National ID card', 'Residence permit'],
+        documentTypes: ID_DOCUMENT_TYPES.EU,
         poaRequired: true,
-        additionalVerification: 'Selfie + ID + POA 제출이 필요합니다.',
+        additionalVerification: 'Selfie + ID + Proof of Address submission is required.',
     },
     UK: {
         minAge: 18,
-        documentTypes: ['Passport', 'Driving license', 'Biometric residence permit'],
+        documentTypes: ID_DOCUMENT_TYPES.UK,
         poaRequired: true,
-        additionalVerification: 'Selfie + ID + POA 제출이 필요합니다.',
+        additionalVerification: 'Selfie + ID + Proof of Address submission is required.',
     },
-    Swiss: {
+    CH: { // Switzerland
         minAge: 18,
-        documentTypes: ['Passport', 'Swiss ID', 'B permit'],
+        documentTypes: ID_DOCUMENT_TYPES.CH,
         poaRequired: true,
-        additionalVerification: 'Selfie + ID + POA 제출이 필요합니다.',
+        additionalVerification: 'Selfie + ID + Proof of Address submission is required.',
     },
-    Australia: {
+    AU: { // Australia
         minAge: 18,
-        documentTypes: ['Passport', 'Driver license', 'Medicare card'],
+        documentTypes: ID_DOCUMENT_TYPES.AU,
         poaRequired: true,
-        additionalVerification: 'Selfie + ID + POA 제출이 필요합니다.',
+        additionalVerification: 'Selfie + ID + Proof of Address submission is required.',
     },
     default: {
         minAge: 18,
-        documentTypes: ['Passport', 'National ID card'],
+        documentTypes: ID_DOCUMENT_TYPES.default,
         poaRequired: false,
-        additionalVerification: 'Selfie + ID 제출을 준비해주세요. 필요 시 POA 요청이 있을 수 있습니다.',
+        additionalVerification: 'Please prepare your Selfie + ID submission. Proof of Address may be requested if needed.',
     },
 };
 
 // Stepper configuration based on policy
 export const getOnboardingSteps = (isPOARequired: boolean) => {
     const baseSteps = [
-        { id: 'intro', label: '시작하기', description: '온보딩 절차를 시작합니다.' },
-        { id: 'profile', label: '기본 정보', description: '개인 정보를 입력합니다.' },
+        { id: 'register', label: 'Account Creation', description: 'Sign up and OTP verification' },
+        { id: 'residence', label: 'Country of Residence', description: 'Select your country of residence.' },
+        { id: 'profile', label: 'Personal Information', description: 'Enter your personal details.' },
+        { id: 'nationality', label: 'Nationality & ID Document', description: 'Select your nationality and ID type.' },
     ];
 
     if (isPOARequired) {
-        baseSteps.push({ id: 'poa', label: '주소 증빙', description: '주소 증빙 문서를 업로드합니다.' });
+        baseSteps.push({ id: 'poa', label: 'Proof of Address', description: 'Upload your proof of address document.' });
     }
 
     baseSteps.push(
-        { id: 'document', label: '신분증 업로드', description: '신분증을 업로드합니다.' },
-        { id: 'review', label: '심사 대기', description: '제출된 정보를 검토합니다.' }
+        { id: 'review', label: 'Review Pending', description: 'Your submitted information is under review.' }
     );
 
     return baseSteps;

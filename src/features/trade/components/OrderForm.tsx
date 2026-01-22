@@ -1,235 +1,97 @@
-import React, { useState, FormEvent } from 'react';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/Tabs';
+import { useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-interface OrderFormProps {
-    currentMarket: string;
-    availableBalance: { base: number; quote: number };
-    onPlaceOrder: (type: 'buy' | 'sell', orderType: 'limit' | 'market' | 'stop-limit', price: number, amount: number) => void;
-    isLoading?: boolean;
-}
+export const OrderForm = () => {
+    const [side, setSide] = useState<"buy" | "sell">("buy");
+    const [price, setPrice] = useState("42150");
+    const [amount, setAmount] = useState("");
 
-const OrderForm: React.FC<OrderFormProps> = ({
-    currentMarket,
-    availableBalance,
-    onPlaceOrder,
-    isLoading,
-}) => {
-    const [orderSide, setOrderSide] = useState<'buy' | 'sell'>('buy');
-    const [tradeType, setTradeType] = useState<'limit' | 'market' | 'stop-limit'>('limit');
-    const [price, setPrice] = useState<string>('');
-    const [amount, setAmount] = useState<string>('');
-    const [total, setTotal] = useState<string>('');
-    const [takeProfit, setTakeProfit] = useState<boolean>(false);
-    const [stopLoss, setStopLoss] = useState<boolean>(false);
-    const [errors, setErrors] = useState<Record<string, string>>({});
-
-    const [baseAsset, quoteAsset] = currentMarket.split('/');
-
-    const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newPrice = e.target.value;
-        setPrice(newPrice);
-        if (newPrice && amount) {
-            setTotal((parseFloat(newPrice) * parseFloat(amount)).toFixed(2));
-        } else {
-            setTotal('');
-        }
-        setErrors((prev) => ({ ...prev, price: '' }));
-    };
-
-    const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newAmount = e.target.value;
-        setAmount(newAmount);
-        if (price && newAmount) {
-            setTotal((parseFloat(price) * parseFloat(newAmount)).toFixed(2));
-        } else {
-            setTotal('');
-        }
-        setErrors((prev) => ({ ...prev, amount: '' }));
-    };
-
-    const handleTotalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newTotal = e.target.value;
-        setTotal(newTotal);
-        if (price && newTotal && parseFloat(price) > 0) {
-            setAmount((parseFloat(newTotal) / parseFloat(price)).toFixed(4));
-        } else {
-            setAmount('');
-        }
-        setErrors((prev) => ({ ...prev, total: '' }));
-    };
-
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {};
-        const numPrice = parseFloat(price);
-        const numAmount = parseFloat(amount);
-        const numTotal = parseFloat(total);
-
-        if (tradeType !== 'market' && (isNaN(numPrice) || numPrice <= 0)) {
-            newErrors.price = 'Please enter a valid price.';
-        }
-        if (isNaN(numAmount) || numAmount <= 0) {
-            newErrors.amount = 'Please enter a valid amount.';
-        }
-        if (isNaN(numTotal) || numTotal <= 0) {
-            newErrors.total = 'Please enter a valid total.';
-        }
-
-        if (orderSide === 'buy') {
-            if (numTotal > availableBalance.quote) {
-                newErrors.total = `Insufficient balance: You only have ${availableBalance.quote.toFixed(2)} ${quoteAsset}.`;
-            }
-        } else {
-            if (numAmount > availableBalance.base) {
-                newErrors.amount = `Insufficient balance: You only have ${availableBalance.base.toFixed(4)} ${baseAsset}.`;
-            }
-        }
-
-        setErrors(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
-
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        if (validateForm()) {
-            onPlaceOrder(orderSide, tradeType, parseFloat(price), parseFloat(amount));
-            setPrice('');
-            setAmount('');
-            setTotal('');
-            setErrors({});
-        }
-    };
-
-    const isPriceEditable = tradeType === 'limit' || tradeType === 'stop-limit';
+    // Simple calculation
+    const total = (parseFloat(price || "0") * parseFloat(amount || "0")).toFixed(2);
 
     return (
-        <div className="bg-card p-4 rounded-lg shadow-md border border-border">
-            <div className="flex bg-muted rounded-md p-1 mb-4">
-                <Button
-                    variant="ghost"
-                    className={`flex-1 ${orderSide === 'buy' ? 'bg-success text-success-foreground' : 'text-muted-foreground'}`}
-                    onClick={() => setOrderSide('buy')}
-                >
-                    Buy
-                </Button>
-                <Button
-                    variant="ghost"
-                    className={`flex-1 ${orderSide === 'sell' ? 'bg-destructive text-destructive-foreground' : 'text-muted-foreground'}`}
-                    onClick={() => setOrderSide('sell')}
-                >
-                    Sell
-                </Button>
-            </div>
-
-            <Tabs value={tradeType} onValueChange={(value) => setTradeType(value as 'limit' | 'market' | 'stop-limit')} className="mb-4">
-                <TabsList className="grid w-full grid-cols-3 bg-muted p-1 rounded-md">
-                    <TabsTrigger value="limit">Limit</TabsTrigger>
-                    <TabsTrigger value="market">Market</TabsTrigger>
-                    <TabsTrigger value="stop-limit">Stop Limit</TabsTrigger>
+        <div className="h-full flex flex-col">
+            <Tabs defaultValue="buy" className="w-full" onValueChange={(v) => setSide(v as any)}>
+                <TabsList className="w-full grid grid-cols-2 rounded-none bg-transparent border-b border-border p-0 h-10">
+                    <TabsTrigger
+                        value="buy"
+                        className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-emerald-500 data-[state=active]:border-b-2 data-[state=active]:border-emerald-500"
+                    >
+                        Buy
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="sell"
+                        className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-rose-500 data-[state=active]:border-b-2 data-[state=active]:border-rose-500"
+                    >
+                        Sell
+                    </TabsTrigger>
                 </TabsList>
-                <TabsContent value={tradeType} className="mt-4">
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                        <Input
-                            label="Price"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            value={price}
-                            onChange={handlePriceChange}
-                            error={errors.price}
-                            readOnly={isLoading || !isPriceEditable}
-                            suffix={quoteAsset}
-                        />
-                        <div className="flex justify-between items-center text-sm">
+
+                <div className="p-4 flex flex-col gap-4">
+                    {/* Order Type */}
+                    <div className="flex gap-2 text-xs mb-2">
+                        <button className="text-primary font-bold bg-muted/20 px-2 py-1 rounded">Limit</button>
+                        <button className="text-muted-foreground hover:text-primary px-2 py-1">Market</button>
+                    </div>
+
+                    {/* Inputs */}
+                    <div className="space-y-3">
+                        <div className="relative">
+                            <label className="text-[10px] text-muted-foreground uppercase mb-1 block">Price (USDT)</label>
                             <Input
-                                label="Amount"
                                 type="number"
-                                step="0.0001"
-                                placeholder="0.0000"
-                                value={amount}
-                                onChange={handleAmountChange}
-                                error={errors.amount}
-                                readOnly={isLoading}
-                                suffix={baseAsset}
-                                className="flex-grow mr-2"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                className="text-right"
                             />
-                            <div className="flex space-x-1">
-                                {[25, 50, 75, 100].map((percent) => (
-                                    <Button
-                                        key={percent}
-                                        type="button"
-                                        variant="outline"
-                                        size="xs"
-                                        onClick={() => {
-                                            const balanceToUse = orderSide === 'buy' ? availableBalance.quote : availableBalance.base;
-                                            const calculatedAmount = (balanceToUse * percent / 100) / (parseFloat(price) || 1);
-                                            setAmount(calculatedAmount.toFixed(4));
-                                            if (price) setTotal((calculatedAmount * parseFloat(price)).toFixed(2));
-                                        }}
-                                    >
-                                        {percent}%
-                                    </Button>
-                                ))}
+                        </div>
+
+                        <div className="relative">
+                            <label className="text-[10px] text-muted-foreground uppercase mb-1 block">Amount (BTC)</label>
+                            <Input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                placeholder="0.00"
+                                className="text-right"
+                            />
+                        </div>
+
+                        {/* Percent Slider Mock */}
+                        <div className="flex justify-between gap-1 mt-2">
+                            {[25, 50, 75, 100].map((pct) => (
+                                <button key={pct} className="bg-muted/30 text-[10px] py-1 flex-1 rounded hover:bg-muted/50 transition-colors">
+                                    {pct}%
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="relative pt-2">
+                            <label className="text-[10px] text-muted-foreground uppercase mb-1 block">Total (USDT)</label>
+                            <div className="w-full p-2 bg-muted/20 rounded text-right text-sm font-mono border border-transparent hover:border-border transition-colors">
+                                {total === "NaN" ? "0.00" : total}
                             </div>
                         </div>
+                    </div>
 
-                        <Input
-                            label="Total"
-                            type="number"
-                            step="0.01"
-                            placeholder="0.00"
-                            value={total}
-                            onChange={handleTotalChange}
-                            error={errors.total}
-                            readOnly={isLoading || tradeType === 'market'}
-                            suffix={quoteAsset}
-                        />
-
-                        <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                            <label className="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={takeProfit}
-                                    onChange={(e) => setTakeProfit(e.target.checked)}
-                                    className="rounded border-border bg-background"
-                                />
-                                <span>Take profit</span>
-                            </label>
-                            <label className="flex items-center space-x-2 cursor-pointer">
-                                <input
-                                    type="checkbox"
-                                    checked={stopLoss}
-                                    onChange={(e) => setStopLoss(e.target.checked)}
-                                    className="rounded border-border bg-background"
-                                />
-                                <span>Stop loss</span>
-                            </label>
-                        </div>
-
-                        <div className="flex justify-between text-sm text-muted-foreground">
-                            <span>Available:</span>
-                            <span>
-                                {orderSide === 'buy'
-                                    ? `${availableBalance.quote.toFixed(2)} ${quoteAsset}`
-                                    : `${availableBalance.base.toFixed(4)} ${baseAsset}`}
-                            </span>
-                        </div>
-
+                    {/* Action Button */}
+                    <div className="mt-4">
+                        {/* Login Check: If logged in, show Buy/Sell button. Else, show Login button */}
                         <Button
-                            type="submit"
-                            variant={orderSide === 'buy' ? 'success' : 'destructive'}
-                            className="w-full font-bold"
-                            disabled={isLoading}
-                            isLoading={isLoading}
+                            className={`w-full font-bold text-white ${side === 'buy' ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-rose-600 hover:bg-rose-700'}`}
                         >
-                            {orderSide === 'buy' ? `Buy ${baseAsset}` : `Sell ${baseAsset}`}
+                            {side === 'buy' ? 'Buy BTC' : 'Sell BTC'}
                         </Button>
-                    </form>
-                </TabsContent>
+                    </div>
+
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
+                        <span>Avail:</span>
+                        <span className="text-foreground">1,402.32 USDT</span>
+                    </div>
+                </div>
             </Tabs>
         </div>
     );
 };
-
-export default OrderForm;
