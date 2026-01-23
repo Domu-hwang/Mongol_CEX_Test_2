@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthLayout } from '@/features/auth/components/AuthLayout';
-import { LoginForm } from '@/features/auth/components/LoginForm';
+import { AuthLayout } from '../components/AuthLayout';
+import { LoginForm } from '../components/LoginForm';
 
 export const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -11,7 +11,7 @@ export const LoginPage: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-grow items-center justify-center py-12"> {/* Removed specific height and background color */}
+        <div className="flex flex-grow items-center justify-center py-12">
             <AuthLayout
                 title="Log In"
                 subtitle="Enter your account details to continue."

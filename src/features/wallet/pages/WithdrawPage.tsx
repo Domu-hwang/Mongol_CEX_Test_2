@@ -1,14 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import DepositForm from '@/features/wallet/components/DepositForm';
+import WithdrawForm from '../components/WithdrawForm';
 
-const DepositPage: React.FC = () => {
+const WithdrawPage: React.FC = () => {
     const navigate = useNavigate();
 
-    const handleDeposit = (currency: string, amount: number, address: string) => {
-        console.log('Deposit:', { currency, amount, address });
-        // TODO: Implement actual deposit logic
+    const handleWithdraw = (currency: string, amount: number, address: string) => {
+        console.log('Withdraw:', { currency, amount, address });
+        // TODO: Implement actual withdrawal logic
     };
 
     return (
@@ -17,13 +17,13 @@ const DepositPage: React.FC = () => {
                 <Button variant="ghost" onClick={() => navigate('/wallet')}>
                     ← Back to Wallet
                 </Button>
-                <h1 className="text-3xl font-bold">Deposit</h1>
+                <h1 className="text-3xl font-bold">Withdraw</h1>
             </div>
             <div className="max-w-md">
-                <DepositForm onDeposit={handleDeposit} />
+                <WithdrawForm onWithdraw={handleWithdraw} />
             </div>
         </div>
     );
 };
 
-export default DepositPage;
+export default WithdrawPage;

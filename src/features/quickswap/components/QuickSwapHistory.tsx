@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useQuickSwap } from '../hooks/useQuickSwap';
-import { useAuth } from '@/features/auth/hooks/useAuth'; // Assuming useAuth provides userId
+import { useAuth } from '@/features/auth/AuthContext';
 import { Card } from '@/components/ui/card';
 import { format } from 'date-fns';
 

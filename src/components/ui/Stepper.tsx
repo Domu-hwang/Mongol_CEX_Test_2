@@ -29,9 +29,7 @@ export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, className 
                     />
                   </svg>
                 </span>
-                <span className="ml-3 text-sm font-medium text-muted-foreground">
-                  {step.label}
-                </span>
+                {/* Removed step.label */}
               </div>
             ) : index === currentStep ? (
               // Current step
@@ -39,7 +37,7 @@ export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, className 
                 <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border-2 border-primary">
                   <span className="text-primary font-medium">{index + 1}</span>
                 </span>
-                <span className="ml-3 text-sm font-medium text-primary">{step.label}</span>
+                {/* Removed step.label */}
               </div>
             ) : (
               // Future step
@@ -47,9 +45,7 @@ export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, className 
                 <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border-2 border-border">
                   <span className="text-muted-foreground">{index + 1}</span>
                 </div>
-                <span className="ml-3 text-sm font-medium text-muted-foreground">
-                  {step.label}
-                </span>
+                {/* Removed step.label */}
               </div>
             )}
             {index < steps.length - 1 && (

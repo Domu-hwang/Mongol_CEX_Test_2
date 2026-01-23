@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { InputOTP, InputOTPGroup, InputOTPSlot, InputOTPSeparator } from '@/components/ui/input-otp';
+import { Input } from '@/components/ui/input'; // Use standard Input
 import {
     Form,
     FormControl,
@@ -14,10 +14,8 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '../../auth/hooks/useAuth';
+import { useAuth } from '@/features/auth/AuthContext';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '../store/useOnboardingStore';
-
 const otpSchema = z.object({
     otp: z.string().min(6, 'OTP must be 6 digits.').max(6, 'OTP must be 6 digits.'),
 });
@@ -25,22 +23,22 @@ const otpSchema = z.object({
 type OtpFormValues = z.infer<typeof otpSchema>;
 
 interface OtpVerificationProps {
-    // This could receive a destination for redirection, or an identifier for OTP verification
     identifier?: string; // e.g., email or phone number
+    onSuccess?: () => void; // Callback to notify parent on successful OTP verification
 }
 
-export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) => {
+export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier, onSuccess }) => {
     const navigate = useNavigate();
     const { verifyOtp, sendOtp, isLoading } = useAuth();
     const [countdown, setCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [serverError, setServerError] = useState('');
-    const { nextStep } = useOnboardingStore();
+    const [otpValue, setOtpValue] = useState(''); // Local state for OTP input
 
     const form = useForm<OtpFormValues>({
         resolver: zodResolver(otpSchema),
         defaultValues: {
-            otp: '',
+            otp: '', // Keep default value for validation, but manage actual input via otpValue
         },
     });
 
@@ -71,7 +69,7 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) 
         setServerError('');
         try {
             await verifyOtp(identifier || '', values.otp);
-            nextStep(); // Move to the next onboarding step (ResidenceStep)
+            onSuccess?.(); // Call onSuccess callback
         } catch (error: any) {
             setServerError(error.message || 'OTP verification failed. Please try again.');
         }
@@ -98,19 +96,12 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier }) 
                                 <FormItem>
                                     <FormLabel className="sr-only">One-Time Password</FormLabel>
                                     <FormControl>
-                                        <InputOTP maxLength={6} {...field} >
-                                            <InputOTPGroup>
-                                                <InputOTPSlot />
-                                                <InputOTPSlot />
-                                                <InputOTPSlot />
-                                            </InputOTPGroup>
-                                            <InputOTPSeparator />
-                                            <InputOTPGroup>
-                                                <InputOTPSlot />
-                                                <InputOTPSlot />
-                                                <InputOTPSlot />
-                                            </InputOTPGroup>
-                                        </InputOTP>
+                                        <Input
+                                            type="text"
+                                            maxLength={6}
+                                            placeholder="Enter 6-digit OTP"
+                                            {...field}
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

@@ -25,8 +25,12 @@ const residenceSchema = z.object({
 
 type ResidenceFormValues = z.infer<typeof residenceSchema>;
 
-export const ResidenceStep: React.FC = () => {
-    const { residenceCountry, setResidenceCountry, nextStep } = useOnboardingStore();
+interface ResidenceStepProps {
+    onSuccess?: () => void;
+}
+
+export const ResidenceStep: React.FC<ResidenceStepProps> = ({ onSuccess }) => {
+    const { residenceCountry, setResidenceCountry } = useOnboardingStore();
     const navigate = useNavigate();
     const [showAlert, setShowAlert] = useState(false);
 
@@ -46,7 +50,7 @@ export const ResidenceStep: React.FC = () => {
 
     const onSubmit = (values: ResidenceFormValues) => {
         setResidenceCountry(values.residenceCountry);
-        nextStep();
+        onSuccess?.(); // Call onSuccess callback
     };
 
     const countries = [

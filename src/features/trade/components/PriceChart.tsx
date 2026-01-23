@@ -11,7 +11,11 @@ interface MarketData {
     low24h: number;
 }
 
-export const PriceChart = () => {
+interface PriceChartProps {
+    symbol?: string;
+}
+
+export const PriceChart = ({ symbol = 'BTC-USD' }: PriceChartProps) => {
     const [marketData, setMarketData] = useState<MarketData>({
         price: 43682.67,
         change24h: -70.45,
@@ -68,7 +72,7 @@ export const PriceChart = () => {
                     {/* Market Pair Dropdown */}
                     <div className="relative group">
                         <button className="flex items-center gap-1 text-lg font-bold text-foreground cursor-pointer hover:text-primary transition-colors">
-                            <span>BTC-USD</span>
+                            <span>{symbol}</span>
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 className="h-4 w-4 transition-transform group-hover:rotate-180"

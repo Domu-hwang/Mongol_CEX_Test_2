@@ -100,7 +100,7 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({ onWithdraw, isLoading = fal
                         {errors.address && <p className="mt-1 text-sm text-destructive-foreground">{errors.address}</p>}
                     </div>
 
-                    <Button type="submit" className="w-full" disabled={isLoading}>
+                    <Button type="submit" className="w-full" disabled={isLoading} variant="outline">
                         Request Withdrawal
                     </Button>
                 </form>

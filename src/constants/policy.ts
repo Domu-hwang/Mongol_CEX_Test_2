@@ -71,18 +71,17 @@ export const getKycPolicyKeyForCountry = (countryName: string): KycPolicyKey => 
 // Stepper configuration based on policy
 export const getOnboardingSteps = (isPOARequired: boolean) => {
     const baseSteps = [
-        { id: 'register', label: 'Account Creation', description: 'Sign up and OTP verification' },
-        { id: 'residence', label: 'Country of Residence', description: 'Select your country of residence.' },
-        { id: 'profile', label: 'Personal Information', description: 'Enter your personal details.' },
-        { id: 'nationality', label: 'Nationality & ID Document', description: 'Select your nationality and ID type.' },
+        { id: 'residence', label: 'Residence', description: 'Select your country of residence.' },
+        { id: 'profile', label: 'Profile', description: 'Enter your personal details.' },
+        { id: 'nationality', label: 'ID Document', description: 'Select your nationality and ID type.' },
     ];
 
     if (isPOARequired) {
-        baseSteps.push({ id: 'poa', label: 'Proof of Address', description: 'Upload your proof of address document.' });
+        baseSteps.push({ id: 'poa', label: 'POA', description: 'Upload your proof of address document.' });
     }
 
     baseSteps.push(
-        { id: 'review', label: 'Review Pending', description: 'Your submitted information is under review.' }
+        { id: 'review', label: 'Review', description: 'Your submitted information is under review.' }
     );
 
     return baseSteps;

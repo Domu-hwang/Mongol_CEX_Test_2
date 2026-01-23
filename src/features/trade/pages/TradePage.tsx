@@ -1,5 +1,5 @@
 import React from 'react';
-import { TradeView } from '../features/trade/components/TradeView';
+import { TradeView } from '../components/TradeView';
 
 const TradePage = () => {
     return (

@@ -6,11 +6,10 @@ interface NavLinksProps {
 }
 
 const NavLinks: React.FC<NavLinksProps> = ({ onLinkClick }) => {
-    // Updated navigation items based on user feedback
     const navItems = [
-        { to: "/trade", label: "Trade" }, // Main Trade page
+        { to: "/trade", label: "Trade" },
         { to: "/quick-swap", label: "Quick Swap" },
-        { to: "/my-assets", label: "My assets" }, // Renamed from Portfolio
+        { to: "/my-assets", label: "My Assets" },
     ];
 
     return (

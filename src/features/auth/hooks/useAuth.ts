@@ -1,16 +1,34 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react'; // Added useEffect
 import authService from '../services/authService';
 import { KycSubmissionData } from '../../kyc/types'; // Import the new type
 
 export const useAuth = () => {
-    const [user, setUser] = useState<any>(null);
+    const [user, setUser] = useState<any>(() => {
+        // Initialize user from local storage if available
+        try {
+            const storedUser = localStorage.getItem('user');
+            return storedUser ? JSON.parse(storedUser) : null;
+        } catch (error) {
+            console.error("Failed to parse user from localStorage", error);
+            return null;
+        }
+    });
     const [isLoading, setIsLoading] = useState(false);
+
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('user', JSON.stringify(user));
+        } else {
+            localStorage.removeItem('user');
+        }
+    }, [user]);
 
     const login = useCallback(async (username: string, password: string) => {
         setIsLoading(true);
         try {
             const loggedInUser = await authService.login(username, password);
             setUser(loggedInUser);
+            // In a real app, you might set a token here too: localStorage.setItem('token', loggedInUser.token);
             return loggedInUser;
         } catch (error) {
             console.error('Login failed:', error);
@@ -24,7 +42,9 @@ export const useAuth = () => {
         setIsLoading(true);
         try {
             const registeredUser = await authService.register(username, password);
-            setUser(registeredUser); // Log in the user automatically after registration
+            // Set isKycCompleted to false for newly registered users
+            setUser({ ...registeredUser, isKycCompleted: false });
+            // In a real app, you might set a token here too: localStorage.setItem('token', registeredUser.token);
             return registeredUser;
         } catch (error) {
             console.error('Registration failed:', error);
@@ -65,7 +85,8 @@ export const useAuth = () => {
         try {
             await authService.completeKyc(profileData);
             console.log('KYC completed successfully.');
-            // Optionally update user state to reflect KYC status
+            // Update user state to reflect KYC completion
+            setUser((prevUser: any) => prevUser ? { ...prevUser, isKycCompleted: true } : null);
             return true;
         } catch (error) {
             console.error('KYC completion failed:', error);
@@ -80,6 +101,8 @@ export const useAuth = () => {
         try {
             await authService.logout();
             setUser(null);
+            localStorage.removeItem('user'); // Clear user from local storage on logout
+            // Also clear token if applicable: localStorage.removeItem('token');
         } catch (error) {
             console.error('Logout failed:', error);
         } finally {
@@ -97,5 +120,6 @@ export const useAuth = () => {
         completeKyc,
         logout,
         isAuthenticated: !!user,
+        isKycCompleted: user?.isKycCompleted ?? false,
     } as const; // Add as const assertion
 };

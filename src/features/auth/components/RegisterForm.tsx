@@ -8,7 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { Check } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../AuthContext';
+import VerificationPromptDialog from './VerificationPromptDialog'; // Import the new dialog component
 import {
     Form,
     FormControl,
@@ -57,6 +58,7 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     const { register: authRegister, isLoading } = useAuth();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState('');
+    const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
 
     const form = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -87,10 +89,15 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         try {
             const identifier = values.authType === 'email' ? values.email! : values.phone!;
             await authRegister(identifier, values.password);
-            onSuccess?.();
+            setShowVerificationPrompt(true); // Show dialog instead of navigating
         } catch (error: any) {
             setServerError(error.message || 'Registration failed. Please try again.');
         }
+    };
+
+    const handleCloseVerificationPrompt = () => {
+        setShowVerificationPrompt(false);
+        onSuccess?.(); // Call original onSuccess to potentially navigate to dashboard
     };
 
     return (
@@ -179,14 +186,20 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
 
                         <Button
                             type="submit"
-                            className="w-full mt-4"
                             disabled={isLoading || !form.formState.isValid}
+                            variant="secondary"
+                            className="w-full mt-4 text-black"
                         >
                             Create Account
                         </Button>
                     </form>
                 </Form>
             </Tabs>
+
+            <VerificationPromptDialog
+                isOpen={showVerificationPrompt}
+                onClose={handleCloseVerificationPrompt}
+            />
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Terminal } from 'lucide-react';
 import {
     Form,
     FormControl,
@@ -16,11 +14,12 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-    FormDescription, // Added FormDescription
+    FormDescription,
 } from '@/components/ui/form';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
-import { useOnboardingStore } from '../store/useOnboardingStore'; // Corrected relative import path
+import { useOnboardingStore } from '../store/useOnboardingStore';
 import { subYears, isBefore } from 'date-fns';
+import { KycSubmissionData } from '../types';
 
 const profileSchema = z.object({
     firstName: z.string().min(1, 'First name is required'),
@@ -35,8 +34,12 @@ const profileSchema = z.object({
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
-export const ProfileStep: React.FC = () => {
-    const { nextStep } = useOnboardingStore();
+interface ProfileStepProps {
+    onSuccess?: () => void;
+}
+
+export const ProfileStep: React.FC<ProfileStepProps> = ({ onSuccess }) => {
+    const { nextStep, setProfileData } = useOnboardingStore();
     const navigate = useNavigate();
 
     const form = useForm<ProfileFormValues>({
@@ -57,6 +60,8 @@ export const ProfileStep: React.FC = () => {
 
     const onSubmit = (values: ProfileFormValues) => {
         console.log('Profile Data:', values);
+        setProfileData({ ...values, dob: values.dob?.toISOString() } as KycSubmissionData);
+        onSuccess?.();
         nextStep();
     };
 
@@ -149,16 +154,6 @@ export const ProfileStep: React.FC = () => {
                             </FormItem>
                         )}
                     />
-
-                    {isUnder18 && (
-                        <Alert variant="destructive">
-                            <Terminal className="h-4 w-4" />
-                            <AlertTitle>Age Restriction</AlertTitle>
-                            <AlertDescription>
-                                You must be at least 18 years old to continue.
-                            </AlertDescription>
-                        </Alert>
-                    )}
 
                     <Button type="submit" className="w-full" disabled={isUnder18 || !form.formState.isValid}>
                         Continue

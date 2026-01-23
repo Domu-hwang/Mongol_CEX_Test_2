@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuickSwap } from '../hooks/useQuickSwap';
-import { useAuth } from '@/features/auth/hooks/useAuth'; // Assuming useAuth provides userId
+import { useAuth } from '@/features/auth/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -130,15 +130,15 @@ export const QuickSwapForm: React.FC = () => {
                     <p>{currentQuote.fromAmount} {currentQuote.fromAsset} = {currentQuote.toAmount} {currentQuote.toAsset}</p>
                     <p>Rate: 1 {currentQuote.fromAsset} = {currentQuote.rate} {currentQuote.toAsset}</p>
                     <p>Expires in: {quoteCountdown} seconds</p>
-                    <Button onClick={handleExecuteSwap} className="mt-4 w-full" disabled={loading || quoteCountdown === 0}>
+                    <Button onClick={handleExecuteSwap} variant="default" className="mt-4 w-full" disabled={loading || quoteCountdown === 0}>
                         {loading ? 'Executing...' : 'Confirm Swap'}
                     </Button>
-                    <Button onClick={() => setCurrentQuote(null)} variant="link" className="w-full mt-2 text-secondary-foreground">
+                    <Button onClick={() => setCurrentQuote(null)} variant="secondary" className="w-full mt-2">
                         Cancel Quote
                     </Button>
                 </Card>
             ) : (
-                <Button onClick={handleRequestQuote} className="w-full" disabled={loading || !fromAsset || !toAsset || parseFloat(amount) <= 0}>
+                <Button onClick={handleRequestQuote} variant="default" className="w-full" disabled={loading || !fromAsset || !toAsset || parseFloat(amount) <= 0}>
                     {loading ? 'Getting Quote...' : 'Get Quote'}
                 </Button>
             )}

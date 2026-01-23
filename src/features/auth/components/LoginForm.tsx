@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label'; // Import Label
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../AuthContext';
 
 const loginSchema = z.object({
     identifier: z.string().min(1, 'Please enter your email or phone number.'),

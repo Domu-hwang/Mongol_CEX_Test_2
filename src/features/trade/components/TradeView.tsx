@@ -5,8 +5,12 @@ import { OrderForm } from "./OrderForm";
 import { RecentTrades } from "./RecentTrades";
 import { OrderHistory } from "./OrderHistory";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { useParams } from 'react-router-dom';
 
 export const TradeView = () => {
+    const { symbol } = useParams<{ symbol: string }>();
+    const displaySymbol = symbol ? `${symbol}-USD` : 'BTC-USD';
+
     return (
         <div className="h-[calc(100vh-64px)] w-full bg-background p-1 box-border overflow-hidden">
             {/* Main Grid Layout (3 columns) */}
@@ -26,8 +30,8 @@ export const TradeView = () => {
                     {/* Top: Token Info & Chart Tabs */}
                     <Card className="flex-[4] rounded-none border-border overflow-hidden flex flex-col">
                         {/* Token Info Placeholder */}
-                        <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">
-                            Token Info (Placeholder)
+                        <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex justify-between items-center">
+                            <span>Token Info: {displaySymbol}</span>
                         </div>
                         {/* Chart, Info, Trading Data Tabs */}
                         <Tabs defaultValue="chart" className="flex-1 flex flex-col">
@@ -43,7 +47,7 @@ export const TradeView = () => {
                                 </TabsTrigger>
                             </TabsList>
                             <TabsContent value="chart" className="flex-1 overflow-hidden mt-0">
-                                <PriceChart />
+                                <PriceChart symbol={displaySymbol} />
                             </TabsContent>
                             <TabsContent value="info" className="flex-1 overflow-hidden mt-0 p-4 text-muted-foreground">
                                 Token Information will go here.

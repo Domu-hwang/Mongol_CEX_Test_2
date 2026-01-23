@@ -1,17 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthLayout } from '@/features/auth/components/AuthLayout';
-import { RegisterForm } from '@/features/auth/components/RegisterForm';
+import { AuthLayout } from '../components/AuthLayout';
+import { RegisterForm } from '../components/RegisterForm';
 
 export const RegisterPage: React.FC = () => {
     const navigate = useNavigate();
 
     const handleSuccess = () => {
-        navigate('/onboarding/intro');
+        navigate('/account'); // Navigate to the account page after successful registration
     };
 
     return (
-        <div className="flex flex-grow items-center justify-center py-12"> {/* Removed specific height and background color */}
+        <div className="flex flex-grow items-center justify-center py-12">
             <AuthLayout
                 title="Create Account"
                 subtitle="Join Mongol CEX and start trading today."
