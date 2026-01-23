@@ -58,7 +58,6 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
     const { register: authRegister, isLoading } = useAuth();
     const navigate = useNavigate();
     const [serverError, setServerError] = useState('');
-    const [showVerificationPrompt, setShowVerificationPrompt] = useState(false);
 
     const form = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -89,15 +88,10 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
         try {
             const identifier = values.authType === 'email' ? values.email! : values.phone!;
             await authRegister(identifier, values.password);
-            setShowVerificationPrompt(true); // Show dialog instead of navigating
+            onSuccess?.(); // Call original onSuccess to potentially navigate to dashboard
         } catch (error: any) {
             setServerError(error.message || 'Registration failed. Please try again.');
         }
-    };
-
-    const handleCloseVerificationPrompt = () => {
-        setShowVerificationPrompt(false);
-        onSuccess?.(); // Call original onSuccess to potentially navigate to dashboard
     };
 
     return (
@@ -187,19 +181,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSuccess }) => {
                         <Button
                             type="submit"
                             disabled={isLoading || !form.formState.isValid}
-                            variant="secondary"
-                            className="w-full mt-4 text-black"
+                            variant="yellow"
+                            className="w-full mt-4"
                         >
                             Create Account
                         </Button>
                     </form>
                 </Form>
             </Tabs>
-
-            <VerificationPromptDialog
-                isOpen={showVerificationPrompt}
-                onClose={handleCloseVerificationPrompt}
-            />
         </div>
     );
 };

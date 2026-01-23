@@ -38,6 +38,9 @@ The header will be a sticky top navigation bar, present across all authenticated
         *   **Logout Button:** If authenticated, a "Logout" button.
         *   **Login/Sign Up Buttons:** If not authenticated, clearly visible "Log In" (outline variant) and "Sign Up" (primary yellow button) buttons.
 
+**Design System Rule:**
+*   **Yellow Fill Button:** Buttons with a yellow background should consistently use black text for optimal readability and brand adherence. This applies to buttons like "Verify Now" and "Sign Up".
+
 **Functional Requirements for Dynamic "Deposit" CTA:**
 *   **Visibility Condition:** The "Deposit" button will only be visible if the user's total wallet balance falls below a predefined threshold (e.g., 50 USDT or equivalent).
 *   **Click Action:** Clicking the "Deposit" button will trigger a modal or navigate to the `WalletPage.tsx` with the `DepositForm.tsx` active, prompting the user to deposit funds.

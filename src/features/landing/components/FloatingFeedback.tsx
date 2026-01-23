@@ -30,14 +30,13 @@ const FloatingFeedback: React.FC = () => {
             {/* Toggle Button */}
             <Button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`w-14 h-14 rounded-full shadow-lg transition-all ${
-                    isOpen
-                        ? 'bg-gray-700 hover:bg-gray-600'
+                className={`w-14 h-14 rounded-full shadow-lg transition-all ${isOpen
+                        ? 'bg-secondary hover:bg-secondary/80'
                         : 'bg-yellow-500 hover:bg-yellow-600'
-                }`}
+                    }`}
             >
                 {isOpen ? (
-                    <X className="w-6 h-6 text-white" />
+                    <X className="w-6 h-6 text-secondary-foreground" />
                 ) : (
                     <MessageCircle className="w-6 h-6 text-black" />
                 )}

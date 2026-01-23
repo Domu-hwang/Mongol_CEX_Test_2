@@ -4,16 +4,32 @@ import { useAuth } from '@/features/auth/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
+import { ArrowDownUp, ChevronDown, Clock, Info } from 'lucide-react';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 export const QuickSwapForm: React.FC = () => {
-    const { user } = useAuth(); // Get user from auth hook
-    const userId = user?.id || 'guest'; // Placeholder user ID for now
+    const { user } = useAuth();
+    const userId = user?.id || 'guest';
     const { assets, currentQuote, loading, error, requestQuote, executeSwap, setCurrentQuote } = useQuickSwap(userId);
 
     const [fromAsset, setFromAsset] = useState('');
     const [toAsset, setToAsset] = useState('');
     const [amount, setAmount] = useState('');
     const [quoteCountdown, setQuoteCountdown] = useState(0);
+
+    // Mock balance data - replace with actual balance from API
+    const mockBalances: Record<string, number> = {
+        'BTC': 0.5,
+        'ETH': 2.0,
+        'USDT': 1000,
+        'MNT': 50000,
+    };
 
     useEffect(() => {
         if (assets.length > 0) {
@@ -23,7 +39,7 @@ export const QuickSwapForm: React.FC = () => {
     }, [assets]);
 
     useEffect(() => {
-        let timer: number; // Changed NodeJS.Timeout to number
+        let timer: number;
         if (currentQuote && currentQuote.expiresAt) {
             const expiryTime = new Date(currentQuote.expiresAt).getTime();
             const interval = setInterval(() => {
@@ -32,7 +48,7 @@ export const QuickSwapForm: React.FC = () => {
                 setQuoteCountdown(remaining);
                 if (remaining === 0) {
                     clearInterval(interval);
-                    setCurrentQuote(null); // Clear expired quote
+                    setCurrentQuote(null);
                 }
             }, 1000);
             timer = interval;
@@ -42,106 +58,223 @@ export const QuickSwapForm: React.FC = () => {
 
     const handleRequestQuote = async () => {
         if (!fromAsset || !toAsset || !amount || parseFloat(amount) <= 0) {
-            alert('Please select assets and enter a valid amount.');
             return;
         }
         try {
             await requestQuote(fromAsset, toAsset, amount);
         } catch (e) {
-            // Error handled by useQuickSwap hook, displayed via 'error' state
+            // Error handled by useQuickSwap hook
         }
     };
 
     const handleExecuteSwap = async () => {
         if (!currentQuote || quoteCountdown === 0) {
-            alert('No active quote or quote expired. Please request a new quote.');
             return;
         }
         try {
             await executeSwap(currentQuote.quoteId);
-            alert('Swap executed successfully!');
-            setAmount(''); // Clear amount after successful swap
+            setAmount('');
         } catch (e) {
             // Error handled by useQuickSwap hook
         }
     };
 
     const handleFlipAssets = () => {
+        const tempFrom = fromAsset;
         setFromAsset(toAsset);
-        setToAsset(fromAsset);
-        setCurrentQuote(null); // Clear quote as assets changed
+        setToAsset(tempFrom);
+        setCurrentQuote(null);
     };
 
-    if (loading && !currentQuote) {
-        return <p>Loading assets...</p>;
+    const handleMaxClick = () => {
+        const balance = mockBalances[fromAsset] || 0;
+        setAmount(balance.toString());
+        setCurrentQuote(null);
+    };
+
+    const handleHalfClick = () => {
+        const balance = mockBalances[fromAsset] || 0;
+        setAmount((balance / 2).toString());
+        setCurrentQuote(null);
+    };
+
+    const fromBalance = mockBalances[fromAsset] || 0;
+    const toBalance = mockBalances[toAsset] || 0;
+    const estimatedOutput = currentQuote ? currentQuote.toAmount : (amount && parseFloat(amount) > 0 ? '—' : '0');
+
+    if (loading && !currentQuote && assets.length === 0) {
+        return (
+            <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-yellow-500"></div>
+            </div>
+        );
     }
 
     return (
-        <div className="space-y-4">
-            {error && <p className="text-destructive">{error}</p>}
+        <div className="space-y-3">
+            {error && (
+                <div className="p-3 bg-destructive/10 border border-destructive/30 rounded-lg">
+                    <p className="text-sm text-destructive">{error}</p>
+                </div>
+            )}
 
-            <div>
-                <label htmlFor="from-asset" className="block text-sm font-medium text-foreground">From Asset</label>
-                <select
-                    id="from-asset"
-                    value={fromAsset}
-                    onChange={(e) => { setFromAsset(e.target.value); setCurrentQuote(null); }}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-input text-foreground"
+            {/* From Token Section */}
+            <div className="p-4 bg-muted/50 rounded-xl border border-border">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-muted-foreground">From</span>
+                    <span className="text-xs text-muted-foreground">
+                        Balance: {fromBalance.toLocaleString()} {fromAsset}
+                    </span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                    {/* Amount Input */}
+                    <Input
+                        type="number"
+                        value={amount}
+                        onChange={(e) => { setAmount(e.target.value); setCurrentQuote(null); }}
+                        placeholder="0.00"
+                        className="flex-1 text-2xl font-semibold bg-transparent border-none focus-visible:ring-0 focus-visible:ring-offset-0 p-0 h-auto"
+                    />
+
+                    {/* Token Selector */}
+                    <Select value={fromAsset} onValueChange={(value) => { setFromAsset(value); setCurrentQuote(null); }}>
+                        <SelectTrigger className="w-[130px] bg-background border-border">
+                            <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {assets.map(asset => (
+                                <SelectItem key={asset.fromAsset} value={asset.fromAsset}>
+                                    {asset.fromAsset}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Quick Amount Buttons */}
+                <div className="flex items-center gap-2 mt-3">
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleHalfClick}
+                        className="h-7 text-xs px-3"
+                    >
+                        50%
+                    </Button>
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleMaxClick}
+                        className="h-7 text-xs px-3"
+                    >
+                        MAX
+                    </Button>
+                </div>
+            </div>
+
+            {/* Swap Button */}
+            <div className="flex justify-center -my-1 relative z-10">
+                <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={handleFlipAssets}
+                    className="rounded-full h-10 w-10 bg-background border-border hover:bg-muted"
                 >
-                    {assets.map(asset => (
-                        <option key={asset.fromAsset} value={asset.fromAsset}>{asset.fromAsset}</option>
-                    ))}
-                </select>
+                    <ArrowDownUp className="h-4 w-4" />
+                </Button>
             </div>
 
-            <Button onClick={handleFlipAssets} variant="outline" className="w-full">
-                Flip Assets
-            </Button>
+            {/* To Token Section */}
+            <div className="p-4 bg-muted/50 rounded-xl border border-border">
+                <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm text-muted-foreground">To</span>
+                    <span className="text-xs text-muted-foreground">
+                        Balance: {toBalance.toLocaleString()} {toAsset}
+                    </span>
+                </div>
 
-            <div>
-                <label htmlFor="to-asset" className="block text-sm font-medium text-foreground">To Asset</label>
-                <select
-                    id="to-asset"
-                    value={toAsset}
-                    onChange={(e) => { setToAsset(e.target.value); setCurrentQuote(null); }}
-                    className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md bg-input text-foreground"
-                >
-                    {assets.map(asset => (
-                        <option key={asset.toAsset} value={asset.toAsset}>{asset.toAsset}</option>
-                    ))}
-                </select>
+                <div className="flex items-center gap-3">
+                    {/* Estimated Output (Read-only) */}
+                    <div className="flex-1 text-2xl font-semibold text-foreground">
+                        {estimatedOutput}
+                    </div>
+
+                    {/* Token Selector */}
+                    <Select value={toAsset} onValueChange={(value) => { setToAsset(value); setCurrentQuote(null); }}>
+                        <SelectTrigger className="w-[130px] bg-background border-border">
+                            <SelectValue placeholder="Select" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {assets.map(asset => (
+                                <SelectItem key={asset.toAsset} value={asset.toAsset}>
+                                    {asset.toAsset}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
 
-            <div>
-                <label htmlFor="amount" className="block text-sm font-medium text-foreground">Amount</label>
-                <Input
-                    id="amount"
-                    type="number"
-                    value={amount}
-                    onChange={(e) => { setAmount(e.target.value); setCurrentQuote(null); }}
-                    placeholder="Enter amount"
-                    className="mt-1 block w-full"
-                />
-            </div>
+            {/* Quote Details */}
+            {currentQuote && (
+                <div className="p-3 bg-muted/30 rounded-lg border border-border space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Rate</span>
+                        <span className="text-foreground">
+                            1 {currentQuote.fromAsset} = {currentQuote.rate} {currentQuote.toAsset}
+                        </span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            Quote expires
+                        </span>
+                        <span className={quoteCountdown <= 10 ? 'text-destructive' : 'text-foreground'}>
+                            {quoteCountdown}s
+                        </span>
+                    </div>
+                </div>
+            )}
 
+            {/* Action Button */}
             {currentQuote ? (
-                <Card className="p-4 bg-secondary text-secondary-foreground">
-                    <p className="text-lg font-semibold">Quote Details:</p>
-                    <p>{currentQuote.fromAmount} {currentQuote.fromAsset} = {currentQuote.toAmount} {currentQuote.toAsset}</p>
-                    <p>Rate: 1 {currentQuote.fromAsset} = {currentQuote.rate} {currentQuote.toAsset}</p>
-                    <p>Expires in: {quoteCountdown} seconds</p>
-                    <Button onClick={handleExecuteSwap} variant="default" className="mt-4 w-full" disabled={loading || quoteCountdown === 0}>
+                <div className="space-y-2">
+                    <Button
+                        onClick={handleExecuteSwap}
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium h-12"
+                        disabled={loading || quoteCountdown === 0}
+                    >
                         {loading ? 'Executing...' : 'Confirm Swap'}
                     </Button>
-                    <Button onClick={() => setCurrentQuote(null)} variant="secondary" className="w-full mt-2">
-                        Cancel Quote
+                    <Button
+                        onClick={() => setCurrentQuote(null)}
+                        variant="ghost"
+                        className="w-full text-muted-foreground"
+                    >
+                        Cancel
                     </Button>
-                </Card>
+                </div>
             ) : (
-                <Button onClick={handleRequestQuote} variant="default" className="w-full" disabled={loading || !fromAsset || !toAsset || parseFloat(amount) <= 0}>
+                <Button
+                    onClick={handleRequestQuote}
+                    className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium h-12"
+                    disabled={loading || !fromAsset || !toAsset || !amount || parseFloat(amount) <= 0}
+                >
                     {loading ? 'Getting Quote...' : 'Get Quote'}
                 </Button>
             )}
+
+            {/* Info Notice */}
+            <div className="flex items-start gap-2 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-muted-foreground">
+                    Quotes are valid for 30 seconds. Final rate may vary slightly due to market conditions.
+                </p>
+            </div>
         </div>
     );
 };

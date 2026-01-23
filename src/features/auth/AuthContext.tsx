@@ -20,6 +20,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const auth = useAuthHook();
 
+    // Temporarily hardcode isKycCompleted to false for testing the modal appearance
+    const testAuthValue = {
+        ...auth,
+        isKycCompleted: false,
+        isAuthenticated: true, // Ensure authenticated for testing AccountView
+    };
+
     return (
         <AuthContext.Provider value={auth}>
             {children}

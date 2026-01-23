@@ -10,15 +10,15 @@ const SettingsSection: React.FC = () => {
     const [language, setLanguage] = useState('en');
 
     return (
-        <Card className="bg-background border-none shadow-none">
-            <CardHeader className="px-0 pt-0">
-                <CardTitle className="text-xl font-semibold">General Settings</CardTitle>
+        <Card className="p-6 bg-card border border-border shadow-sm">
+            <CardHeader className="p-0 mb-4">
+                <CardTitle className="text-xl font-semibold text-foreground">General Settings</CardTitle>
             </CardHeader>
-            <CardContent className="px-0 space-y-6">
+            <CardContent className="p-0 space-y-6">
 
                 {/* Preferences */}
                 <div className="space-y-4">
-                    <h3 className="text-lg font-medium">Preferences</h3>
+                    <h3 className="text-lg font-medium text-foreground">Preferences</h3>
 
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
@@ -60,7 +60,7 @@ const SettingsSection: React.FC = () => {
 
                 {/* Notifications */}
                 <div className="space-y-4 pt-4 border-t border-border">
-                    <h3 className="text-lg font-medium">Notifications</h3>
+                    <h3 className="text-lg font-medium text-foreground">Notifications</h3>
                     <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
                             <Label className="text-base">Email Notifications</Label>

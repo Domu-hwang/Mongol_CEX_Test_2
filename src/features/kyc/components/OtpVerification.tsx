@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input'; // Use standard Input
+import { Input } from '@/components/ui/input';
 import {
     Form,
     FormControl,
@@ -13,9 +13,10 @@ import {
     FormLabel,
     FormMessage,
 } from '@/components/ui/form';
-import { CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Mail, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/features/auth/AuthContext';
-import OnboardingLayout from '@/components/layout/OnboardingLayout';
+
 const otpSchema = z.object({
     otp: z.string().min(6, 'OTP must be 6 digits.').max(6, 'OTP must be 6 digits.'),
 });
@@ -23,8 +24,8 @@ const otpSchema = z.object({
 type OtpFormValues = z.infer<typeof otpSchema>;
 
 interface OtpVerificationProps {
-    identifier?: string; // e.g., email or phone number
-    onSuccess?: () => void; // Callback to notify parent on successful OTP verification
+    identifier?: string;
+    onSuccess?: () => void;
 }
 
 export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier, onSuccess }) => {
@@ -33,17 +34,15 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier, on
     const [countdown, setCountdown] = useState(60);
     const [isResendDisabled, setIsResendDisabled] = useState(true);
     const [serverError, setServerError] = useState('');
-    const [otpValue, setOtpValue] = useState(''); // Local state for OTP input
 
     const form = useForm<OtpFormValues>({
         resolver: zodResolver(otpSchema),
         defaultValues: {
-            otp: '', // Keep default value for validation, but manage actual input via otpValue
+            otp: '',
         },
     });
 
     useEffect(() => {
-        // Use 'any' or 'number' for timer to bypass NodeJS namespace error in browser context
         let timer: any;
         if (isResendDisabled && countdown > 0) {
             timer = setTimeout(() => setCountdown(countdown - 1), 1000);
@@ -69,61 +68,85 @@ export const OtpVerification: React.FC<OtpVerificationProps> = ({ identifier, on
         setServerError('');
         try {
             await verifyOtp(identifier || '', values.otp);
-            onSuccess?.(); // Call onSuccess callback
+            onSuccess?.();
         } catch (error: any) {
             setServerError(error.message || 'OTP verification failed. Please try again.');
         }
     };
 
+    const maskedIdentifier = identifier
+        ? identifier.replace(/(.{2})(.*)(@.*)/, '$1***$3')
+        : 'your email';
+
     return (
-        <OnboardingLayout title="Verify Your Account">
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <CardHeader className="text-center">
-                        <CardTitle>Enter OTP</CardTitle>
-                        <CardDescription>
-                            We have sent a 6-digit code to your {identifier ? identifier.includes('@') ? 'email' : 'phone number' : 'registered account'}.
-                        </CardDescription>
-                        {serverError && (
-                            <p className="text-destructive text-sm mt-2">{serverError}</p>
-                        )}
-                    </CardHeader>
-                    <div className="flex justify-center">
-                        <FormField
-                            control={form.control}
-                            name="otp"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="sr-only">One-Time Password</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="text"
-                                            maxLength={6}
-                                            placeholder="Enter 6-digit OTP"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                {/* Email Sent Notice */}
+                <div className="flex items-center justify-center gap-3 p-4 bg-muted/50 rounded-lg border border-border">
+                    <div className="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center">
+                        <Mail className="w-5 h-5 text-yellow-500" />
                     </div>
-
-                    <div className="text-center text-sm">
-                        {isResendDisabled ? (
-                            <p className="text-muted-foreground">Resend code in {countdown}s</p>
-                        ) : (
-                            <Button variant="link" onClick={handleResend} disabled={isLoading}>
-                                Resend Code
-                            </Button>
-                        )}
+                    <div className="text-left">
+                        <p className="text-sm font-medium text-foreground">Verification code sent</p>
+                        <p className="text-xs text-muted-foreground">Check {maskedIdentifier}</p>
                     </div>
+                </div>
 
-                    <Button type="submit" className="w-full" disabled={isLoading || !form.formState.isValid}>
-                        Verify
-                    </Button>
-                </form>
-            </Form>
-        </OnboardingLayout>
+                {serverError && (
+                    <Alert variant="destructive">
+                        <AlertDescription>{serverError}</AlertDescription>
+                    </Alert>
+                )}
+
+                <FormField
+                    control={form.control}
+                    name="otp"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel className="text-foreground">Verification Code</FormLabel>
+                            <FormControl>
+                                <Input
+                                    type="text"
+                                    maxLength={6}
+                                    placeholder="Enter 6-digit code"
+                                    className="text-center text-lg tracking-widest font-mono"
+                                    {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="text-center text-sm">
+                    {isResendDisabled ? (
+                        <p className="text-muted-foreground">
+                            Didn't receive the code? Resend in <span className="font-medium text-foreground">{countdown}s</span>
+                        </p>
+                    ) : (
+                        <Button variant="link" onClick={handleResend} disabled={isLoading} className="p-0 h-auto">
+                            Resend verification code
+                        </Button>
+                    )}
+                </div>
+
+                <Button
+                    type="submit"
+                    className="w-full font-medium"
+                    disabled={isLoading || !form.formState.isValid}
+                    variant="yellow"
+                >
+                    {isLoading ? 'Verifying...' : 'Verify & Continue'}
+                </Button>
+
+                {/* Security Notice */}
+                <div className="flex items-start gap-2 p-3 bg-green-500/5 border border-green-500/20 rounded-lg">
+                    <ShieldCheck className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-muted-foreground">
+                        This verification protects your account from unauthorized access. Never share this code with anyone.
+                    </p>
+                </div>
+            </form>
+        </Form>
     );
 };

@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/AuthContext';
-import { Navigation } from '../layout/Navigation';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Globe, ChevronDown } from 'lucide-react';
+import { Globe, ChevronDown, Sun, Moon } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/popover';
+import { Switch } from '@/components/ui/switch';
+import { useTheme } from '@/contexts/ThemeContext';
 
 type Language = 'en' | 'ko' | 'mn';
 
@@ -21,6 +22,7 @@ const languages: { code: Language; label: string; flag: string }[] = [
 
 const Header: React.FC = () => {
     const { isAuthenticated, isKycCompleted } = useAuth();
+    const { theme, toggleTheme } = useTheme();
     const [language, setLanguage] = useState<Language>('en');
     const [langOpen, setLangOpen] = useState(false);
 
@@ -35,11 +37,31 @@ const Header: React.FC = () => {
                 </Link>
 
                 {/* Main Navigation */}
-                <Navigation />
+                <nav className="hidden md:flex items-center space-x-6">
+                    <Link to="/trade" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+                        Trade
+                    </Link>
+                    <Link to="/quick-swap" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+                        Quick Swap
+                    </Link>
+                    <Link to="/my-assets" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+                        Wallet
+                    </Link>
+                </nav>
             </div>
 
             {/* Right-aligned buttons */}
             <div className="flex items-center space-x-4">
+                {/* Theme Toggle */}
+                <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                    onClick={toggleTheme}
+                >
+                    {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                </Button>
+
                 {/* Language Selector */}
                 <Popover open={langOpen} onOpenChange={setLangOpen}>
                     <PopoverTrigger asChild>
@@ -68,13 +90,6 @@ const Header: React.FC = () => {
                         ))}
                     </PopoverContent>
                 </Popover>
-
-                {/* Deposit CTA - Redirects to register if not authenticated */}
-                <Link to={isAuthenticated ? "/wallet/deposit" : "/register"}>
-                    <Button variant="default">
-                        Deposit
-                    </Button>
-                </Link>
 
                 {isAuthenticated ? (
                     <Link to="/account" className="relative">

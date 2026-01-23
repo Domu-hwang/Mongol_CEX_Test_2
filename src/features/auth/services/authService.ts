@@ -5,19 +5,25 @@ interface User {
     id: string;
     username: string;
     token: string;
+    isKycCompleted?: boolean; // Add optional isKycCompleted property
 }
 
-const users: Record<string, string> = {
-    'user@example.com': 'password123',
+// In-memory user store for mock service
+const users: Record<string, { password: string, isKycCompleted: boolean }> = {
+    'existing@example.com': { password: 'TestPassword123!', isKycCompleted: true }, // An existing user with KYC completed
 };
 
 const authService = {
     async login(username: string, password: string): Promise<User> {
+        console.log(`Attempting login for: ${username}`);
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                if (users[username] === password) {
-                    resolve({ id: '1', username, token: 'mock-jwt-token' });
+                const storedUser = users[username];
+                if (storedUser && storedUser.password === password) {
+                    console.log(`Login successful for: ${username}`);
+                    resolve({ id: '1', username, token: 'mock-jwt-token', isKycCompleted: storedUser.isKycCompleted });
                 } else {
+                    console.log(`Login failed for: ${username} - Invalid credentials.`);
                     reject(new Error('Invalid username or password'));
                 }
             }, 500);
@@ -25,13 +31,17 @@ const authService = {
     },
 
     async register(username: string, password: string): Promise<User> {
+        console.log(`Attempting registration for: ${username}`);
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 if (users[username]) {
+                    console.log(`Registration failed for: ${username} - User already exists.`);
                     reject(new Error('User already exists'));
                 } else {
-                    users[username] = password;
-                    resolve({ id: 'new-user', username, token: 'mock-jwt-token-new' });
+                    // For new users, ensure isKycCompleted is explicitly false
+                    users[username] = { password: password, isKycCompleted: false };
+                    console.log(`Registration successful for: ${username}`);
+                    resolve({ id: 'new-user', username, token: 'mock-jwt-token-new', isKycCompleted: false });
                 }
             }, 500);
         });
@@ -41,6 +51,12 @@ const authService = {
         return new Promise((resolve) => {
             setTimeout(() => {
                 console.log('KYC Data submitted:', profileData);
+                // In a real app, this would update the user's KYC status in the backend.
+                // For mock, find the user and update their status.
+                const userEntry = users[profileData.username];
+                if (userEntry) {
+                    userEntry.isKycCompleted = true;
+                }
                 resolve(true); // Simulate successful KYC
             }, 1000);
         });

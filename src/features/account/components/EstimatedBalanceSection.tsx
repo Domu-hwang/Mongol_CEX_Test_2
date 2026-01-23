@@ -1,26 +1,27 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, Eye } from 'lucide-react';
 
 const EstimatedBalanceSection: React.FC = () => {
     return (
-        <Card className="bg-black p-4">
+        <Card className="p-6">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-white">Estimated Balance</h3>
+                <h3 className="text-lg font-semibold text-foreground">Estimated Balance</h3>
                 <div className="flex items-center space-x-2">
-                    <Button variant="outline" size="sm" className="text-gray-300 border-gray-600 hover:bg-gray-700">Deposit</Button>
-                    <Button variant="outline" size="sm" className="text-gray-300 border-gray-600 hover:bg-gray-700">Withdraw</Button>
+                    <Button variant="outline" size="sm">Deposit</Button>
+                    <Button variant="outline" size="sm">Withdraw</Button>
+                    <Button variant="outline" size="sm">Cash In</Button>
                 </div>
             </div>
             <div className="flex items-center space-x-2 mb-2">
-                <span className="text-3xl font-bold text-white">0.00</span>
-                <span className="text-lg text-gray-400">BTC</span>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
-                <Eye className="h-4 w-4 text-gray-400 cursor-pointer" />
+                <span className="text-3xl font-bold text-foreground">0.00</span>
+                <span className="text-lg text-muted-foreground">BTC</span>
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <Eye className="h-4 w-4 text-muted-foreground cursor-pointer" />
             </div>
-            <p className="text-gray-500 text-sm">≈ $0.00</p>
-            <p className="text-gray-500 text-sm">Today's P&L <span className="text-green-500">+ $0.00 (0.00%)</span></p>
+            <p className="text-muted-foreground text-sm">≈ $0.00</p>
+            <p className="text-muted-foreground text-sm">Today's P&L <span className="text-green-500 font-medium">+ $0.00 (0.00%)</span></p>
         </Card>
     );
 };

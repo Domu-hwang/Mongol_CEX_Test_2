@@ -23,8 +23,8 @@ const MarketsSection: React.FC = () => {
     };
 
     return (
-        <div className="bg-black p-4 rounded-lg">
-            <h3 className="text-lg font-semibold text-white mb-4">Markets</h3>
+        <div className="bg-card p-4 rounded-lg border border-border">
+            <h3 className="text-lg font-semibold text-foreground mb-4">Markets</h3>
             <AssetList
                 assets={mockAssets}
                 selectedCurrency={selectedCurrency}

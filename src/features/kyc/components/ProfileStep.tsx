@@ -20,6 +20,7 @@ import OnboardingLayout from '@/components/layout/OnboardingLayout';
 import { useOnboardingStore } from '../store/useOnboardingStore';
 import { subYears, isBefore } from 'date-fns';
 import { KycSubmissionData } from '../types';
+import { User, Info } from 'lucide-react';
 
 const profileSchema = z.object({
     firstName: z.string().min(1, 'First name is required'),
@@ -66,98 +67,120 @@ export const ProfileStep: React.FC<ProfileStepProps> = ({ onSuccess }) => {
     };
 
     return (
-        <OnboardingLayout title="Personal Information">
+        <OnboardingLayout
+            title="Personal Information"
+            description="Please enter your legal name exactly as it appears on your ID document."
+        >
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>First Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="John" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+                    {/* Info Notice */}
+                    <div className="flex items-start gap-3 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg mb-2">
+                        <Info className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-muted-foreground">
+                            Your name must match your government-issued ID for verification purposes.
+                        </p>
+                    </div>
 
-                    <FormField
-                        control={form.control}
-                        name="hasMiddleName"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow">
-                                <FormControl>
-                                    <Checkbox
-                                        checked={field.value}
-                                        onCheckedChange={field.onChange}
-                                    />
-                                </FormControl>
-                                <div className="space-y-1 leading-none">
-                                    <FormLabel>
-                                        I have a middle name
-                                    </FormLabel>
-                                    <FormDescription>
-                                        Check this box if you have a middle name.
-                                    </FormDescription>
-                                </div>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    {hasMiddleName && (
+                    <div className="grid grid-cols-1 gap-4">
                         <FormField
                             control={form.control}
-                            name="middleName"
+                            name="firstName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Middle Name (Optional)</FormLabel>
+                                    <FormLabel className="text-foreground">First Name <span className="text-destructive">*</span></FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Middle" {...field} />
+                                        <Input placeholder="Enter your first name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
-                    )}
 
-                    <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Last Name</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Doe" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
+                        <FormField
+                            control={form.control}
+                            name="hasMiddleName"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-lg border border-border p-3 bg-muted/30">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-0.5 leading-none">
+                                        <FormLabel className="text-sm font-normal text-foreground cursor-pointer">
+                                            I have a middle name
+                                        </FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
+                        {hasMiddleName && (
+                            <FormField
+                                control={form.control}
+                                name="middleName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="text-foreground">Middle Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter your middle name" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         )}
-                    />
 
-                    <FormField
-                        control={form.control}
-                        name="dob"
-                        render={({ field }) => (
-                            <FormItem className="flex flex-col">
-                                <FormLabel>Date of Birth</FormLabel>
-                                <FormControl>
-                                    <DatePicker
-                                        date={field.value}
-                                        setDate={field.onChange}
-                                        placeholder="Pick your date of birth"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
+                        <FormField
+                            control={form.control}
+                            name="lastName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="text-foreground">Last Name <span className="text-destructive">*</span></FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter your last name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                    <Button type="submit" className="w-full" disabled={isUnder18 || !form.formState.isValid}>
+                        <FormField
+                            control={form.control}
+                            name="dob"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel className="text-foreground">Date of Birth <span className="text-destructive">*</span></FormLabel>
+                                    <FormControl>
+                                        <DatePicker
+                                            date={field.value}
+                                            setDate={field.onChange}
+                                            placeholder="Select your date of birth"
+                                        />
+                                    </FormControl>
+                                    <FormDescription className="text-xs">
+                                        You must be at least 18 years old to use our services.
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
+                    <Button
+                        type="submit"
+                        className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-medium"
+                        disabled={isUnder18 || !form.formState.isValid}
+                    >
                         Continue
                     </Button>
+
+                    {/* Data Protection Notice */}
+                    <p className="text-xs text-muted-foreground text-center">
+                        Your personal data is processed securely in accordance with our{' '}
+                        <a href="/legal" className="text-yellow-500 hover:underline">Privacy Policy</a>.
+                    </p>
                 </form>
             </Form>
         </OnboardingLayout>

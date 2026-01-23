@@ -45,7 +45,7 @@ const PilotProgramSection: React.FC = () => {
                                 <div className="w-16 h-16 bg-yellow-500/10 rounded-full flex items-center justify-center mx-auto">
                                     <item.icon className="w-8 h-8 text-yellow-500" />
                                 </div>
-                                <span className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                                <span className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-500 text-black rounded-full flex items-center justify-center text-sm font-bold">
                                     {item.step}
                                 </span>
                             </div>
@@ -89,7 +89,7 @@ const PilotProgramSection: React.FC = () => {
                 {/* CTA */}
                 <div className="text-center">
                     <Link to="/register">
-                        <Button size="lg" className="px-8 bg-yellow-500 hover:bg-emerald-600 text-white">
+                        <Button variant="yellow" size="lg" className="px-8">
                             Apply as Pilot Tester
                         </Button>
                     </Link>

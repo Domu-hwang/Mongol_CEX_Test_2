@@ -11,6 +11,8 @@ const buttonVariants = cva(
       variant: {
         default:
           "bg-brand text-primary-foreground shadow hover:bg-brand/90",
+        yellow:
+          "bg-yellow-500 text-black shadow hover:bg-yellow-600",
         "primary-fill":
           "bg-primary text-primary-foreground shadow hover:bg-primary/90",
         destructive:

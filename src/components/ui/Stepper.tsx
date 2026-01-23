@@ -1,58 +1,76 @@
 import React from 'react';
 import { cn } from '@/design-system';
+import { Check } from 'lucide-react';
 
 interface StepperProps {
-  steps: { label: string; description?: string }[];
+  steps: { label: string; description?: string; id?: string }[];
   currentStep: number;
   className?: string;
+  showLabels?: boolean;
 }
 
-export const Stepper: React.FC<StepperProps> = ({ steps, currentStep, className }) => {
+export const Stepper: React.FC<StepperProps> = ({
+  steps,
+  currentStep,
+  className,
+  showLabels = true
+}) => {
   return (
-    <nav className={cn('flex items-center justify-center', className)} aria-label="Progress">
-      <ol className="flex items-center space-x-5">
-        {steps.map((step, index) => (
-          <li key={step.label} className="flex-1">
-            {index < currentStep ? (
-              // Completed step
-              <div className="flex items-center">
-                <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-primary">
-                  <svg
-                    className="w-5 h-5 text-primary-foreground"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                {/* Removed step.label */}
-              </div>
-            ) : index === currentStep ? (
-              // Current step
-              <div className="flex items-center" aria-current="step">
-                <span className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border-2 border-primary">
-                  <span className="text-primary font-medium">{index + 1}</span>
-                </span>
-                {/* Removed step.label */}
-              </div>
-            ) : (
-              // Future step
-              <div className="flex items-center">
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full border-2 border-border">
-                  <span className="text-muted-foreground">{index + 1}</span>
+    <nav className={cn('w-full', className)} aria-label="Progress">
+      <ol className="flex items-center justify-between">
+        {steps.map((step, index) => {
+          const isCompleted = index < currentStep;
+          const isCurrent = index === currentStep;
+          const isFuture = index > currentStep;
+
+          return (
+            <li key={step.label} className="flex-1 relative">
+              <div className="flex flex-col items-center">
+                {/* Step Circle */}
+                <div
+                  className={cn(
+                    'flex-shrink-0 w-10 h-10 flex items-center justify-center rounded-full font-medium transition-all duration-200',
+                    isCompleted && 'bg-yellow-500 text-black',
+                    isCurrent && 'border-2 border-yellow-500 text-yellow-500 bg-yellow-500/10',
+                    isFuture && 'border-2 border-border text-muted-foreground bg-background'
+                  )}
+                >
+                  {isCompleted ? (
+                    <Check className="w-5 h-5" />
+                  ) : (
+                    <span>{index + 1}</span>
+                  )}
                 </div>
-                {/* Removed step.label */}
+
+                {/* Step Label */}
+                {showLabels && (
+                  <div className="mt-2 text-center">
+                    <span
+                      className={cn(
+                        'text-xs font-medium',
+                        isCompleted && 'text-yellow-500',
+                        isCurrent && 'text-foreground',
+                        isFuture && 'text-muted-foreground'
+                      )}
+                    >
+                      {step.label}
+                    </span>
+                  </div>
+                )}
               </div>
-            )}
-            {index < steps.length - 1 && (
-              <div className="flex-auto border-t-2 border-border ml-4 mr-4 hidden md:block" />
-            )}
-          </li>
-        ))}
+
+              {/* Connector Line */}
+              {index < steps.length - 1 && (
+                <div
+                  className={cn(
+                    'absolute top-5 left-[calc(50%+20px)] right-[calc(-50%+20px)] h-0.5 transition-colors duration-200',
+                    isCompleted ? 'bg-yellow-500' : 'bg-border'
+                  )}
+                />
+              )}
+            </li>
+          );
+        })}
       </ol>
     </nav>
   );

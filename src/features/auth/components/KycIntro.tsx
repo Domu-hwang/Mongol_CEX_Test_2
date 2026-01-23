@@ -40,7 +40,7 @@ export const KycIntro: React.FC<KycIntroProps> = ({ onStart }) => {
                         </div>
                     </div>
                 </div>
-                <Button className="w-full" onClick={onStart} variant="default">
+                <Button className="w-full" onClick={onStart} variant="yellow">
                     Start Verification
                 </Button>
             </CardContent>

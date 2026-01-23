@@ -18,7 +18,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onLinkClick }) => {
                 <Link
                     key={item.to}
                     to={item.to}
-                    className="text-gray-300 hover:text-white transition-colors text-sm font-medium"
+                    className="text-muted-foreground hover:text-foreground transition-colors text-sm font-medium"
                     onClick={onLinkClick}
                 >
                     {item.label}

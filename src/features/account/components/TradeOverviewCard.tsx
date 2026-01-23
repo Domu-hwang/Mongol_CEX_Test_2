@@ -4,11 +4,11 @@ import { Clock } from 'lucide-react';
 
 const TradeOverviewCard: React.FC = () => {
     return (
-        <Card className="bg-black">
+        <Card className="bg-card border border-border">
             <CardContent className="p-4 flex flex-col items-start space-y-4">
-                <Clock className="h-8 w-8 text-gray-400" />
-                <h4 className="text-lg font-semibold text-white">Trade</h4>
-                <p className="text-gray-400 text-sm">Pending</p>
+                <Clock className="h-8 w-8 text-muted-foreground" />
+                <h4 className="text-lg font-semibold text-foreground">Trade</h4>
+                <p className="text-muted-foreground text-sm">Pending</p>
             </CardContent>
         </Card>
     );

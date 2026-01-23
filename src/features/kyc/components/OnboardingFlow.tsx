@@ -131,15 +131,24 @@ const OnboardingFlow: React.FC = () => {
                 <Routes>
                     {/* Explicit routes for pre-onboarding steps */}
                     <Route path="register" element={
-                        <OnboardingLayout title="Create Your Account">
+                        <OnboardingLayout
+                            title="Create Your Account"
+                            description="Enter your details to get started with Mongol CEX."
+                        >
                             <RegisterForm onSuccess={() => navigate('otp', { replace: true })} />
                         </OnboardingLayout>
                     } />
                     <Route path="otp" element={
-                        <OnboardingLayout title="Verify Your Account">
+                        <OnboardingLayout
+                            title="Verify Your Email"
+                            description="Enter the verification code sent to your email."
+                        >
                             <OtpVerification identifier="user@example.com" onSuccess={handleNext} />
-                            <button className="mt-4 w-full text-sm text-muted-foreground hover:underline" onClick={handleBack}>
-                                Previous Step
+                            <button
+                                className="mt-4 w-full text-sm text-muted-foreground hover:text-foreground transition-colors"
+                                onClick={handleBack}
+                            >
+                                Go Back
                             </button>
                         </OnboardingLayout>
                     } />
@@ -150,22 +159,13 @@ const OnboardingFlow: React.FC = () => {
                             key={step.id}
                             path={step.id}
                             element={
-                                <OnboardingLayout title={step.label === 'Review' ? 'Review Your Application' : step.description}>
+                                <>
                                     {step.id === 'residence' && <ResidenceStep onSuccess={handleNext} />}
                                     {step.id === 'profile' && <ProfileStep onSuccess={handleNext} />}
                                     {step.id === 'nationality' && <DocumentUploadStep />}
                                     {step.id === 'poa' && <POAStep />}
                                     {step.id === 'review' && <StatusStep />}
-
-                                    <button className="mt-4 w-full text-sm text-muted-foreground hover:underline" onClick={handleBack}>
-                                        Previous Step
-                                    </button>
-                                    {step.id !== 'review' && (
-                                        <button className="mt-4 w-full text-sm text-muted-foreground hover:underline" onClick={handleNext}>
-                                            Next Step
-                                        </button>
-                                    )}
-                                </OnboardingLayout>
+                                </>
                             }
                         />
                     ))}

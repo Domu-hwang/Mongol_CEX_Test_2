@@ -4,14 +4,14 @@ import { Button } from '@/components/ui/button';
 
 const CTASection: React.FC = () => {
     return (
-        <section className="py-20 bg-gray-800 text-white text-center">
+        <section className="py-20 bg-muted/50 text-center border-t border-border">
             <div className="container mx-auto px-4">
-                <h2 className="text-4xl font-bold mb-4 text-text">Ready to Start Your Crypto Journey?</h2>
-                <p className="text-lg text-text-dark mb-8">
+                <h2 className="text-4xl font-bold mb-4 text-foreground">Ready to Start Your Crypto Journey?</h2>
+                <p className="text-lg text-muted-foreground mb-8">
                     Join Mongol CEX today and experience the future of digital asset trading.
                 </p>
                 <Link to="/register">
-                    <Button variant="default" className="text-black text-xl">
+                    <Button variant="yellow" size="lg" className="text-xl px-12 h-14 font-bold">
                         Sign Up Now
                     </Button>
                 </Link>

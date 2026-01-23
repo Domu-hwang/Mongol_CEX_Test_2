@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import ProfileSection from './ProfileSection';
 import SecuritySection from './SecuritySection';
 import SettingsSection from './SettingsSection';
@@ -17,10 +17,16 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { UserProfile } from '../types';
 import { useAuth } from '@/features/auth/AuthContext';
+import { Dialog, DialogContent } from '@/components/ui/dialog'; // Import Dialog components
+import KycIntro from '@/features/auth/components/KycIntro'; // Import KycIntro
 
 const AccountView: React.FC = () => {
-    const { isKycCompleted } = useAuth();
+    const { isKycCompleted: authKycCompleted } = useAuth(); // Rename to avoid conflict
+    // Temporarily force isKycCompleted to false and showKycPromptModal to true for testing
+    const isKycCompleted = false;
     const [activeSection, setActiveSection] = useState<'dashboard' | 'profile' | 'assets' | 'orders' | 'security' | 'settings'>('dashboard');
+    const navigate = useNavigate(); // Initialize useNavigate
+    const [showKycPromptModal, setShowKycPromptModal] = useState(true); // State for KYC prompt modal
 
     // Mock user data for the profile summary
     const mockUser: UserProfile = {
@@ -59,26 +65,24 @@ const AccountView: React.FC = () => {
                                         <AlertTriangle className="h-6 w-6 text-yellow-500" />
                                         <div>
                                             <h3 className="text-lg font-semibold text-yellow-500">Need Verification</h3>
-                                            <p className="text-gray-400 text-sm">Complete your identity verification to unlock all features.</p>
+                                            <p className="text-muted-foreground text-sm">Complete your identity verification to unlock all features.</p>
                                         </div>
                                     </div>
-                                    <Link to="/onboarding">
-                                        <Button variant="default" className="bg-yellow-500 hover:bg-yellow-600 text-black">
-                                            Verify Now
-                                        </Button>
-                                    </Link>
+                                    <Button variant="yellow" onClick={() => setShowKycPromptModal(true)}>
+                                        Verify Now
+                                    </Button>
                                 </div>
                             </Card>
                         )}
 
                         {/* User Profile Summary */}
-                        <div className="bg-black p-6 rounded-lg shadow-md mb-8 flex items-center space-x-6">
+                        <div className="bg-card p-6 rounded-lg shadow-md mb-8 flex items-center space-x-6 border border-border">
                             <Avatar className="h-16 w-16 bg-yellow-500 text-black flex items-center justify-center font-bold text-xl">
                                 <AvatarFallback>U</AvatarFallback>
                             </Avatar>
                             <div>
-                                <h2 className="text-2xl font-bold text-white mb-1">{mockUser.name}</h2>
-                                <div className="flex items-center space-x-4 text-gray-400 text-sm">
+                                <h2 className="text-2xl font-bold text-foreground mb-1">{mockUser.name}</h2>
+                                <div className="flex items-center space-x-4 text-muted-foreground text-sm">
                                     <span>UID: {mockUser.uid} <Copy className="h-3 w-3 inline-block cursor-pointer" /></span>
                                     <span>VIP Level: {mockUser.vipLevel} <ChevronRight className="h-3 w-3 inline-block" /></span>
                                 </div>
@@ -86,8 +90,8 @@ const AccountView: React.FC = () => {
                         </div>
 
                         {/* Get Started Section */}
-                        <Card className="bg-black p-6 rounded-lg shadow-md mb-8">
-                            <h3 className="text-xl font-bold text-white mb-6">Get Started</h3>
+                        <Card className="bg-card p-6 rounded-lg shadow-md mb-8 border border-border">
+                            <h3 className="text-xl font-bold text-foreground mb-6">Get Started</h3>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {/* Step 1: Verification */}
                                 <div className="flex flex-col">
@@ -98,12 +102,12 @@ const AccountView: React.FC = () => {
                                                 ? "border-2 border-yellow-500 text-yellow-500"
                                                 : currentStep > 0
                                                     ? "bg-yellow-500 text-black"
-                                                    : "border-2 border-gray-600 text-gray-500"
+                                                    : "border-2 border-border text-muted-foreground"
                                         )}>
                                             {currentStep > 0 ? '✓' : '1'}
                                         </span>
-                                        <span className="ml-3 text-sm text-gray-400">Verification</span>
-                                        <div className="flex-1 h-[2px] bg-gray-700 ml-4 hidden md:block" />
+                                        <span className="ml-3 text-sm text-muted-foreground">Verification</span>
+                                        <div className="flex-1 h-[2px] bg-border ml-4 hidden md:block" />
                                     </div>
                                     <VerificationStatusCard />
                                 </div>
@@ -115,14 +119,14 @@ const AccountView: React.FC = () => {
                                             "flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full font-medium",
                                             currentStep === 1
                                                 ? "border-2 border-yellow-500 text-yellow-500"
-                                                : currentStep > 1
+                                                : currentStep > 0
                                                     ? "bg-yellow-500 text-black"
-                                                    : "border-2 border-gray-600 text-gray-500"
+                                                    : "border-2 border-border text-muted-foreground"
                                         )}>
                                             {currentStep > 1 ? '✓' : '2'}
                                         </span>
-                                        <span className="ml-3 text-sm text-gray-400">Deposit</span>
-                                        <div className="flex-1 h-[2px] bg-gray-700 ml-4 hidden md:block" />
+                                        <span className="ml-3 text-sm text-muted-foreground">Deposit</span>
+                                        <div className="flex-1 h-[2px] bg-border ml-4 hidden md:block" />
                                     </div>
                                     <DepositOverviewCard />
                                 </div>
@@ -134,13 +138,13 @@ const AccountView: React.FC = () => {
                                             "flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full font-medium",
                                             currentStep === 2
                                                 ? "border-2 border-yellow-500 text-yellow-500"
-                                                : currentStep > 2
+                                                : currentStep > 0
                                                     ? "bg-yellow-500 text-black"
-                                                    : "border-2 border-gray-600 text-gray-500"
+                                                    : "border-2 border-border text-muted-foreground"
                                         )}>
                                             {currentStep > 2 ? '✓' : '3'}
                                         </span>
-                                        <span className="ml-3 text-sm text-gray-400">Trade</span>
+                                        <span className="ml-3 text-sm text-muted-foreground">Trade</span>
                                     </div>
                                     <TradeOverviewCard />
                                 </div>
@@ -176,18 +180,16 @@ const AccountView: React.FC = () => {
     return (
         <div className="flex flex-1">
             {/* Sidebar */}
-            <aside className="w-64 bg-black border-r border-gray-800 p-6"> {/* Changed background to black */}
+            <aside className="w-64 bg-card border-r border-border p-6">
                 <nav className="space-y-2">
                     {sidebarItems.map((item) => (
                         <Button
                             key={item.id}
-                            variant="ghost"
+                            variant={activeSection === item.id ? "yellow" : "ghost"}
                             onClick={() => setActiveSection(item.id)}
                             className={cn(
                                 "justify-start gap-3 w-full",
-                                activeSection === item.id
-                                    ? "bg-yellow-500 text-black hover:bg-yellow-600"
-                                    : "text-gray-300 hover:bg-gray-800 hover:text-white"
+                                activeSection !== item.id && "text-muted-foreground hover:bg-muted hover:text-foreground"
                             )}
                         >
                             <item.icon className="h-5 w-5" />
@@ -201,6 +203,18 @@ const AccountView: React.FC = () => {
             <main className="flex-1 pl-[8vh]"> {/* Added left padding for gap */}
                 {renderContent()}
             </main>
+
+            {/* KYC Prompt Modal */}
+            {!isKycCompleted && (
+                <Dialog open={showKycPromptModal} onOpenChange={setShowKycPromptModal}>
+                    <DialogContent className="max-w-md p-0">
+                        <KycIntro onStart={() => {
+                            setShowKycPromptModal(false);
+                            navigate('/onboarding/intro/otp');
+                        }} />
+                    </DialogContent>
+                </Dialog>
+            )}
         </div>
     );
 };
