@@ -8,7 +8,9 @@
             "DOM",
             "DOM.Iterable"
         ],
-        // "types": ["node"] // Remove explicit node types, usually picked up automatically if @types/node is installed
+        "types": [
+            "vitest/globals"
+        ],
         "skipLibCheck": true,
         "moduleResolution": "Node",
         "resolveJsonModule": true,
@@ -25,7 +27,8 @@
         }
     },
     "include": [
-        "src"
+        "src",
+        "src/**/*.test.ts" // Include test files for type checking
         // Removed "src/components/ui" to temporarily bypass type-checking for UI components
     ],
     "references": [
