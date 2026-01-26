@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { ChevronDown, Eye } from 'lucide-react';
 
 const EstimatedBalanceSection: React.FC = () => {

@@ -1,7 +1,7 @@
 import React, { FormEvent, useMemo, useState } from 'react';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { COUNTRIES, ID_DOCUMENT_TYPES, KycPolicyKey, getKycPolicyKeyForCountry } from '@/constants/policy';

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Globe, ChevronDown, Sun, Moon } from 'lucide-react';
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
             <div className="flex items-center space-x-6">
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold text-primary flex items-center">
-                    Mongol CEX
+                    IKH MYANGAN
                 </Link>
 
                 {/* Main Navigation */}

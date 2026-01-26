@@ -14,7 +14,7 @@ export const RegisterPage: React.FC = () => {
         <div className="flex flex-grow items-center justify-center py-12">
             <AuthLayout
                 title="Create Account"
-                subtitle="Join Mongol CEX and start trading today."
+                subtitle="Join IKH MYANGAN and start trading today."
                 helperText="By creating an account, you agree to our Terms of Service and Privacy Policy."
             >
                 <RegisterForm onSuccess={handleSuccess} />

@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
         <footer className="bg-card text-foreground py-12 border-t border-border">
             <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-5 gap-8">
                 <div className="md:col-span-1">
-                    <h3 className="text-xl font-bold mb-4 text-yellow-500">Mongol CEX</h3>
+                    <h3 className="text-xl font-bold mb-4 text-yellow-500">IKH MYANGAN</h3>
                     <p className="text-muted-foreground text-sm">
                         Building the future of digital finance in Mongolia with global standards.
                     </p>
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
                     <h3 className="text-lg font-semibold mb-4 text-foreground">About Us</h3>
                     <ul className="space-y-2">
                         <li>
-                            <Link to="/about" className="text-muted-foreground hover:text-yellow-500 text-sm transition-colors">About Mongol CEX</Link>
+                            <Link to="/about" className="text-muted-foreground hover:text-yellow-500 text-sm transition-colors">About IKH MYANGAN</Link>
                         </li>
                         <li>
                             <Link to="/careers" className="text-muted-foreground hover:text-yellow-500 text-sm transition-colors">Careers</Link>
@@ -96,7 +96,7 @@ const Footer: React.FC = () => {
                     </p>
                 </div>
                 <div className="text-center text-muted-foreground text-sm">
-                    &copy; {new Date().getFullYear()} Mongol CEX. All rights reserved.
+                    &copy; {new Date().getFullYear()} IKH MYANGAN. All rights reserved.
                 </div>
             </div>
         </footer>

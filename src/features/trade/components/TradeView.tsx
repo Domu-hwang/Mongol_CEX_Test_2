@@ -7,7 +7,7 @@ import { RecentTrades } from "./RecentTrades";
 import { OrderHistory } from "./OrderHistory";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // Added SheetClose, SheetHeader, SheetTitle
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { useParams, Link } from 'react-router-dom';
 import { Menu, BarChart3, BookOpen, History, X, Home, Wallet, RefreshCw, User } from 'lucide-react';
 import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery"; // Import useMediaQuery
@@ -48,7 +48,7 @@ export const TradeView = () => {
                                         {/* Sidebar Header */}
                                         <div className="p-4 border-b border-border">
                                             <Link to="/" className="text-xl font-bold text-yellow-500">
-                                                Mongol CEX
+                                                IKH MYANGAN
                                             </Link>
                                         </div>
                                         {/* Navigation Items */}

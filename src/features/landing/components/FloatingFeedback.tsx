@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, Bug, Lightbulb } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/components/ui/Button';
 
 const FloatingFeedback: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,8 +31,8 @@ const FloatingFeedback: React.FC = () => {
             <Button
                 onClick={() => setIsOpen(!isOpen)}
                 className={`w-14 h-14 rounded-full shadow-lg transition-all ${isOpen
-                        ? 'bg-secondary hover:bg-secondary/80'
-                        : 'bg-yellow-500 hover:bg-yellow-600'
+                    ? 'bg-secondary hover:bg-secondary/80'
+                    : 'bg-yellow-500 hover:bg-yellow-600'
                     }`}
             >
                 {isOpen ? (

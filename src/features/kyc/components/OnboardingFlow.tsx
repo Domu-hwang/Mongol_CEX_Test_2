@@ -133,7 +133,7 @@ const OnboardingFlow: React.FC = () => {
                     <Route path="register" element={
                         <OnboardingLayout
                             title="Create Your Account"
-                            description="Enter your details to get started with Mongol CEX."
+                            description="Enter your details to get started with IKH MYANGAN."
                         >
                             <RegisterForm onSuccess={() => navigate('otp', { replace: true })} />
                         </OnboardingLayout>

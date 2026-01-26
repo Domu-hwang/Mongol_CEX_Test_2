@@ -24,7 +24,7 @@ const OnboardingLayout: React.FC<OnboardingLayoutProps> = ({
                         <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
                             <span className="text-black font-bold text-xl">M</span>
                         </div>
-                        <span className="text-xl font-bold text-foreground">Mongol CEX</span>
+                        <span className="text-xl font-bold text-foreground">IKH MYANGAN</span>
                     </div>
 
                     <CardTitle className="text-2xl font-bold text-foreground">{title}</CardTitle>
