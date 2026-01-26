@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import AssetList from '@/features/wallet/components/AssetList';
 import TransactionHistory from '@/features/wallet/components/TransactionHistory';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';

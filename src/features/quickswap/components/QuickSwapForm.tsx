@@ -3,7 +3,7 @@ import { useQuickSwap } from '../hooks/useQuickSwap';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import { ArrowDownUp, ChevronDown, Clock, Info } from 'lucide-react';
 import {
     Select,

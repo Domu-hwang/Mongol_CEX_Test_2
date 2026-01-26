@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useQuickSwap } from '../hooks/useQuickSwap';
 import { useAuth } from '@/features/auth/AuthContext';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import { format } from 'date-fns';
 
 export const QuickSwapHistory: React.FC = () => {

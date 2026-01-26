@@ -12,10 +12,15 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
+            // This assumes your project root is the current working directory where vite.config.ts resides
             '@': '/src',
         },
     },
     server: {
-        port: 5173,
+        port: 5175,
+        host: true,
+        allowedHosts: [
+            'semidramatically-fathomless-corene.ngrok-free.dev',
+        ],
     },
 });

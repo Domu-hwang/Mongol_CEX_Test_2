@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/Button'; // Updated import casing
-import { Card, CardContent } from '@/components/ui/card'; // Import Card and CardContent
+import { Card, CardContent } from '@/components/ui/Card'; // Import Card and CardContent
 import { ShieldAlert, FileText, CheckCircle } from 'lucide-react';
 
 interface KycIntroProps {

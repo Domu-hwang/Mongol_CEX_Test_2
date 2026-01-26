@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import TransactionHistory from '@/features/wallet/components/TransactionHistory';
 
 const HistorySection: React.FC = () => {

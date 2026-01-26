@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 
 interface AuthLayoutProps {
     title: string;

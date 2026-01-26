@@ -1,7 +1,7 @@
 import React from 'react';
 import { QuickSwapForm } from '../components/QuickSwapForm';
 import { QuickSwapHistory } from '../components/QuickSwapHistory';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/Card';
 import { Zap } from 'lucide-react';
 
 export const QuickSwapPage: React.FC = () => {

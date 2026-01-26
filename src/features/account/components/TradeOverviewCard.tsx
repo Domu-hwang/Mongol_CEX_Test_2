@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/Card';
 import { Clock } from 'lucide-react';
 
 const TradeOverviewCard: React.FC = () => {

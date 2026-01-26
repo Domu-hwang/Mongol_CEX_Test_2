@@ -10,7 +10,7 @@ import DepositOverviewCard from './DepositOverviewCard';
 import TradeOverviewCard from './TradeOverviewCard';
 import EstimatedBalanceSection from './EstimatedBalanceSection';
 import MarketsSection from './MarketsSection';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Copy, ChevronRight, User, ShieldCheck, Settings, Wallet, ClipboardList, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';

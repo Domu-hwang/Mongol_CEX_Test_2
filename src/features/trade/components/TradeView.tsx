@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/Card";
 import { OrderBook } from "./OrderBook";
 import { PriceChart } from "./PriceChart";
 import { OrderForm } from "./OrderForm";

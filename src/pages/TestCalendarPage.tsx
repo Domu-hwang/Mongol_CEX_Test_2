@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Calendar } from '@/components/ui/calendar';
-import { Card } from '@/components/ui/card';
+import { Card } from '@/components/ui/Card';
 
 const TestCalendarPage: React.FC = () => {
     const [date, setDate] = useState<Date | undefined>(new Date());
