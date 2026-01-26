@@ -193,12 +193,8 @@ export const TradeView = () => {
                         {/* --- CENTER COLUMN: Token Info, Chart Tabs & Recent Trades --- */}
                         <div className="col-span-7 row-span-6 flex flex-col gap-1">
 
-                            {/* Top: Token Info & Chart Tabs */}
+                            {/* Top: Chart Tabs & Token Info */}
                             <Card className="flex-[4] rounded-none border-border overflow-hidden flex flex-col">
-                                {/* Token Info Placeholder */}
-                                <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex justify-between items-center">
-                                    <span>Token Info: {displaySymbol}</span>
-                                </div>
                                 {/* Chart, Info, Trading Data Tabs */}
                                 <Tabs defaultValue="chart" className="flex-1 flex flex-col">
                                     <TabsList className="grid w-full grid-cols-3 rounded-none bg-transparent border-b border-border p-0 h-10">
@@ -222,6 +218,10 @@ export const TradeView = () => {
                                         Trading Data will go here.
                                     </TabsContent>
                                 </Tabs>
+                                {/* Token Info Placeholder */}
+                                <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex justify-between items-center">
+                                    <span>Token Info: {displaySymbol}</span>
+                                </div>
                             </Card>
 
                             {/* Bottom: Recent Trades */}
