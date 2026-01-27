@@ -1,4 +1,4 @@
-import React, { useState, memo, useCallback, useEffect } from "react";
+import Reatsct, { useState, memo, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TradeActionButton } from "./shared/TradeActionButton";
 import { cn } from "@/lib/utils";
 
-type TabOrderType = "limit" | "market" | "stop";
+type TabOrderType = "limit" | "market" | "stop-limit" | "stop-market";
 
 interface OrderFormProps {
     symbol?: string;
@@ -58,25 +58,10 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     const totalInput = watch("total"); // Watch the new total input
     const marketInputMode = watch("marketInputMode"); // Watch the new market input mode
 
-    const [activeTab, setActiveTab] = useState<TabOrderType>(() => {
-        // Initialize activeTab based on current orderType from form
-        if (orderType === "limit") return "limit";
-        if (orderType === "market") return "market";
-        return "stop"; // Default for stop-limit, stop-market
-    });
+    const [activeTab, setActiveTab] = useState<TabOrderType>("limit");
 
     useEffect(() => {
-        let newActiveTab: TabOrderType;
-        if (orderType === "limit") {
-            newActiveTab = "limit";
-        } else if (orderType === "market") {
-            newActiveTab = "market";
-        } else {
-            newActiveTab = "stop"; // Covers "stop-limit" and "stop-market"
-        }
-        // @ts-ignore: TypeScript is being overly strict here despite explicit type handling.
-        // This cast is safe because the logic ensures newActiveTab is always TabOrderType.
-        setActiveTab(newActiveTab);
+        setActiveTab(orderType as TabOrderType);
     }, [orderType]);
 
     const fetchData = useCallback(async () => {
@@ -155,7 +140,7 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     const onSubmit = async (data: OrderFormValues) => {
         setIsLoading(true);
         try {
-            const orderTypeForApi: OrderType = data.orderType; // Explicit type assertion
+            const orderTypeForApi = data.orderType;
             const orderPayload = {
                 symbol: symbol,
                 side: data.side,
@@ -185,15 +170,9 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
         }
     };
 
-    const handleOrderTypeChange = (tabValue: TabOrderType) => {
-        setActiveTab(tabValue); // Update the active tab state
-
-        if (tabValue === "stop") {
-            // When 'stop' tab is selected, default to 'stop-limit' for the actual order type
-            setValue("orderType", "stop-limit", { shouldValidate: true });
-        } else {
-            setValue("orderType", tabValue, { shouldValidate: true });
-        }
+    const handleOrderTypeChange = (tabValue: string) => {
+        setActiveTab(tabValue as TabOrderType); // Update the active tab state
+        setValue("orderType", tabValue as OrderType, { shouldValidate: true });
     };
 
     const handleSideChange = (value: string) => {
@@ -225,8 +204,8 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
 
     return (
         <div className="relative h-full flex flex-col">
-            <Tabs defaultValue="limit" className="w-full" value={activeTab} onValueChange={(value: TabOrderType) => handleOrderTypeChange(value)}>
-                <TabsList className="w-full grid grid-cols-3 rounded-none bg-transparent border-b border-border p-0 h-10">
+            <Tabs defaultValue="limit" className="w-full" value={activeTab} onValueChange={handleOrderTypeChange}>
+                <TabsList className="w-full grid grid-cols-4 rounded-none bg-transparent border-b border-border p-0 h-10">
                     <TabsTrigger
                         value="limit"
                         className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
@@ -240,10 +219,16 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                         Market
                     </TabsTrigger>
                     <TabsTrigger
-                        value="stop"
+                        value="stop-limit"
                         className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                     >
-                        Stop
+                        Stop Limit
+                    </TabsTrigger>
+                    <TabsTrigger
+                        value="stop-market"
+                        className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
+                    >
+                        Stop Market
                     </TabsTrigger>
                 </TabsList>
 
@@ -279,14 +264,14 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                 </Tabs>
 
                                 <div className="space-y-3 mt-2">
-                                    {activeTab === "stop" && (
+                                    {(activeTab === "stop-limit" || activeTab === "stop-market") && (
                                         <FormField
                                             control={control}
                                             name="orderType"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-[10px] text-muted-foreground uppercase mb-1 block">Stop Order Type</FormLabel>
-                                                    <Select onValueChange={(value) => field.onChange(value)} defaultValue={field.value}>
+                                                    <Select onValueChange={(value) => field.onChange(value as OrderType)} defaultValue={field.value}>
                                                         <FormControl>
                                                             <SelectTrigger className="w-full text-left">
                                                                 <SelectValue placeholder="Select a stop order type" />

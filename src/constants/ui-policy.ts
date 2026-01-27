@@ -127,7 +127,7 @@ export const TRADE_GRID_COLUMNS = {
 // =============================================================================
 
 export const TRADE_DESKTOP_GRID_CONFIG = {
-    gridTemplateColumns: '1.2fr 2fr 1.2fr 1fr',
+    gridTemplateColumns: '1.2fr 2fr 1fr 1.2fr',
     gridTemplateRows: '0.6fr 0.4fr',
     gridTemplateAreas: `
         "market chart orderbook orderform"

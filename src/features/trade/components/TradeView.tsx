@@ -45,12 +45,23 @@ export const TradeView = () => {
 
     return (
         <div className="flex flex-col h-[calc(100vh-64px)] w-full p-1 box-border overflow-hidden">
+            <TokenInfo
+                symbol={displaySymbol}
+                price={43658.36} // Placeholder, replace with actual data source
+                priceChange={-0.22} // Placeholder
+                volume24h={836880000} // Placeholder
+                high24h={45426.45} // Placeholder
+                low24h={43342.16} // Placeholder
+                variant="default"
+            />
+
             {/* Main Trading Grid */}
             <div className="flex-1 grid gap-1"
                 style={{
                     gridTemplateColumns: TRADE_DESKTOP_GRID_CONFIG.gridTemplateColumns,
                     gridTemplateRows: TRADE_DESKTOP_GRID_CONFIG.gridTemplateRows,
                     gridTemplateAreas: TRADE_DESKTOP_GRID_CONFIG.gridTemplateAreas,
+                    gap: TRADE_DESKTOP_GRID_CONFIG.gap,
                 }}>
                 <Card className="rounded-none border-border flex flex-col" style={{ gridArea: 'market' }}>
                     <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex items-center">
@@ -119,14 +130,6 @@ export const TradeView = () => {
                     </Tabs>
                 </Card>
 
-                {/* Order History */}
-                <Card className="rounded-none border-border overflow-hidden flex flex-col" style={{ gridArea: 'orderhistory' }}>
-                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order History</div>
-                    <div className="flex-1 overflow-hidden relative">
-                        <OrderHistory />
-                    </div>
-                </Card>
-
                 {/* Order Book */}
                 <Card className="rounded-none border-border overflow-hidden flex flex-col min-h-0" style={{ gridArea: 'orderbook' }}>
                     <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Book</div>
@@ -140,6 +143,14 @@ export const TradeView = () => {
                     <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Form</div>
                     <div className="flex-1 overflow-y-auto">
                         <OrderForm symbol={displaySymbol} />
+                    </div>
+                </Card>
+
+                {/* Order History */}
+                <Card className="rounded-none border-border overflow-hidden flex flex-col" style={{ gridArea: 'orderhistory' }}>
+                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order History</div>
+                    <div className="flex-1 overflow-hidden relative">
+                        <OrderHistory />
                     </div>
                 </Card>
             </div>
