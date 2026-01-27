@@ -35,19 +35,19 @@ export const createOrderFormSchema = (marketPrice: number) => {
             }
 
             // Conditional validation for Buy Stop Price
-            if (data.side === "buy" && numericTriggerPrice > marketPrice) {
+            if (data.side === "buy" && numericTriggerPrice <= marketPrice) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: "For a Buy Stop order, Trigger Price must be less than or equal to the current market price.",
+                    message: "For a Buy Stop order, Trigger Price should be greater than the current market price.",
                     path: ["triggerPrice"],
                 });
             }
 
             // Conditional validation for Sell Stop Price
-            if (data.side === "sell" && numericTriggerPrice < marketPrice) {
+            if (data.side === "sell" && numericTriggerPrice >= marketPrice) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: "For a Sell Stop order, Trigger Price must be greater than or equal to the current market price.",
+                    message: "For a Sell Stop order, Trigger Price should be less than the current market price.",
                     path: ["triggerPrice"],
                 });
             }

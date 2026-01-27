@@ -134,16 +134,15 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
         const depthPercent = (order.cumulative / maxCumulative) * 100;
         const amountPercent = (order.amount / maxAmount) * 100;
 
-        const bgColor = side === 'ask' ? 'rgba(239, 68, 68, 0.15)' : 'rgba(16, 185, 129, 0.15)';
-        const hoverBgColor = side === 'ask' ? 'rgba(239, 68, 68, 0.25)' : 'rgba(16, 185, 129, 0.25)';
-        const textColor = side === 'ask' ? 'text-red-500' : 'text-emerald-500';
+        const bgColor = side === 'ask' ? 'hsl(var(--destructive) / 0.15)' : 'hsl(var(--success) / 0.15)';
+        const hoverBgColor = side === 'ask' ? 'hsl(var(--destructive) / 0.25)' : 'hsl(var(--success) / 0.25)';
+        const textColor = side === 'ask' ? 'text-destructive' : 'text-success';
 
         return (
             <div
                 key={`${side}-${index}`}
-                className={`relative flex items-center justify-between px-2 py-1 cursor-pointer transition-all duration-150 ${
-                    isHovered ? 'scale-[1.01]' : ''
-                }`}
+                className={`relative flex items-center justify-between px-2 py-1 cursor-pointer transition-all duration-150 ${isHovered ? 'scale-[1.01]' : ''
+                    }`}
                 style={{
                     background: isHovered ? hoverBgColor : 'transparent',
                 }}
@@ -166,7 +165,7 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                     className="absolute inset-y-0 transition-all duration-200"
                     style={{
                         width: `${amountPercent}%`,
-                        background: side === 'ask' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)',
+                        background: side === 'ask' ? 'hsl(var(--destructive) / 0.3)' : 'hsl(var(--success) / 0.3)',
                         left: side === 'bid' ? 0 : 'auto',
                         right: side === 'ask' ? 0 : 'auto',
                     }}
@@ -200,9 +199,8 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                     {/* Display mode toggle */}
                     <button
                         onClick={() => setDisplayMode('both')}
-                        className={`p-1.5 rounded transition-colors ${
-                            displayMode === 'both' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`p-1.5 rounded transition-colors ${displayMode === 'both' ? 'bg-primary/20 text-primary' : 'text-muted-foreground hover:text-foreground'
+                            }`}
                         title="Show both"
                     >
                         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
@@ -212,9 +210,8 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                     </button>
                     <button
                         onClick={() => setDisplayMode('bids')}
-                        className={`p-1.5 rounded transition-colors ${
-                            displayMode === 'bids' ? 'bg-emerald-500/20 text-emerald-500' : 'text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`p-1.5 rounded transition-colors ${displayMode === 'bids' ? 'bg-success/20 text-success' : 'text-muted-foreground hover:text-foreground'
+                            }`}
                         title="Bids only"
                     >
                         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
@@ -223,9 +220,8 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                     </button>
                     <button
                         onClick={() => setDisplayMode('asks')}
-                        className={`p-1.5 rounded transition-colors ${
-                            displayMode === 'asks' ? 'bg-red-500/20 text-red-500' : 'text-muted-foreground hover:text-foreground'
-                        }`}
+                        className={`p-1.5 rounded transition-colors ${displayMode === 'asks' ? 'bg-destructive/20 text-destructive' : 'text-muted-foreground hover:text-foreground'
+                            }`}
                         title="Asks only"
                     >
                         <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
@@ -240,11 +236,10 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                         <button
                             key={p}
                             onClick={() => setPrecision(p)}
-                            className={`px-1.5 py-0.5 rounded text-xs transition-colors ${
-                                precision === p
+                            className={`px-1.5 py-0.5 rounded text-xs transition-colors ${precision === p
                                     ? 'bg-primary/20 text-primary'
                                     : 'text-muted-foreground hover:text-foreground'
-                            }`}
+                                }`}
                         >
                             {p}
                         </button>
@@ -275,13 +270,12 @@ export const OrderBook = ({ onPriceClick, onAmountClick }: OrderBookProps) => {
                 {/* Mid-market price */}
                 {displayMode === 'both' && (
                     <div
-                        className={`py-2 px-3 text-center font-bold text-lg border-y border-border transition-colors duration-300 ${
-                            priceDirection === 'up'
-                                ? 'bg-emerald-500/10 text-emerald-500'
+                        className={`py-2 px-3 text-center font-bold text-lg border-y border-border transition-colors duration-300 ${priceDirection === 'up'
+                                ? 'bg-success/10 text-success'
                                 : priceDirection === 'down'
-                                ? 'bg-red-500/10 text-red-500'
-                                : 'bg-muted/20 text-foreground'
-                        }`}
+                                    ? 'bg-destructive/10 text-destructive'
+                                    : 'bg-muted/20 text-foreground'
+                            }`}
                     >
                         <div className="flex items-center justify-center gap-2">
                             <span className="font-mono">{midPrice.toFixed(4)}</span>

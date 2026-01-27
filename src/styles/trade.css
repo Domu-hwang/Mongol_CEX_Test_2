@@ -37,6 +37,14 @@
         border-radius: 4px;
         border: 2px solid var(--color-background-secondary);
     }
+
+    .btn-trade-buy {
+        @apply bg-success text-white font-bold py-2 px-4 rounded transition-all transform active:scale-[0.98] hover:bg-success/90;
+    }
+
+    .btn-trade-sell {
+        @apply bg-destructive text-white font-bold py-2 px-4 rounded transition-all transform active:scale-[0.98] hover:bg-destructive/90;
+    }
 }
 
 @layer utilities {

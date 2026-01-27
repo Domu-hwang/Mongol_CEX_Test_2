@@ -13,7 +13,7 @@ export const RecentTrades = () => {
                 </thead>
                 <tbody>
                     {Array.from({ length: 10 }).map((_, i) => (
-                        <tr key={i} className={`${i % 2 === 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                        <tr key={i} className={`${i % 2 === 0 ? 'text-success' : 'text-destructive'}`}>
                             <td className="py-1">13:0{i}</td>
                             <td className="py-1">4215{i}.00</td>
                             <td className="py-1 text-right">0.0{i} BTC</td>

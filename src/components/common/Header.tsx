@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Globe, ChevronDown, Sun, Moon } from 'lucide-react';
+import { Globe, ChevronDown, Sun, Moon, Menu } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
@@ -20,7 +20,11 @@ const languages: { code: Language; label: string; flag: string }[] = [
     { code: 'mn', label: 'Монгол', flag: '🇲🇳' },
 ];
 
-const Header: React.FC = () => {
+interface HeaderProps {
+    onMenuClick?: () => void;
+}
+
+const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     const { isAuthenticated, isKycCompleted } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [language, setLanguage] = useState<Language>('en');
@@ -30,7 +34,12 @@ const Header: React.FC = () => {
 
     return (
         <header className="bg-background text-foreground p-4 flex justify-between items-center shadow-md border-b border-border">
-            <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-4">
+                {/* Mobile Menu Button */}
+                <Button variant="ghost" size="icon" className="md:hidden" onClick={onMenuClick}>
+                    <Menu className="h-6 w-6" />
+                </Button>
+
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold text-primary flex items-center">
                     IKH MYANGAN

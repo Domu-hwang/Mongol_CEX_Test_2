@@ -14,7 +14,7 @@ import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery"; // Import
 
 export const TradeView = () => {
     const { symbol } = useParams<{ symbol: string }>();
-    const displaySymbol = symbol ? `${symbol}-USD` : 'BTC-USD';
+    const displaySymbol = symbol ? `${symbol.toUpperCase()}-USDT` : 'BTC-USDT';
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isTransactionSheetOpen, setIsTransactionSheetOpen] = useState(false); // Renamed state for clarity
     const [mobileContentTab, setMobileContentTab] = useState<string>("chart"); // New state for mobile content tabs
@@ -47,7 +47,7 @@ export const TradeView = () => {
                                     <div className="flex flex-col h-full">
                                         {/* Sidebar Header */}
                                         <div className="p-4 border-b border-border">
-                                            <Link to="/" className="text-xl font-bold text-yellow-500">
+                                            <Link to="/" className="text-xl font-bold text-primary">
                                                 IKH MYANGAN
                                             </Link>
                                         </div>
@@ -71,8 +71,8 @@ export const TradeView = () => {
                             <span className="font-semibold text-foreground">{displaySymbol}</span>
                         </div>
                         <div className="text-right">
-                            <span className="text-lg font-bold text-emerald-500">$42,150.00</span>
-                            <span className="text-xs text-emerald-500 ml-2">+2.34%</span>
+                            <span className="text-lg font-bold text-success">$42,150.00</span>
+                            <span className="text-xs text-success ml-2">+2.34%</span>
                         </div>
                     </div>
 
@@ -81,25 +81,25 @@ export const TradeView = () => {
                         <TabsList className="grid grid-cols-4 rounded-none bg-card border-b border-border p-0 h-11 shrink-0">
                             <TabsTrigger
                                 value="chart"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                             >
                                 Chart
                             </TabsTrigger>
                             <TabsTrigger
                                 value="orderbook"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                             >
                                 Order Book
                             </TabsTrigger>
                             <TabsTrigger
                                 value="trade-form"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                             >
                                 Trade
                             </TabsTrigger>
                             <TabsTrigger
                                 value="info"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                             >
                                 Info
                             </TabsTrigger>
@@ -114,7 +114,7 @@ export const TradeView = () => {
                         </TabsContent>
 
                         <TabsContent value="trade-form" className="flex-1 flex flex-col overflow-y-auto mt-0 p-1">
-                            <OrderForm />
+                            <OrderForm symbol={displaySymbol} />
                         </TabsContent>
 
                         <TabsContent value="info" className="flex-1 overflow-y-auto mt-0 p-2 text-muted-foreground">
@@ -125,13 +125,15 @@ export const TradeView = () => {
                     {/* CTA Buttons for Buy/Sell at the bottom */}
                     <div className="flex w-full sticky bottom-0 bg-background border-t border-border">
                         <Button
-                            className="flex-1 h-12 rounded-none bg-green-500 hover:bg-green-600 text-white text-lg"
+                            variant="buy"
+                            className="flex-1 h-12 rounded-none text-lg"
                             onClick={() => setIsTransactionSheetOpen(true)}
                         >
                             Buy
                         </Button>
                         <Button
-                            className="flex-1 h-12 rounded-none bg-red-500 hover:bg-red-600 text-white text-lg"
+                            variant="sell"
+                            className="flex-1 h-12 rounded-none text-lg"
                             onClick={() => setIsTransactionSheetOpen(true)}
                         >
                             Sell
@@ -153,13 +155,13 @@ export const TradeView = () => {
                                 <TabsList className="grid grid-cols-2 rounded-none bg-card border-b border-border p-0 h-11 shrink-0">
                                     <TabsTrigger
                                         value="recent-trades"
-                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                                     >
                                         Recent Trades
                                     </TabsTrigger>
                                     <TabsTrigger
                                         value="order-history"
-                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-yellow-500 data-[state=active]:border-b-2 data-[state=active]:border-yellow-500"
+                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                                     >
                                         Order History
                                     </TabsTrigger>
@@ -240,7 +242,7 @@ export const TradeView = () => {
                             <Card className="rounded-none border-border overflow-hidden flex flex-col min-h-0">
                                 <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Form</div>
                                 <div className="flex-1 overflow-y-auto">
-                                    <OrderForm />
+                                    <OrderForm symbol={displaySymbol} />
                                 </div>
                             </Card>
 

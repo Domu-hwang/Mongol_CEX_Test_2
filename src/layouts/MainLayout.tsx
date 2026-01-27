@@ -14,12 +14,14 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
     const hideFooter = location.pathname === '/trade' || location.pathname === '/quick-swap';
 
+    const isFullWidthPage = location.pathname === '/' || location.pathname.startsWith('/trade');
+
     return (
         <div className="flex min-h-screen">
             <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
             <div className="flex-1 flex flex-col" style={{ marginLeft: isSidebarOpen ? '16rem' : '0' }}>
                 <Header onMenuClick={toggleSidebar} />
-                <main className="flex-1 p-6">{children}</main>
+                <main className={`flex-1 ${isFullWidthPage ? 'p-0' : 'p-6'}`}>{children}</main>
                 {!hideFooter && <Footer />} {/* Conditionally render Footer */}
             </div>
         </div>

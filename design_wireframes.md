@@ -40,6 +40,7 @@ The header will be a sticky top navigation bar, present across all authenticated
 
 **Design System Rule:**
 *   **Yellow Fill Button:** Buttons with a yellow background should consistently use black text for optimal readability and brand adherence. This applies to buttons like "Verify Now" and "Sign Up".
+*   **Trading Action Buttons:** All "Buy" and "Sell" buttons across all page levels and depths must use the standardized `variant="buy"` and `variant="sell"` from the common `Button` component library to ensure visual consistency and correct color tokens (Greem for Buy, Red for Sell).
 
 **Functional Requirements for Dynamic "Deposit" CTA:**
 *   **Visibility Condition:** The "Deposit" button will only be visible if the user's total wallet balance falls below a predefined threshold (e.g., 50 USDT or equivalent).

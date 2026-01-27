@@ -14,7 +14,7 @@ export const MarketSelector = () => {
                         <div key={i} className="grid grid-cols-3 gap-1 py-1 hover:bg-muted/20 cursor-pointer">
                             <span className="col-span-1 text-foreground">BTC/USDT</span>
                             <span className="col-span-1 text-right">4215{i}.00</span>
-                            <span className={`col-span-1 text-right ${i % 2 === 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                            <span className={`col-span-1 text-right ${i % 2 === 0 ? 'text-success' : 'text-destructive'}`}>
                                 {i % 2 === 0 ? '+' : '-'}{i}.{i}0%
                             </span>
                         </div>
