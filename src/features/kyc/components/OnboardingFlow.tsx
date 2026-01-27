@@ -3,7 +3,7 @@ import { useNavigate, Routes, Route, useParams } from 'react-router-dom';
 import OnboardingLayout from '@/components/layout/OnboardingLayout';
 import { useOnboardingStore } from '@/features/kyc/store/useOnboardingStore';
 import { getOnboardingSteps } from '@/constants/policy';
-import { Stepper } from '@/components/ui/Stepper'; // Re-added Stepper import
+import { Stepper } from '@/components/ui/stepper'; // Re-added Stepper import
 
 import { RegisterForm } from '@/features/auth/components/RegisterForm'; // Assuming RegisterForm and OtpVerification remain in auth
 import { OtpVerification } from './OtpVerification'; // Corrected import path, as OtpVerification is in the same directory

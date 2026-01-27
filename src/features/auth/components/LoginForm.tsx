@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; // Added Link import
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label'; // Import Label
 import { useAuth } from '../AuthContext';
 

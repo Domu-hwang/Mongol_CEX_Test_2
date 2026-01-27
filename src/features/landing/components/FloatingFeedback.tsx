@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MessageCircle, X, Bug, Lightbulb } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 
 const FloatingFeedback: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);

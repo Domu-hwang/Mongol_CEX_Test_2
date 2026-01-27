@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useQuickSwap } from '../hooks/useQuickSwap';
 import { useAuth } from '@/features/auth/AuthContext';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { ArrowDownUp, ChevronDown, Clock, Info } from 'lucide-react';
 import {
     Select,

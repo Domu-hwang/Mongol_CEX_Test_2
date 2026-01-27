@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import WithdrawForm from '../components/WithdrawForm';
 
 const WithdrawPage: React.FC = () => {

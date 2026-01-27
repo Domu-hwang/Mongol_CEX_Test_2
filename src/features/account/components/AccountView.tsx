@@ -10,11 +10,11 @@ import DepositOverviewCard from './DepositOverviewCard';
 import TradeOverviewCard from './TradeOverviewCard';
 import EstimatedBalanceSection from './EstimatedBalanceSection';
 import MarketsSection from './MarketsSection';
-import { Card } from '@/components/ui/Card';
+import { Card } from '@/components/ui/card';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Copy, ChevronRight, User, ShieldCheck, Settings, Wallet, ClipboardList, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { UserProfile } from '../types';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Dialog, DialogContent } from '@/components/ui/dialog'; // Import Dialog components

@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button'; // Import Button component
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button'; // Import Button component
 
 interface Asset {
     id: string;
