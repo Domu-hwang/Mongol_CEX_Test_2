@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/Slider"; // Import Slider component
+import { Slider } from "@/components/ui/slider"; // Import Slider component
 import { createOrderFormSchema, OrderFormValues } from "@/features/trade/schemas/orderFormSchema";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form"; // Import Form component
 import { useOrderTotalEstimation } from "@/features/trade/hooks/useOrderTotalEstimation";
