@@ -3,267 +3,159 @@ import { Card } from "@/components/ui/card";
 import { OrderBook } from "./OrderBook";
 import { PriceChart } from "./PriceChart";
 import { OrderForm } from "./OrderForm";
-import { RecentTrades } from "./RecentTrades";
 import { OrderHistory } from "./OrderHistory";
+import { TokenInfo } from "./TokenInfo";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Sheet, SheetContent, SheetTrigger, SheetClose, SheetHeader, SheetTitle } from "@/components/ui/sheet"; // Added SheetClose, SheetHeader, SheetTitle
-import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Star } from 'lucide-react';
+import { cn } from "@/lib/utils";
 import { useParams, Link } from 'react-router-dom';
-import { Menu, BarChart3, BookOpen, History, X, Home, Wallet, RefreshCw, User } from 'lucide-react';
-import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery"; // Import useMediaQuery
+import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery";
+import { TRADE_DESKTOP_GRID_CONFIG } from "@/constants/ui-policy";
+import React, { useEffect } from "react"; // Import useEffect for console.log
 
 export const TradeView = () => {
     const { symbol } = useParams<{ symbol: string }>();
     const displaySymbol = symbol ? `${symbol.toUpperCase()}-USDT` : 'BTC-USDT';
-    const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [isTransactionSheetOpen, setIsTransactionSheetOpen] = useState(false); // Renamed state for clarity
-    const [mobileContentTab, setMobileContentTab] = useState<string>("chart"); // New state for mobile content tabs
-    const isDesktop = useMediaQuery("(min-width: 1024px)"); // Hook to check desktop view
+    const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-    // Mobile Navigation Items (for sidebar)
-    const mobileNavItems = [
-        { icon: Home, label: 'Home', path: '/' },
-        { icon: BarChart3, label: 'Trade', path: '/trade' },
-        { icon: RefreshCw, label: 'Swap', path: '/quick-swap' },
-        { icon: Wallet, label: 'Wallet', path: '/wallet' },
-        { icon: User, label: 'Account', path: '/account' },
-    ];
+    useEffect(() => {
+        console.log("isDesktop:", isDesktop);
+    }, [isDesktop]);
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [favorites, setFavorites] = useState<string[]>([]);
+
+    const handleFavoriteToggle = (pair: string) => {
+        setFavorites(prevFavorites =>
+            prevFavorites.includes(pair)
+                ? prevFavorites.filter(fav => fav !== pair)
+                : [...prevFavorites, pair]
+        );
+    };
+
+    const filteredMarkets = Array.from({ length: 20 }).map((_, i) => ({
+        pair: `BTC/USDT-${i}`,
+        price: `4215${i}.00`,
+        change: `${i % 2 === 0 ? '+' : '-'}${i}.${i}0%`,
+        isPositiveChange: i % 2 === 0,
+    })).filter(market =>
+        market.pair.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
-        <>
-            {/* ============ MOBILE LAYOUT (< lg) ============ */}
-            {!isDesktop && (
-                <div className="flex flex-col h-[calc(100vh-64px)] bg-background">
-                    {/* Mobile Header with Symbol & Menu */}
-                    <div className="flex items-center justify-between p-3 border-b border-border bg-card">
-                        <div className="flex items-center gap-2">
-                            <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
-                                <SheetTrigger asChild>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                                        <Menu className="h-5 w-5" />
-                                    </Button>
-                                </SheetTrigger>
-                                <SheetContent side="left" className="w-64 p-0">
-                                    <div className="flex flex-col h-full">
-                                        {/* Sidebar Header */}
-                                        <div className="p-4 border-b border-border">
-                                            <Link to="/" className="text-xl font-bold text-primary">
-                                                IKH MYANGAN
-                                            </Link>
-                                        </div>
-                                        {/* Navigation Items */}
-                                        <nav className="flex-1 p-4 space-y-2">
-                                            {mobileNavItems.map((item) => (
-                                                <Link
-                                                    key={item.path}
-                                                    to={item.path}
-                                                    onClick={() => setSidebarOpen(false)}
-                                                    className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-foreground hover:bg-muted transition-colors"
-                                                >
-                                                    <item.icon className="h-5 w-5" />
-                                                    <span>{item.label}</span>
-                                                </Link>
-                                            ))}
-                                        </nav>
-                                    </div>
-                                </SheetContent>
-                            </Sheet>
-                            <span className="font-semibold text-foreground">{displaySymbol}</span>
-                        </div>
-                        <div className="text-right">
-                            <span className="text-lg font-bold text-success">$42,150.00</span>
-                            <span className="text-xs text-success ml-2">+2.34%</span>
-                        </div>
-                    </div>
+        <div className="flex flex-col h-[calc(100vh-64px)] w-full p-1 box-border overflow-hidden">
+            {/* Token Info and 24h Change Info (Header Section) */}
+            <div className="mb-1">
+                <TokenInfo
+                    symbol={displaySymbol}
+                    price={43658.36}
+                    priceChange={-0.22}
+                    volume24h={836880000}
+                    high24h={45426.45}
+                    low24h={43342.16}
+                    variant="default" // You might need to adjust the variant or component if it needs to look like a separate header bar
+                />
+            </div>
 
-                    {/* Mobile Main Content Tabs (Chart, Order Book, Order Form, Trades) */}
-                    <Tabs value={mobileContentTab} onValueChange={setMobileContentTab} className="flex-1 flex flex-col overflow-hidden">
-                        <TabsList className="grid grid-cols-4 rounded-none bg-card border-b border-border p-0 h-11 shrink-0">
-                            <TabsTrigger
-                                value="chart"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                            >
+            {/* Main Trading Grid */}
+            <div className="flex-1 grid gap-1"
+                style={{
+                    gridTemplateColumns: TRADE_DESKTOP_GRID_CONFIG.gridTemplateColumns,
+                    gridTemplateRows: TRADE_DESKTOP_GRID_CONFIG.gridTemplateRows,
+                    gridTemplateAreas: TRADE_DESKTOP_GRID_CONFIG.gridTemplateAreas,
+                }}>
+                <Card className="rounded-none border-border flex flex-col" style={{ gridArea: 'market' }}>
+                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex items-center">
+                        <Star className="h-3 w-3 mr-2 text-muted-foreground" /> Market Pair
+                    </div>
+                    <div className="p-2 flex-grow flex flex-col overflow-hidden">
+                        <Input
+                            type="text"
+                            placeholder="Search Pair"
+                            className="mb-2 h-8 text-xs"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        {/* Market List */}
+                        <div className="w-full flex-1 flex flex-col overflow-hidden">
+                            <div className="grid grid-cols-[20px_1fr_1fr_1fr] gap-1 text-[10px] text-muted-foreground border-b border-border pb-1 sticky top-0 bg-card">
+                                <span className="col-span-1 flex justify-center items-center"><Star className="h-3 w-3" /></span>
+                                <span className="col-span-1">Pair</span>
+                                <span className="col-span-1 text-right">Price</span>
+                                <span className="col-span-1 text-right">Change</span>
+                            </div>
+                            <div className="overflow-y-auto custom-scrollbar flex-1">
+                                {filteredMarkets.map((market, i) => {
+                                    const isFavorite = favorites.includes(market.pair);
+                                    return (
+                                        <div key={i} className="grid grid-cols-[20px_1fr_1fr_1fr] gap-1 py-1 hover:bg-muted/20 cursor-pointer">
+                                            <span className="col-span-1 flex justify-center items-center" onClick={() => handleFavoriteToggle(market.pair)}>
+                                                <Star className={cn('h-3 w-3', isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground')} />
+                                            </span>
+                                            <span className="col-span-1 text-foreground">{market.pair}</span>
+                                            <span className="col-span-1 text-right">{market.price}</span>
+                                            <span className={cn('col-span-1 text-right', market.isPositiveChange ? 'text-success' : 'text-destructive')}>
+                                                {market.change}
+                                            </span>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div> {/* Closing div for "p-2 flex-grow flex flex-col overflow-hidden" */}
+                </Card>
+
+                {/* Chart */}
+                <Card className="rounded-none border-border overflow-hidden flex flex-col" style={{ gridArea: 'chart' }}>
+                    <Tabs defaultValue="chart" className="flex-1 flex flex-col">
+                        <TabsList className="grid w-full grid-cols-3 rounded-none bg-transparent border-b border-border p-0 h-10">
+                            <TabsTrigger value="chart" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
                                 Chart
                             </TabsTrigger>
-                            <TabsTrigger
-                                value="orderbook"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                            >
-                                Order Book
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="trade-form"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                            >
-                                Trade
-                            </TabsTrigger>
-                            <TabsTrigger
-                                value="info"
-                                className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                            >
+                            <TabsTrigger value="info" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
                                 Info
                             </TabsTrigger>
+                            <TabsTrigger value="trading-data" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
+                                Trading Data
+                            </TabsTrigger>
                         </TabsList>
-
-                        <TabsContent value="chart" className="flex-1 flex flex-col overflow-hidden mt-0 p-1">
+                        <TabsContent value="chart" className="flex-1 overflow-hidden mt-0">
                             <PriceChart symbol={displaySymbol} />
                         </TabsContent>
-
-                        <TabsContent value="orderbook" className="flex-1 flex flex-col overflow-hidden mt-0 p-1">
-                            <OrderBook />
+                        <TabsContent value="info" className="flex-1 overflow-hidden mt-0 p-4 text-muted-foreground">
+                            Token Info content here.
                         </TabsContent>
-
-                        <TabsContent value="trade-form" className="flex-1 flex flex-col overflow-y-auto mt-0 p-1">
-                            <OrderForm symbol={displaySymbol} />
-                        </TabsContent>
-
-                        <TabsContent value="info" className="flex-1 overflow-y-auto mt-0 p-2 text-muted-foreground">
-                            Token Information will go here.
+                        <TabsContent value="trading-data" className="flex-1 overflow-hidden mt-0 p-4 text-muted-foreground">
+                            Trading Data will go here.
                         </TabsContent>
                     </Tabs>
+                </Card>
 
-                    {/* CTA Buttons for Buy/Sell at the bottom */}
-                    <div className="flex w-full sticky bottom-0 bg-background border-t border-border">
-                        <Button
-                            variant="buy"
-                            className="flex-1 h-12 rounded-none text-lg"
-                            onClick={() => setIsTransactionSheetOpen(true)}
-                        >
-                            Buy
-                        </Button>
-                        <Button
-                            variant="sell"
-                            className="flex-1 h-12 rounded-none text-lg"
-                            onClick={() => setIsTransactionSheetOpen(true)}
-                        >
-                            Sell
-                        </Button>
+                {/* Order History */}
+                <Card className="rounded-none border-border overflow-hidden flex flex-col" style={{ gridArea: 'orderhistory' }}>
+                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order History</div>
+                    <div className="flex-1 overflow-hidden relative">
+                        <OrderHistory />
                     </div>
+                </Card>
 
-                    {/* Transaction Sheet for Recent Trades and Order History */}
-                    <Sheet open={isTransactionSheetOpen} onOpenChange={setIsTransactionSheetOpen}>
-                        <SheetContent side="bottom" className="h-3/4 flex flex-col p-1"> {/* Changed p-0 to p-1 */}
-                            <SheetHeader className="p-3 border-b border-border flex flex-row items-center justify-between"> {/* Adjusted padding */}
-                                <SheetTitle>Recent Trades & Order History</SheetTitle>
-                                <SheetClose asChild>
-                                    <Button variant="ghost" size="icon">
-                                        <X className="h-5 w-5" />
-                                    </Button>
-                                </SheetClose>
-                            </SheetHeader>
-                            <Tabs defaultValue="recent-trades" className="flex-1 flex flex-col overflow-hidden">
-                                <TabsList className="grid grid-cols-2 rounded-none bg-card border-b border-border p-0 h-11 shrink-0">
-                                    <TabsTrigger
-                                        value="recent-trades"
-                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                                    >
-                                        Recent Trades
-                                    </TabsTrigger>
-                                    <TabsTrigger
-                                        value="order-history"
-                                        className="rounded-none h-full text-xs data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                                    >
-                                        Order History
-                                    </TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="recent-trades" className="flex-1 overflow-y-auto mt-0 p-1"> {/* Changed p-2 to p-1 */}
-                                    <RecentTrades />
-                                </TabsContent>
-                                <TabsContent value="order-history" className="flex-1 overflow-y-auto mt-0 p-1"> {/* Changed p-2 to p-1 */}
-                                    <OrderHistory />
-                                </TabsContent>
-                            </Tabs>
-                        </SheetContent>
-                    </Sheet>
-                </div>
-            )}
-
-            {/* ============ DESKTOP LAYOUT (>= lg) ============ */}
-            {isDesktop && ( // Use isDesktop to conditionally render desktop layout
-                <div className="h-[calc(100vh-64px)] w-full bg-background p-1 box-border overflow-hidden">
-                    {/* Main Grid Layout (3 columns) */}
-                    <div className="grid grid-cols-12 grid-rows-6 gap-1 h-full">
-
-                        {/* --- LEFT COLUMN: Order Book --- */}
-                        <Card className="col-span-2 row-span-6 rounded-none border-border overflow-hidden flex flex-col">
-                            <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Book</div>
-                            <div className="flex-1 overflow-hidden relative">
-                                <OrderBook />
-                            </div>
-                        </Card>
-
-                        {/* --- CENTER COLUMN: Token Info, Chart Tabs & Recent Trades --- */}
-                        <div className="col-span-7 row-span-6 flex flex-col gap-1">
-
-                            {/* Top: Chart Tabs & Token Info */}
-                            <Card className="flex-[4] rounded-none border-border overflow-hidden flex flex-col">
-                                {/* Chart, Info, Trading Data Tabs */}
-                                <Tabs defaultValue="chart" className="flex-1 flex flex-col">
-                                    <TabsList className="grid w-full grid-cols-3 rounded-none bg-transparent border-b border-border p-0 h-10">
-                                        <TabsTrigger value="chart" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                                            Chart
-                                        </TabsTrigger>
-                                        <TabsTrigger value="info" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                                            Info
-                                        </TabsTrigger>
-                                        <TabsTrigger value="trading-data" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                                            Trading Data
-                                        </TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="chart" className="flex-1 overflow-hidden mt-0">
-                                        <PriceChart symbol={displaySymbol} />
-                                    </TabsContent>
-                                    <TabsContent value="info" className="flex-1 overflow-hidden mt-0 p-4 text-muted-foreground">
-                                        Token Information will go here.
-                                    </TabsContent>
-                                    <TabsContent value="trading-data" className="flex-1 overflow-hidden mt-0 p-4 text-muted-foreground">
-                                        Trading Data will go here.
-                                    </TabsContent>
-                                </Tabs>
-                                {/* Token Info Placeholder */}
-                                <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex justify-between items-center">
-                                    <span>Token Info: {displaySymbol}</span>
-                                </div>
-                            </Card>
-
-                            {/* Bottom: Recent Trades */}
-                            <Card className="flex-[1] rounded-none border-border overflow-hidden flex flex-col min-h-0">
-                                <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Recent Trades</div>
-                                <div className="flex-1 overflow-y-auto">
-                                    <RecentTrades />
-                                </div>
-                            </Card>
-                        </div>
-
-                        {/* --- RIGHT COLUMN: Order Form & Order History --- */}
-                        <div className="col-span-3 row-span-6 flex flex-col gap-1">
-
-                            {/* Top: Order Form */}
-                            <Card className="rounded-none border-border overflow-hidden flex flex-col min-h-0">
-                                <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Form</div>
-                                <div className="flex-1 overflow-y-auto">
-                                    <OrderForm symbol={displaySymbol} />
-                                </div>
-                            </Card>
-
-                            {/* Bottom: Order History */}
-                            <Card className="flex-[1] rounded-none border-border overflow-hidden flex flex-col min-h-0">
-                                <Tabs defaultValue="order-history" className="flex-1 flex flex-col">
-                                    <TabsList className="grid w-full grid-cols-1 rounded-none bg-transparent border-b border-border p-0 h-10">
-                                        <TabsTrigger value="order-history" className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary">
-                                            Order History
-                                        </TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="order-history" className="flex-1 overflow-hidden mt-0">
-                                        <OrderHistory />
-                                    </TabsContent>
-                                </Tabs>
-                            </Card>
-                        </div>
-
+                {/* Order Book */}
+                <Card className="rounded-none border-border overflow-hidden flex flex-col min-h-0" style={{ gridArea: 'orderbook' }}>
+                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Book</div>
+                    <div className="flex-1 overflow-hidden relative">
+                        <OrderBook />
                     </div>
-                </div>
-            )}
-        </>
+                </Card>
+
+                {/* Order Form */}
+                <Card className="rounded-none border-border overflow-hidden flex flex-col min-h-0" style={{ gridArea: 'orderform' }}>
+                    <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase">Order Form</div>
+                    <div className="flex-1 overflow-y-auto">
+                        <OrderForm symbol={displaySymbol} />
+                    </div>
+                </Card>
+            </div>
+        </div>
     );
 };

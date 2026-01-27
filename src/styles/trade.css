@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Trade-specific styles */
 @layer base {
     :root {
@@ -12,9 +16,6 @@
         --color-yellow: #fcd535;
     }
 
-    body {
-        @apply antialiased text-color-text-primary bg-color-background-secondary;
-    }
 }
 
 @layer components {

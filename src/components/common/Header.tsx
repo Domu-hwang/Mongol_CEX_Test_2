@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Globe, ChevronDown, Sun, Moon, Menu } from 'lucide-react';
+import { Globe, ChevronDown, Sun, Moon, Menu, Plus } from 'lucide-react';
 import {
     Popover,
     PopoverContent,
@@ -25,6 +25,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
+    const navigate = useNavigate();
     const { isAuthenticated, isKycCompleted } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [language, setLanguage] = useState<Language>('en');
@@ -99,6 +100,15 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                         ))}
                     </PopoverContent>
                 </Popover>
+
+                {/* Deposit Button */}
+                <Button
+                    onClick={() => navigate('/wallet/deposit')}
+                    className="bg-[#F0B90B] hover:bg-[#F0B90B]/90 text-black font-semibold gap-1"
+                >
+                    <Plus className="h-4 w-4" />
+                    <span className="hidden sm:inline">Deposit</span>
+                </Button>
 
                 {isAuthenticated ? (
                     <Link to="/account" className="relative">

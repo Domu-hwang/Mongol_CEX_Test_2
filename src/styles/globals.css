@@ -38,6 +38,10 @@
     /* Custom Binance Green */
     --success-foreground: 215 12% 14.7%;
 
+    --warning: 38 92% 50%;
+    /* Custom warning orange/amber */
+    --warning-foreground: 0 0% 9%;
+
     --border: 0 0% 89.8%;
     /* Custom dark border */
     --input: 0 0% 89.8%;
@@ -72,10 +76,12 @@
     --muted-foreground: 0 0% 63.9%;
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --success: var(--success);
-    --success-foreground: var(--success-foreground);
+    --success: 156.4 85.5% 43.1%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;

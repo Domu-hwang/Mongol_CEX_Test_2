@@ -3,6 +3,9 @@ import * as React from 'react';
 import { ToastProps } from '@/components/ui/toast';
 
 const TOAST_LIMIT = 1;
+// NOTE: If you are using this component in a production environment, you should consider
+// increasing the TOAST_REMOVE_DELAY to a more appropriate value (e.g. 5000 for 5 seconds).
+// This is currently set to a very large number for development purposes to keep toasts visible.
 const TOAST_REMOVE_DELAY = 1000000;
 
 type ToastsMap = Map<
@@ -92,13 +95,11 @@ function dispatch(action: Action) {
     listeners.forEach((listener) => listener(memoryState));
 }
 
-type Toast = Omit<ToastProps, 'id'>;
-
 function generateId() {
     return Math.random().toString(36).substring(2, 9);
 }
 
-function createToast({ ...props }: Toast) {
+function createToast({ ...props }: Omit<ToastProps, 'id'>) {
     const id = generateId();
 
     const update = (props: ToastProps) =>
@@ -145,7 +146,7 @@ function useToast() {
 
     return {
         ...state,
-        toast: React.useCallback((props: Toast) => createToast(props), []),
+        toast: React.useCallback((props: Omit<ToastProps, 'id'>) => createToast(props), []),
     };
 }
 

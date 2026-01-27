@@ -5,25 +5,58 @@ export const createOrderFormSchema = (marketPrice: number) => {
         side: z.enum(["buy", "sell"], {
             required_error: "Trade side is required.",
         }),
-        orderType: z.enum(["limit", "market", "stop"], {
+        orderType: z.enum(["limit", "market", "stop-limit", "stop-market"], {
             required_error: "Order type is required.",
         }),
-        price: z.string().optional(), // Price is optional for market orders
-        amount: z.string().min(1, { message: "Amount is required." }),
+        price: z.string().optional(), // Price is optional for market orders and stop-market orders
+        amount: z.string().optional(),
+        total: z.string().optional(), // Total is used for market orders when input mode is 'total'
         triggerPrice: z.string().optional(), // Conditional based on orderType
+        marketInputMode: z.enum(["amount", "total"]).default("amount"), // New field for market orders
     }).superRefine((data, ctx) => {
-        if (data.orderType === "limit" || data.orderType === "stop") {
+        // Validation for amount/total based on marketInputMode
+        if (data.orderType === "market") {
+            if (data.marketInputMode === "amount") {
+                if (!data.amount || parseFloat(data.amount) <= 0) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Amount is required and must be positive for Market orders.",
+                        path: ["amount"],
+                    });
+                }
+            } else if (data.marketInputMode === "total") {
+                if (!data.total || parseFloat(data.total) <= 0) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Total is required and must be positive for Market orders.",
+                        path: ["total"],
+                    });
+                }
+            }
+        } else {
+            // Amount is required for Limit and Stop orders
+            if (!data.amount || parseFloat(data.amount) <= 0) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Amount is required and must be positive.",
+                    path: ["amount"],
+                });
+            }
+        }
+
+        // Price is required for Limit and Stop-Limit orders
+        if (data.orderType === "limit" || data.orderType === "stop-limit") {
             if (!data.price || parseFloat(data.price) <= 0) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: "Price is required and must be positive for Limit and Stop orders.",
+                    message: "Price is required and must be positive for Limit and Stop-Limit orders.",
                     path: ["price"],
                 });
             }
         }
 
-        if (data.orderType === "stop") {
-            const numericPrice = parseFloat(data.price as string) || 0;
+        // Trigger price is required for Stop-Limit and Stop-Market orders
+        if (data.orderType === "stop-limit" || data.orderType === "stop-market") {
             const numericTriggerPrice = parseFloat(data.triggerPrice as string) || 0;
 
             if (!data.triggerPrice || numericTriggerPrice <= 0) {
@@ -34,7 +67,7 @@ export const createOrderFormSchema = (marketPrice: number) => {
                 });
             }
 
-            // Conditional validation for Buy Stop Price
+            // Conditional validation for Buy Stop Trigger Price
             if (data.side === "buy" && numericTriggerPrice <= marketPrice) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
@@ -43,7 +76,7 @@ export const createOrderFormSchema = (marketPrice: number) => {
                 });
             }
 
-            // Conditional validation for Sell Stop Price
+            // Conditional validation for Sell Stop Trigger Price
             if (data.side === "sell" && numericTriggerPrice >= marketPrice) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
