@@ -7,12 +7,11 @@ import { OrderHistory } from "./OrderHistory";
 import { TokenInfo } from "./TokenInfo";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
-import { Star } from 'lucide-react';
 import { cn } from "@/lib/utils";
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery";
 import { TRADE_DESKTOP_GRID_CONFIG } from "@/constants/ui-policy";
-import React, { useEffect } from "react"; // Import useEffect for console.log
+import React, { useEffect } from "react";
 
 export const TradeView = () => {
     const { symbol } = useParams<{ symbol: string }>();
@@ -24,15 +23,6 @@ export const TradeView = () => {
     }, [isDesktop]);
 
     const [searchTerm, setSearchTerm] = useState('');
-    const [favorites, setFavorites] = useState<string[]>([]);
-
-    const handleFavoriteToggle = (pair: string) => {
-        setFavorites(prevFavorites =>
-            prevFavorites.includes(pair)
-                ? prevFavorites.filter(fav => fav !== pair)
-                : [...prevFavorites, pair]
-        );
-    };
 
     const filteredMarkets = Array.from({ length: 20 }).map((_, i) => ({
         pair: `BTC/USDT-${i}`,
@@ -45,15 +35,17 @@ export const TradeView = () => {
 
     return (
         <div className="flex flex-col h-[calc(100vh-64px)] w-full p-1 box-border overflow-hidden">
-            <TokenInfo
-                symbol={displaySymbol}
-                price={43658.36} // Placeholder, replace with actual data source
-                priceChange={-0.22} // Placeholder
-                volume24h={836880000} // Placeholder
-                high24h={45426.45} // Placeholder
-                low24h={43342.16} // Placeholder
-                variant="default"
-            />
+            {/* Token Info Bar */}
+            <div className="h-12 mb-1 bg-card border border-border">
+                <TokenInfo
+                    symbol={displaySymbol}
+                    price={43725.05}
+                    priceChange={-0.06}
+                    volume24h={836880000}
+                    high24h={45426.45}
+                    low24h={43342.15}
+                />
+            </div>
 
             {/* Main Trading Grid */}
             <div className="flex-1 grid gap-1"
@@ -65,7 +57,7 @@ export const TradeView = () => {
                 }}>
                 <Card className="rounded-none border-border flex flex-col" style={{ gridArea: 'market' }}>
                     <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase flex items-center">
-                        <Star className="h-3 w-3 mr-2 text-muted-foreground" /> Market Pair
+                        Market Pair
                     </div>
                     <div className="p-2 flex-grow flex flex-col overflow-hidden">
                         <Input
@@ -77,20 +69,15 @@ export const TradeView = () => {
                         />
                         {/* Market List */}
                         <div className="w-full flex-1 flex flex-col overflow-hidden">
-                            <div className="grid grid-cols-[20px_1fr_1fr_1fr] gap-1 text-[10px] text-muted-foreground border-b border-border pb-1 sticky top-0 bg-card">
-                                <span className="col-span-1 flex justify-center items-center"><Star className="h-3 w-3" /></span>
+                            <div className="grid grid-cols-[1fr_1fr_1fr] gap-1 text-[10px] text-muted-foreground border-b border-border pb-1 sticky top-0 bg-card">
                                 <span className="col-span-1">Pair</span>
                                 <span className="col-span-1 text-right">Price</span>
                                 <span className="col-span-1 text-right">Change</span>
                             </div>
                             <div className="overflow-y-auto custom-scrollbar flex-1">
                                 {filteredMarkets.map((market, i) => {
-                                    const isFavorite = favorites.includes(market.pair);
                                     return (
-                                        <div key={i} className="grid grid-cols-[20px_1fr_1fr_1fr] gap-1 py-1 hover:bg-muted/20 cursor-pointer">
-                                            <span className="col-span-1 flex justify-center items-center" onClick={() => handleFavoriteToggle(market.pair)}>
-                                                <Star className={cn('h-3 w-3', isFavorite ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground')} />
-                                            </span>
+                                        <div key={i} className="grid grid-cols-[1fr_1fr_1fr] gap-1 py-1 hover:bg-muted/20 cursor-pointer">
                                             <span className="col-span-1 text-foreground">{market.pair}</span>
                                             <span className="col-span-1 text-right">{market.price}</span>
                                             <span className={cn('col-span-1 text-right', market.isPositiveChange ? 'text-success' : 'text-destructive')}>

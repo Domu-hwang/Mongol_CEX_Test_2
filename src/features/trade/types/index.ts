@@ -12,7 +12,7 @@ export interface Market {
 }
 
 export type OrderSide = 'buy' | 'sell';
-export type OrderType = 'market' | 'limit' | 'stop-limit' | 'stop-market';
+export type OrderType = 'market' | 'limit' | 'stop';
 export type OrderStatus = 'new' | 'open' | 'partially_filled' | 'filled' | 'cancelled' | 'triggered';
 
 export interface Order {

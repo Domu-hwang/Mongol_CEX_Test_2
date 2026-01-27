@@ -1,4 +1,4 @@
-import Reatsct, { useState, memo, useCallback, useEffect } from "react";
+import React, { useState, memo, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,13 +9,13 @@ import { createOrderFormSchema, OrderFormValues } from "@/features/trade/schemas
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useOrderTotalEstimation } from "@/features/trade/hooks/useOrderTotalEstimation";
 import { tradeApi } from "@/features/trade/services/tradeApi";
-import { OrderType } from "@/features/trade/types"; // Import OrderType
+import { OrderType } from "@/features/trade/types";
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TradeActionButton } from "./shared/TradeActionButton";
 import { cn } from "@/lib/utils";
 
-type TabOrderType = "limit" | "market" | "stop-limit" | "stop-market";
+type TabOrderType = "limit" | "market" | "stop";
 
 interface OrderFormProps {
     symbol?: string;
@@ -35,9 +35,9 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
             orderType: "limit",
             price: "",
             amount: "",
-            total: "", // Initialize total field
+            total: "",
             triggerPrice: "",
-            marketInputMode: "amount", // Initialize marketInputMode
+            marketInputMode: "amount",
         },
         mode: "onChange",
     });
@@ -55,14 +55,21 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     const orderType = watch("orderType");
     const price = watch("price");
     const amount = watch("amount");
-    const totalInput = watch("total"); // Watch the new total input
-    const marketInputMode = watch("marketInputMode"); // Watch the new market input mode
+    const totalInput = watch("total");
+    const marketInputMode = watch("marketInputMode");
 
     const [activeTab, setActiveTab] = useState<TabOrderType>("limit");
 
     useEffect(() => {
-        setActiveTab(orderType as TabOrderType);
-    }, [orderType]);
+        if (activeTab === "limit" || activeTab === "market") {
+            setValue("orderType", activeTab as OrderType, { shouldValidate: true });
+            setValue("triggerPrice", "");
+            setValue("price", "");
+        } else if (activeTab === "stop") {
+            setValue("orderType", "stop-limit" as OrderType, { shouldValidate: true });
+            setValue("price", currentMarketPrice.toFixed(2), { shouldValidate: true });
+        }
+    }, [activeTab, setValue, currentMarketPrice]);
 
     const fetchData = useCallback(async () => {
         setIsLoading(true);
@@ -105,8 +112,8 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
 
     const total = useOrderTotalEstimation({
         orderType,
-        price: orderType === "market" && marketInputMode === "total" ? String(currentMarketPrice) : price, // Use market price for total estimation if market order and total input mode
-        amount: orderType === "market" && marketInputMode === "total" ? (parseFloat(totalInput) / currentMarketPrice).toFixed(2) : amount, // Convert total to amount for estimation
+        price: orderType === "market" && marketInputMode === "total" ? String(currentMarketPrice) : price,
+        amount: orderType === "market" && marketInputMode === "total" ? (parseFloat(totalInput) / currentMarketPrice).toFixed(2) : amount,
         marketPrice: currentMarketPrice,
     });
 
@@ -140,17 +147,28 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     const onSubmit = async (data: OrderFormValues) => {
         setIsLoading(true);
         try {
-            const orderTypeForApi = data.orderType;
+            let actualOrderType: OrderType;
+            if (activeTab === "stop") {
+                actualOrderType = data.orderType;
+            } else {
+                actualOrderType = activeTab;
+            }
+
             const orderPayload = {
                 symbol: symbol,
                 side: data.side,
-                type: orderTypeForApi,
-                amount: data.orderType === "market" && data.marketInputMode === "total"
-                    ? parseFloat(data.total as string) / currentMarketPrice // Convert total to amount for market orders
+                type: actualOrderType,
+                amount: (actualOrderType === "market" && data.marketInputMode === "total")
+                    ? parseFloat(data.total as string) / currentMarketPrice
                     : parseFloat(data.amount as string),
                 price: data.price ? parseFloat(data.price) : undefined,
                 triggerPrice: data.triggerPrice ? parseFloat(data.triggerPrice) : undefined,
+                limitPrice: (actualOrderType === "stop-limit" && data.price) ? parseFloat(data.price) : undefined,
             };
+
+            if (actualOrderType === "stop-limit") {
+                delete (orderPayload as any).price;
+            }
 
             const response = await tradeApi.placeOrder(orderPayload);
 
@@ -171,8 +189,14 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     };
 
     const handleOrderTypeChange = (tabValue: string) => {
-        setActiveTab(tabValue as TabOrderType); // Update the active tab state
-        setValue("orderType", tabValue as OrderType, { shouldValidate: true });
+        setActiveTab(tabValue as TabOrderType);
+        if (tabValue === "limit") {
+            setValue("orderType", "limit", { shouldValidate: true });
+        } else if (tabValue === "market") {
+            setValue("orderType", "market", { shouldValidate: true });
+        } else if (tabValue === "stop") {
+            setValue("orderType", "stop-limit", { shouldValidate: true });
+        }
     };
 
     const handleSideChange = (value: string) => {
@@ -205,7 +229,7 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
     return (
         <div className="relative h-full flex flex-col">
             <Tabs defaultValue="limit" className="w-full" value={activeTab} onValueChange={handleOrderTypeChange}>
-                <TabsList className="w-full grid grid-cols-4 rounded-none bg-transparent border-b border-border p-0 h-10">
+                <TabsList className="w-full grid grid-cols-3 rounded-none bg-transparent border-b border-border p-0 h-10">
                     <TabsTrigger
                         value="limit"
                         className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
@@ -219,16 +243,10 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                         Market
                     </TabsTrigger>
                     <TabsTrigger
-                        value="stop-limit"
+                        value="stop"
                         className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
                     >
-                        Stop Limit
-                    </TabsTrigger>
-                    <TabsTrigger
-                        value="stop-market"
-                        className="rounded-none h-full data-[state=active]:bg-transparent data-[state=active]:text-primary data-[state=active]:border-b-2 data-[state=active]:border-primary"
-                    >
-                        Stop Market
+                        Stop
                     </TabsTrigger>
                 </TabsList>
 
@@ -264,14 +282,21 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                 </Tabs>
 
                                 <div className="space-y-3 mt-2">
-                                    {(activeTab === "stop-limit" || activeTab === "stop-market") && (
+                                    {activeTab === "stop" && (
                                         <FormField
                                             control={control}
                                             name="orderType"
                                             render={({ field }) => (
                                                 <FormItem>
                                                     <FormLabel className="text-[10px] text-muted-foreground uppercase mb-1 block">Stop Order Type</FormLabel>
-                                                    <Select onValueChange={(value) => field.onChange(value as OrderType)} defaultValue={field.value}>
+                                                    <Select
+                                                        onValueChange={(value) => {
+                                                            field.onChange(value as OrderType);
+                                                            setValue("price", "");
+                                                            setValue("triggerPrice", "");
+                                                        }}
+                                                        defaultValue={field.value as string}
+                                                    >
                                                         <FormControl>
                                                             <SelectTrigger className="w-full text-left">
                                                                 <SelectValue placeholder="Select a stop order type" />
@@ -288,7 +313,7 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         />
                                     )}
 
-                                    {(orderType === "limit" || orderType === "stop-limit") && (
+                                    {(activeTab === "limit" || (activeTab === "stop" && orderType === "stop-limit")) && (
                                         <FormField
                                             control={control}
                                             name="price"
@@ -311,7 +336,7 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         />
                                     )}
 
-                                    {orderType === "market" && (
+                                    {(orderType === "market" || (activeTab === "stop" && orderType === "stop-market")) && (
                                         <FormItem className="relative">
                                             <FormLabel className="text-[10px] text-muted-foreground uppercase mb-1 block">Price ({symbol.split('-')[1]})</FormLabel>
                                             <FormControl>
@@ -327,7 +352,7 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         </FormItem>
                                     )}
 
-                                    {(orderType === "stop-limit" || orderType === "stop-market") && (
+                                    {activeTab === "stop" && (
                                         <FormField
                                             control={control}
                                             name="triggerPrice"
@@ -350,65 +375,63 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         />
                                     )}
 
-                                    {orderType === "market" ? (
-                                        <>
-                                            <FormField
-                                                control={control}
-                                                name="marketInputMode"
-                                                render={({ field }) => (
-                                                    <FormItem className="relative">
-                                                        <FormLabel className="w-full flex items-center text-[10px] text-muted-foreground uppercase font-bold mb-1 block">
-                                                            <Select onValueChange={(value) => {
-                                                                field.onChange(value);
-                                                                setValue("amount", "");
-                                                                setValue("total", "");
-                                                            }} defaultValue={field.value}>
-                                                                <FormControl>
-                                                                    <SelectTrigger className="w-fit inline-flex items-center justify-start h-6 px-0 border-none bg-transparent shadow-none hover:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-primary focus:ring-0 focus:ring-offset-0">
-                                                                        <div className="flex items-center gap-1 mr-5">
-                                                                            <span className="text-muted-foreground">
-                                                                                {field.value === "amount" ? "Amount" : "Total"}
-                                                                            </span>
-                                                                            <span className="text-muted-foreground font-normal">
-                                                                                ({field.value === "amount" ? symbol.split('-')[0] : symbol.split('-')[1]})
-                                                                            </span>
-                                                                        </div>
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent>
-                                                                    <SelectItem value="amount">Amount</SelectItem>
-                                                                    <SelectItem value="total">Total</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                        </FormLabel>
-                                                        <FormControl>
-                                                            {field.value === "amount" ? (
-                                                                <Input
-                                                                    type="number"
-                                                                    placeholder="0.00"
-                                                                    className="text-right"
-                                                                    {...form.register("amount")}
-                                                                    value={amount ?? ""}
-                                                                    onChange={(e) => setValue("amount", e.target.value, { shouldValidate: true })}
-                                                                />
-                                                            ) : (
-                                                                <Input
-                                                                    type="number"
-                                                                    placeholder="0.00"
-                                                                    className="text-right"
-                                                                    {...form.register("total")}
-                                                                    value={totalInput ?? ""}
-                                                                    onChange={(e) => setValue("total", e.target.value, { shouldValidate: true })}
-                                                                />
-                                                            )}
-                                                        </FormControl>
-                                                        <FormMessage className="text-[10px]">
-                                                            {field.value === "amount" ? errors.amount?.message : errors.total?.message}
-                                                        </FormMessage>
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </>
+                                    {activeTab === "market" ? (
+                                        <FormField
+                                            control={control}
+                                            name="marketInputMode"
+                                            render={({ field }) => (
+                                                <FormItem className="relative">
+                                                    <FormLabel className="w-full flex items-center text-[10px] text-muted-foreground uppercase font-bold mb-1 block">
+                                                        <Select onValueChange={(value) => {
+                                                            field.onChange(value);
+                                                            setValue("amount", "");
+                                                            setValue("total", "");
+                                                        }} defaultValue={field.value}>
+                                                            <FormControl>
+                                                                <SelectTrigger className="w-fit inline-flex items-center justify-start h-6 px-0 border-none bg-transparent shadow-none hover:bg-transparent data-[state=open]:bg-transparent data-[state=open]:text-primary focus:ring-0 focus:ring-offset-0">
+                                                                    <div className="flex items-center gap-1 mr-5">
+                                                                        <span className="text-muted-foreground">
+                                                                            {field.value === "amount" ? "Amount" : "Total"}
+                                                                        </span>
+                                                                        <span className="text-muted-foreground font-normal">
+                                                                            ({field.value === "amount" ? symbol.split('-')[0] : symbol.split('-')[1]})
+                                                                        </span>
+                                                                    </div>
+                                                                </SelectTrigger>
+                                                            </FormControl>
+                                                            <SelectContent>
+                                                                <SelectItem value="amount">Amount</SelectItem>
+                                                                <SelectItem value="total">Total</SelectItem>
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </FormLabel>
+                                                    <FormControl>
+                                                        {field.value === "amount" ? (
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="0.00"
+                                                                className="text-right"
+                                                                {...form.register("amount")}
+                                                                value={amount ?? ""}
+                                                                onChange={(e) => setValue("amount", e.target.value, { shouldValidate: true })}
+                                                            />
+                                                        ) : (
+                                                            <Input
+                                                                type="number"
+                                                                placeholder="0.00"
+                                                                className="text-right"
+                                                                {...form.register("total")}
+                                                                value={totalInput ?? ""}
+                                                                onChange={(e) => setValue("total", e.target.value, { shouldValidate: true })}
+                                                            />
+                                                        )}
+                                                    </FormControl>
+                                                    <FormMessage className="text-[10px]">
+                                                        {field.value === "amount" ? errors.amount?.message : errors.total?.message}
+                                                    </FormMessage>
+                                                </FormItem>
+                                            )}
+                                        />
                                     ) : (
                                         <FormField
                                             control={control}
@@ -479,7 +502,6 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         }
                                     </span>
                                 </div>
-                                {/* Max Buy */}
                                 <div className="flex justify-between text-[10px] text-muted-foreground">
                                     <span>Max Buy:</span>
                                     <span className="text-foreground tabular-nums">
@@ -489,7 +511,6 @@ const OrderForm = memo(({ symbol = "BTC-USDT" }: OrderFormProps) => {
                                         }
                                     </span>
                                 </div>
-                                {/* Est. Fee */}
                                 <div className="flex justify-between text-[10px] text-muted-foreground">
                                     <span>Est. Fee:</span>
                                     <span className="text-foreground tabular-nums">
