@@ -45,19 +45,6 @@ export const TradeView = () => {
 
     return (
         <div className="flex flex-col h-[calc(100vh-64px)] w-full p-1 box-border overflow-hidden">
-            {/* Token Info and 24h Change Info (Header Section) */}
-            <div className="mb-1">
-                <TokenInfo
-                    symbol={displaySymbol}
-                    price={43658.36}
-                    priceChange={-0.22}
-                    volume24h={836880000}
-                    high24h={45426.45}
-                    low24h={43342.16}
-                    variant="default" // You might need to adjust the variant or component if it needs to look like a separate header bar
-                />
-            </div>
-
             {/* Main Trading Grid */}
             <div className="flex-1 grid gap-1"
                 style={{
