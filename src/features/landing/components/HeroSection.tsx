@@ -31,9 +31,9 @@ const HeroSection: React.FC = () => {
 
                 {/* Main Copy */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white drop-shadow-lg">
-                    Trade Crypto with
+                    Raising the Standard for
                     <br />
-                    <span className="text-yellow-400">Speed, Security & Trust</span>
+                    <span className="text-yellow-400">Digital Finance in Mongolia</span>
                 </h1>
 
                 {/* Sub Copy */}
