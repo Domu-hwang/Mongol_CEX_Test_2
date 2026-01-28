@@ -879,12 +879,12 @@ const CTASection: React.FC = () => {
                                 Ready to trade?
                             </h2>
                             <p className="text-white/50 max-w-xl mx-auto mb-10 text-lg leading-relaxed">
-                                Join thousands of traders who trust IKH MYANGAN for secure and efficient digital asset trading. Create your free account in minutes.
+                                Join thousands of traders who trust IKH MYANGAN for secure and efficient digital asset trading. Create your account in minutes.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link to="/register">
                                     <Button className="bg-yellow-500 text-black hover:bg-yellow-400 px-10 py-6 text-base font-medium rounded-full">
-                                        Create Free Account
+                                        Create Account
                                     </Button>
                                 </Link>
                                 <Link to="/trade">

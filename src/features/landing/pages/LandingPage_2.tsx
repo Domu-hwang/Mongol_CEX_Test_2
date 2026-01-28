@@ -222,10 +222,10 @@ const HeroSection2: React.FC = () => {
             <BitcoinFireworks />
 
             <div className="w-full px-4 relative z-20">
-                <div className="max-w-5xl mx-auto text-center">
+                <div className="max-w-7xl mx-auto text-center">
                     <FadeInSection>
                         <p className="text-yellow-500 font-mono text-sm tracking-widest uppercase mb-6">
-                            Mongolia's Premier Digital Asset Exchange
+                            Next-Generation Digital Asset Exchange
                         </p>
                     </FadeInSection>
 
@@ -318,7 +318,7 @@ const ProductShowcase: React.FC = () => {
 
     return (
         <section className="py-32 bg-zinc-950">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 max-w-7xl">
                 <FadeInSection>
                     <div className="text-center mb-20">
                         <p className="text-yellow-500 font-mono text-sm tracking-widest uppercase mb-4">
@@ -561,7 +561,7 @@ const FeaturesGrid: React.FC = () => {
 
     return (
         <section className="py-24 bg-black border-y border-zinc-800">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 max-w-7xl">
                 <div className="grid md:grid-cols-4 gap-0">
                     {features.map((feature, index) => (
                         <FadeInSection key={index} delay={0.1 * index}>
@@ -593,7 +593,7 @@ const WhyChooseSection: React.FC = () => {
         {
             number: '02',
             title: 'LOCAL EXPERTISE',
-            description: 'Deep understanding of Mongolian market needs and regulatory requirements.',
+            description: 'Deep understanding of market needs and regulatory requirements.',
         },
         {
             number: '03',
@@ -604,7 +604,7 @@ const WhyChooseSection: React.FC = () => {
 
     return (
         <section className="py-32 bg-zinc-950">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 max-w-7xl">
                 <FadeInSection>
                     <div className="max-w-4xl mx-auto">
                         <p className="text-yellow-500 font-mono text-sm tracking-widest uppercase mb-4">
@@ -613,7 +613,7 @@ const WhyChooseSection: React.FC = () => {
                         <h2 className="text-4xl md:text-6xl font-black text-white tracking-tight mb-16">
                             BUILT FOR
                             <br />
-                            <span className="text-zinc-500">MONGOLIAN TRADERS</span>
+                            <span className="text-zinc-500">SERIOUS TRADERS</span>
                         </h2>
 
                         <div className="space-y-12">
@@ -640,7 +640,7 @@ const WhyChooseSection: React.FC = () => {
 const CTASection: React.FC = () => {
     return (
         <section className="py-32 bg-yellow-500">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 max-w-7xl">
                 <FadeInSection>
                     <div className="max-w-4xl mx-auto text-center">
                         <h2 className="text-5xl md:text-7xl font-black text-black tracking-tight mb-8">

@@ -45,7 +45,7 @@ const HeroSection: React.FC = () => {
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Link to="/register">
                         <Button variant="yellow" size="lg" className="px-8 py-6 text-lg font-semibold">
-                            Get Started Free
+                            Get Started
                         </Button>
                     </Link>
                     <Link to="/trade">
