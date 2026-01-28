@@ -1,9 +1,6 @@
 export const OrderHistory = () => {
     return (
         <div className="h-full flex flex-col">
-            <div className="p-2 border-b border-border font-semibold text-xs text-muted-foreground uppercase sticky top-0 bg-card z-10">
-                Order History
-            </div>
             <div className="flex-1 overflow-y-auto">
                 {/* Example Table */}
                 <table className="w-full text-left text-xs">

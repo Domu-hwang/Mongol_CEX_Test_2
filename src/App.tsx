@@ -21,6 +21,7 @@ function App() {
     return (
         <MainLayout>
             <Routes>
+                {/* Routes that use MainLayout */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
@@ -30,9 +31,11 @@ function App() {
                 <Route path="/my-assets" element={<WalletPage />} />
                 <Route path="/wallet/deposit" element={<DepositPage />} />
                 <Route path="/wallet/withdraw" element={<WithdrawPage />} />
-                <Route path="/account" element={<AccountPage />} /> {/* Add Account page route */}
-                <Route path="/onboarding/intro/*" element={<OnboardingFlow />} /> {/* Add Onboarding Flow route and allow nested routes */}
+                <Route path="/account" element={<AccountPage />} />
+                <Route path="/onboarding/intro/*" element={<OnboardingFlow />} />
                 <Route path="*" element={<NotFoundPage />} />
+                {/* Add a route for /wallet/transfer that renders WalletPage for now */}
+                <Route path="/wallet/transfer" element={<WalletPage />} />
             </Routes>
         </MainLayout>
     );

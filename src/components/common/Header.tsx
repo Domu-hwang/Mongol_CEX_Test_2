@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/features/auth/AuthContext';
 import { Avatar, AvatarFallback } from '../ui/avatar';
@@ -26,12 +26,14 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
     const navigate = useNavigate();
+    const location = useLocation();
     const { isAuthenticated, isKycCompleted } = useAuth();
     const { theme, toggleTheme } = useTheme();
     const [language, setLanguage] = useState<Language>('en');
     const [langOpen, setLangOpen] = useState(false);
 
     const currentLang = languages.find(l => l.code === language);
+    const isLandingPage = location.pathname === '/';
 
     return (
         <header className="bg-background text-foreground p-4 flex justify-between items-center shadow-md border-b border-border">
@@ -62,15 +64,17 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
 
             {/* Right-aligned buttons */}
             <div className="flex items-center space-x-4">
-                {/* Theme Toggle */}
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
-                    onClick={toggleTheme}
-                >
-                    {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-                </Button>
+                {/* Theme Toggle - Hidden on landing page */}
+                {!isLandingPage && (
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="flex items-center gap-1 text-muted-foreground hover:text-foreground"
+                        onClick={toggleTheme}
+                    >
+                        {theme === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                    </Button>
+                )}
 
                 {/* Language Selector */}
                 <Popover open={langOpen} onOpenChange={setLangOpen}>

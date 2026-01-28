@@ -5,6 +5,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import WithdrawForm from '../components/WithdrawForm';
 import TransactionHistory from '../components/TransactionHistory';
+import { useMemo } from 'react'; // Import useMemo for filtering
 
 // Placeholder for FAQ content
 const FAQSection: React.FC = () => (
@@ -53,7 +54,7 @@ const WithdrawPage: React.FC = () => {
                 {/* Recent Withdrawals Section - Bottom */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold">Recent Withdrawals</h2>
-                    <TransactionHistory />
+                    <TransactionHistory typeFilter="Withdraw" /> {/* Filter for withdrawal history */}
                 </div>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { OrderBook } from "./OrderBook";
 import { PriceChart } from "./PriceChart";
@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { useParams } from 'react-router-dom';
 import { useMediaQuery } from "@/features/shared/hooks/useMediaQuery";
 import { TRADE_DESKTOP_GRID_CONFIG } from "@/constants/ui-policy";
-import React, { useEffect } from "react";
+import { Star } from "lucide-react";
 
 export const TradeView = () => {
     const { symbol } = useParams<{ symbol: string }>();
@@ -77,7 +77,8 @@ export const TradeView = () => {
                             <div className="overflow-y-auto custom-scrollbar flex-1">
                                 {filteredMarkets.map((market, i) => {
                                     return (
-                                        <div key={i} className="grid grid-cols-[1fr_1fr_1fr] gap-1 py-1 hover:bg-muted/20 cursor-pointer">
+                                        <div key={i} className="grid grid-cols-[20px_1fr_1fr_1fr] gap-1 py-1 hover:bg-muted/20 cursor-pointer items-center">
+                                            <Star className="h-4 w-4 text-muted-foreground ml-1" />
                                             <span className="col-span-1 text-foreground">{market.pair}</span>
                                             <span className="col-span-1 text-right">{market.price}</span>
                                             <span className={cn('col-span-1 text-right', market.isPositiveChange ? 'text-success' : 'text-destructive')}>

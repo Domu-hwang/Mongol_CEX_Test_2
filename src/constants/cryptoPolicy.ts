@@ -8,7 +8,8 @@ export interface NetworkPolicy {
     description: string;
     warnings: string[];
     confirmations: number;
-    estimatedTime: string;
+    transactionTime: string;
+    confirmationsPerHour: number;
     isActive: boolean;
 }
 
@@ -43,7 +44,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'Deposits below minimum will not be credited.',
                 ],
                 confirmations: 12,
-                estimatedTime: '5-15 minutes',
+                transactionTime: '5-15 minutes',
+                confirmationsPerHour: 60,
                 isActive: true,
             },
             {
@@ -60,7 +62,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'ERC20 tokens sent here will be lost.',
                 ],
                 confirmations: 20,
-                estimatedTime: '1-3 minutes',
+                transactionTime: '1-3 minutes',
+                confirmationsPerHour: 300,
                 isActive: true,
             },
             {
@@ -77,7 +80,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'ERC20 tokens sent here will be lost.',
                 ],
                 confirmations: 15,
-                estimatedTime: '1-5 minutes',
+                transactionTime: '1-5 minutes',
+                confirmationsPerHour: 100,
                 isActive: true,
             },
         ],
@@ -102,7 +106,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'Other cryptocurrencies sent here will be lost.',
                 ],
                 confirmations: 3,
-                estimatedTime: '30-60 minutes',
+                transactionTime: '30-60 minutes',
+                confirmationsPerHour: 1,
                 isActive: true,
             },
         ],
@@ -127,7 +132,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'ERC20 tokens should use the USDT deposit option.',
                 ],
                 confirmations: 12,
-                estimatedTime: '5-15 minutes',
+                transactionTime: '5-15 minutes',
+                confirmationsPerHour: 60,
                 isActive: true,
             },
         ],
@@ -152,7 +158,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'Minimum deposit is 10 XRP.',
                 ],
                 confirmations: 1,
-                estimatedTime: '3-5 seconds',
+                transactionTime: '3-5 seconds',
+                confirmationsPerHour: 1500,
                 isActive: true,
             },
         ],
@@ -177,7 +184,8 @@ export const CRYPTO_POLICIES: CryptoPolicy = {
                     'Other cryptocurrencies sent here will be lost.',
                 ],
                 confirmations: 6,
-                estimatedTime: '15-30 minutes',
+                transactionTime: '15-30 minutes',
+                confirmationsPerHour: 20,
                 isActive: true,
             },
         ],

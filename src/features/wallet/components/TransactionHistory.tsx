@@ -23,7 +23,7 @@ interface TradeTransaction {
 type Transaction = WithdrawDepositTransaction | TradeTransaction;
 
 interface TransactionHistoryProps {
-    // We might pass a list of transactions here, or fetch them internally
+    typeFilter?: 'Deposit' | 'Withdraw' | 'Trade'; // New prop for filtering
 }
 
 // Utility function to format time
@@ -42,7 +42,7 @@ const formatTime = (date: Date): string => {
     }
 };
 
-const TransactionHistory: React.FC<TransactionHistoryProps> = () => {
+const TransactionHistory: React.FC<TransactionHistoryProps> = ({ typeFilter }) => {
     // Mock data for transactions
     const mockTransactions: Transaction[] = [
         { id: 'wd1', type: 'Withdraw', amount: 0.1, tokenSymbol: 'BTC', timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), address: '0xabc123def456' },
@@ -53,16 +53,20 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = () => {
         { id: 'dp2', type: 'Deposit', amount: 0.8, tokenSymbol: 'BTC', timestamp: new Date('2025-11-15T14:30:00Z'), address: '0xtuvwxys89012' },
     ];
 
+    const filteredTransactions = typeFilter
+        ? mockTransactions.filter(tx => tx.type === typeFilter || (typeFilter === 'Trade' && (tx.type === 'Buy' || tx.type === 'Sell')))
+        : mockTransactions;
+
     return (
         <div
             className="flex flex-col items-start p-5 gap-2.5 w-full bg-[#0D0D0D] border border-[#6F7178] rounded-xl"
             style={{ isolation: 'isolate' }}
         >
-            {mockTransactions.length === 0 ? (
+            {filteredTransactions.length === 0 ? (
                 <p className="text-center text-muted-foreground w-full py-4">No transaction history.</p>
             ) : (
                 <div className="flex flex-col gap-2.5 w-full">
-                    {mockTransactions
+                    {filteredTransactions
                         .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())
                         .map((tx) => {
                             const getIcon = () => {

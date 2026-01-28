@@ -50,16 +50,22 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
                             value={network.network}
                             disabled={!network.isActive}
                         >
-                            <div className="flex items-center gap-2">
-                                <span className="font-medium">{network.networkFullName}</span>
-                                <span className="text-xs text-muted-foreground">
-                                    ({network.network})
-                                </span>
-                                {!network.isActive && (
-                                    <span className="text-xs text-destructive ml-2">
-                                        Unavailable
+                            <div className="flex flex-col items-start gap-1">
+                                <div className="flex items-center gap-2">
+                                    <span className="font-medium">{network.networkFullName}</span>
+                                    <span className="text-xs text-muted-foreground">
+                                        ({network.network})
                                     </span>
-                                )}
+                                    {!network.isActive && (
+                                        <span className="text-xs text-destructive ml-2">
+                                            Unavailable
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                                    <span>Est. Time: {network.transactionTime}</span>
+                                    <span>Confirmations/hr: {network.confirmationsPerHour}</span>
+                                </div>
                             </div>
                         </SelectItem>
                     ))}
@@ -68,9 +74,10 @@ const NetworkSelector: React.FC<NetworkSelectorProps> = ({
 
             {/* Network details when selected */}
             {selectedNetworkDetails && (
-                <div className="text-xs text-muted-foreground flex items-center gap-4">
-                    <span>Fee: {selectedNetworkDetails.fee}</span>
-                    <span>Est. {selectedNetworkDetails.estimatedTime}</span>
+                <div className="text-xs text-muted-foreground space-y-1">
+                    <p>Fee: {selectedNetworkDetails.fee}</p>
+                    <p>Est. Transaction Time: {selectedNetworkDetails.transactionTime}</p>
+                    <p>Confirmations per hour: {selectedNetworkDetails.confirmationsPerHour}</p>
                 </div>
             )}
 

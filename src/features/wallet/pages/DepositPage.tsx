@@ -6,6 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import DepositForm from '../components/DepositForm';
 import TransactionHistory from '../components/TransactionHistory';
+import { useMemo } from 'react'; // Import useMemo for filtering
 
 // Placeholder for FAQ content
 const FAQSection: React.FC = () => (
@@ -54,7 +55,7 @@ const DepositPage: React.FC = () => {
                 {/* Recent Deposits Section - Bottom */}
                 <div className="space-y-4">
                     <h2 className="text-xl font-bold">Recent Deposits</h2>
-                    <TransactionHistory />
+                    <TransactionHistory typeFilter="Deposit" /> {/* Filter for deposit history */}
                 </div>
             </div>
         </div>

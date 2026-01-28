@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ChevronDown, Eye, EyeOff, Plus, ArrowUpRight } from 'lucide-react';
+import { ChevronDown, Eye, EyeOff, Plus, ArrowUpRight, ArrowRightLeft } from 'lucide-react'; // Added ArrowRightLeft icon
 import { useWallet } from '@/features/wallet/hooks/useWallet';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -68,6 +68,15 @@ const EstimatedBalanceSection: React.FC = () => {
                     >
                         <ArrowUpRight className="h-4 w-4" />
                         Withdraw
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate('/wallet/transfer')} // Added navigation for transfer
+                        className="gap-1"
+                    >
+                        <ArrowRightLeft className="h-4 w-4" /> {/* Added Transfer icon */}
+                        Transfer
                     </Button>
                 </div>
             </div>

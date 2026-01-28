@@ -1,20 +1,23 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: '/Mongol_CEX_Test_2/',
+    base: '/',
     plugins: [
         react({
             babel: {
                 plugins: ['@babel/plugin-syntax-decimal'],
             },
         }),
+        tsconfigPaths(),
     ],
     resolve: {
         alias: {
             // This assumes your project root is the current working directory where vite.config.ts resides
-            '@': '/src',
+            // This will be handled by vite-tsconfig-paths
+            // '@': './src',
         },
     },
     server: {

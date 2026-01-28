@@ -17,11 +17,11 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     const isFullWidthPage = location.pathname === '/' || location.pathname.startsWith('/trade');
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen overflow-x-hidden">
             <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
-            <div className="flex-1 flex flex-col" style={{ marginLeft: isSidebarOpen ? '16rem' : '0' }}>
+            <div className="flex-1 flex flex-col w-full" style={{ marginLeft: isSidebarOpen ? '16rem' : '0' }}>
                 <Header onMenuClick={toggleSidebar} />
-                <main className={`flex-1 ${isFullWidthPage ? 'p-0' : 'p-6'}`}>{children}</main>
+                <main className={`flex-1 ${isFullWidthPage ? 'p-0' : 'container mx-auto px-4 max-w-7xl py-6'}`}>{children}</main> {/* Adjusted padding to match footer's container */}
                 {!hideFooter && <Footer />} {/* Conditionally render Footer */}
             </div>
         </div>
