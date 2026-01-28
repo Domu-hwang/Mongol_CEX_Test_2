@@ -49,11 +49,11 @@ export const VerticalStepper: React.FC<VerticalStepperProps> = ({
                                 !isLast && 'min-h-[72px]'
                             )}
                         >
-                            {/* Connector Line - behind the circle */}
+                            {/* Connector Line - connecting between circles */}
                             {!isLast && (
                                 <div
                                     className={cn(
-                                        'absolute left-[19px] top-0 bottom-0 w-0.5 bg-border transition-colors duration-200',
+                                        'absolute left-[19px] top-10 bottom-0 w-0.5 bg-border transition-colors duration-200',
                                         isCompleted && 'bg-yellow-500'
                                     )}
                                 />
