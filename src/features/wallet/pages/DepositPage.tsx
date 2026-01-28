@@ -28,7 +28,7 @@ const DepositPage: React.FC = () => {
         <div className="min-h-screen bg-background text-foreground py-6 px-4 md:px-6 lg:px-8">
             <div className="max-w-6xl mx-auto space-y-8">
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-6">
+                <div className="flex items-center gap-4">
                     <Button
                         variant="ghost"
                         size="icon"
@@ -37,7 +37,24 @@ const DepositPage: React.FC = () => {
                     >
                         <ArrowLeft className="h-5 w-5" />
                     </Button>
-                    <h1 className="text-2xl font-bold">Add Fund</h1>
+                    <h1 className="text-2xl font-bold">Wallet</h1>
+                </div>
+
+                {/* Navigation Tabs */}
+                <div className="flex gap-1 p-1 bg-muted rounded-lg w-fit">
+                    <Button
+                        variant="ghost"
+                        className="bg-background text-foreground shadow-sm"
+                    >
+                        Add Fund
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        className="text-muted-foreground hover:text-foreground"
+                        onClick={() => navigate('/wallet/withdraw')}
+                    >
+                        Withdraw
+                    </Button>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

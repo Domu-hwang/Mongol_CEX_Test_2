@@ -59,17 +59,21 @@ const fragmentShader = `
     float mouseDist = length(uv - mouse);
     float mouseEffect = smoothstep(0.5, 0.0, mouseDist) * hoverIntensity;
 
-    // Distort x position based on mouse
-    float distortedX = uv.x + (uv.x - mouse.x) * mouseEffect * 0.15;
+    // Subtle autonomous sway movement
+    float swayX = sin(time * 0.15 + offset * 0.5) * 0.02;
+    float swayY = cos(time * 0.12 + offset * 0.3) * 0.015;
+
+    // Distort x position based on mouse + subtle sway
+    float distortedX = uv.x + (uv.x - mouse.x) * mouseEffect * 0.15 + swayX;
 
     // Create multiple vertical curtain bands
     float curtainFreq = 12.0 + offset * 2.0;
-    float curtainPhase = time * 0.2 + offset;
+    float curtainPhase = time * 0.08 + offset; // Slower phase movement
 
-    // Wavy vertical bands - like hanging curtains
-    float wave = sin(distortedX * curtainFreq + curtainPhase) * 0.5 + 0.5;
-    wave += sin(distortedX * curtainFreq * 0.5 - time * 0.15 + offset * 1.5) * 0.3;
-    wave += sin(distortedX * curtainFreq * 2.0 + time * 0.3 + offset * 0.7) * 0.2;
+    // Wavy vertical bands - like hanging curtains with subtle movement
+    float wave = sin(distortedX * curtainFreq + curtainPhase + swayY * 5.0) * 0.5 + 0.5;
+    wave += sin(distortedX * curtainFreq * 0.5 - time * 0.08 + offset * 1.5) * 0.3;
+    wave += sin(distortedX * curtainFreq * 2.0 + time * 0.12 + offset * 0.7 + swayX * 3.0) * 0.2;
     wave = wave / 1.5;
 
     // Vertical streaks - strong curtain lines
@@ -130,8 +134,12 @@ const fragmentShader = `
     // Combine
     float p = core * 1.2 + glow * 0.5;
 
-    // Subtle twinkle
-    float twinkle = sin(time * 0.6 + center.x * 50.0) * 0.15 + 0.85;
+    // Enhanced slow twinkle - multiple waves for organic feel
+    float twinkle1 = sin(time * 0.3 + center.x * 30.0 + center.y * 20.0) * 0.2;
+    float twinkle2 = sin(time * 0.2 + center.x * 15.0 - center.y * 25.0) * 0.15;
+    float twinkle3 = cos(time * 0.15 + center.x * 40.0) * 0.1;
+    float twinkle = 0.75 + twinkle1 + twinkle2 + twinkle3;
+    twinkle = clamp(twinkle, 0.4, 1.2);
 
     return p * twinkle;
   }

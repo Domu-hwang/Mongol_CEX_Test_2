@@ -4,6 +4,8 @@ import MainLayout from './layouts/MainLayout';
 
 // Feature-based page imports
 import LandingPage from '@/features/landing/pages/LandingPage';
+import LandingPage_2 from '@/features/landing/pages/LandingPage_2';
+import LandingPage_3 from '@/features/landing/pages/LandingPage_3';
 import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import TradePage from '@/features/trade/pages/TradePage';
@@ -23,6 +25,8 @@ function App() {
             <Routes>
                 {/* Routes that use MainLayout */}
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/landing-2" element={<LandingPage_2 />} />
+                <Route path="/landing-3" element={<LandingPage_3 />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/trade" element={<TradePage />} />

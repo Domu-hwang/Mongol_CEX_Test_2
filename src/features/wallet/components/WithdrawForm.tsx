@@ -142,7 +142,10 @@ const WithdrawForm: React.FC<WithdrawFormProps> = ({ onWithdraw, isLoading = fal
             <div className="flex">
                 {/* Stepper (Left part inside card) */}
                 <div className="w-48 p-6 border-r border-border shrink-0">
-                    <VerticalStepper currentStep={currentStep} steps={steps} />
+                    <VerticalStepper currentStep={currentStep} steps={steps.map((step, idx) => ({
+                        ...step,
+                        inactive: idx > currentStep,
+                    }))} />
                 </div>
 
                 {/* Form Content (Right part inside card) */}

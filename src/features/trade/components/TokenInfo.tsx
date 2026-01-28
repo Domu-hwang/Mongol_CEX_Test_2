@@ -6,9 +6,13 @@ interface TokenInfoProps {
   symbol: string;
   price: number;
   priceChange: number;
+  priceChangeAmount?: number;
   volume24h: number;
+  volume24hQuote?: number;
   high24h: number;
   low24h: number;
+  networks?: string;
+  tokenTags?: string[];
   onSymbolClick?: () => void;
   variant?: "default" | "compact";
 }
@@ -17,9 +21,13 @@ export const TokenInfo = ({
   symbol,
   price,
   priceChange,
+  priceChangeAmount,
   volume24h,
+  volume24hQuote,
   high24h,
   low24h,
+  networks = "BTC (5)",
+  tokenTags = ["POW", "Payments", "Vol", "Hot", "Price Protection"],
   onSymbolClick,
   variant = "default",
 }: TokenInfoProps) => {
@@ -28,26 +36,29 @@ export const TokenInfo = ({
   const baseSymbol = symbol.split("-")[0] || symbol;
   const quoteSymbol = symbol.split("-")[1] || "USDT";
 
-  const formatPrice = (value: number) => {
+  const formatNumber = (value: number, decimals: number = 2) => {
     return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+  };
+
+  const formatVolume = (value: number) => {
+    return new Intl.NumberFormat("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(value);
   };
 
-  const formatVolume = (value: number) => {
-    if (value >= 1_000_000_000) {
-      return `$${(value / 1_000_000_000).toFixed(2)}B`;
-    }
-    if (value >= 1_000_000) {
-      return `$${(value / 1_000_000).toFixed(2)}M`;
-    }
-    if (value >= 1_000) {
-      return `$${(value / 1_000).toFixed(2)}K`;
-    }
-    return `$${value.toFixed(2)}`;
+  const getTagColor = (tag: string) => {
+    const colors: Record<string, string> = {
+      POW: "bg-[#F0B90B] text-black",
+      Payments: "bg-[#1E88E5] text-white",
+      Vol: "bg-[#8B5CF6] text-white",
+      Hot: "bg-[#F23645] text-white",
+      "Price Protection": "bg-[#00C853] text-white",
+    };
+    return colors[tag] || "bg-[#2B3139] text-[#C1C7D0]";
   };
 
   if (isCompact) {
@@ -91,111 +102,113 @@ export const TokenInfo = ({
     );
   }
 
+  const actualPriceChange = priceChangeAmount ?? (price * priceChange / 100);
+  const actualVolQuote = volume24hQuote ?? (volume24h * price);
+
   return (
-    <div className="flex items-center w-full h-[56.5px] bg-[#0B0E11] rounded-lg py-1 px-3">
-      {/* Left section: Favorite, Symbol, OG Price */}
-      <div className="flex items-center gap-3 flex-grow">
-        <button
-          className="w-7 h-7 flex items-center justify-center rounded-full border border-[#333B47] text-[#4F5867] hover:text-foreground hover:border-foreground transition-colors"
-          aria-label="Toggle favorite"
-        >
-          <Star className="w-4 h-4" />
-        </button>
+    <div className="flex items-center w-full h-[56px] bg-[#0B0E11] py-2 px-4 gap-6">
+      {/* Favorite Star */}
+      <button
+        className="text-[#4F5867] hover:text-[#F0B90B] transition-colors flex-shrink-0"
+        aria-label="Toggle favorite"
+      >
+        <Star className="w-4 h-4" />
+      </button>
 
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full border border-[#333B47] overflow-hidden bg-[#0F1117] flex items-center justify-center">
-            <img
-              src="https://cryptologos.cc/logos/tether-usdt-logo.png?v=026"
-              alt={`${baseSymbol} logo`}
-              className="w-full h-full object-contain"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <div className="flex items-center gap-1">
-              <span className="font-sans text-base font-semibold leading-5 text-[#EAECEF] truncate">
-                {baseSymbol}/{quoteSymbol}
-              </span>
-              <span className="text-[10px] px-1 py-0.5 rounded bg-[#2B3139] text-[#C1C7D0] uppercase">
-                Spot
-              </span>
-            </div>
-            <span className="font-sans text-[11px] leading-4 text-[#707A8A]">
-              OG Price
-            </span>
-          </div>
+      {/* Token Icon and Symbol */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="w-7 h-7 rounded-full overflow-hidden bg-[#F7931A] flex items-center justify-center">
+          <img
+            src="https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=026"
+            alt={`${baseSymbol} logo`}
+            className="w-full h-full object-contain"
+          />
         </div>
-      </div>
 
-      {/* Middle section: Current Price and Change */}
-      <div className="flex flex-col min-w-[96px] w-[25%] flex-shrink-0">
-        <div className="flex items-center gap-1">
-          <span
-            className={cn(
-              "font-sans text-xl font-semibold leading-6",
-              isPositive ? "text-success" : "text-destructive"
-            )}
-          >
-            {price.toFixed(3)}
+        <div className="flex flex-col">
+          <span className="font-sans text-sm font-semibold text-[#EAECEF]">
+            {baseSymbol}/{quoteSymbol}
           </span>
-          <div
-            className={cn(
-              "flex items-center gap-1 px-1 py-0.5 rounded",
-              isPositive ? "text-success bg-success/10" : "text-destructive bg-destructive/10"
-            )}
+          <button
+            onClick={onSymbolClick}
+            className="font-sans text-[11px] text-[#707A8A] hover:text-[#F0B90B] transition-colors text-left"
           >
-            {isPositive ? (
-              <TrendingUp className="w-3 h-3" />
-            ) : (
-              <TrendingDown className="w-3 h-3" />
-            )}
-            <span className="text-[11px] leading-4">
-              {isPositive ? "+" : ""}
-              {priceChange.toFixed(2)}%
-            </span>
-          </div>
-        </div>
-        <div className="flex items-center gap-1 text-xs text-[#EAECEF]">
-          <span>$</span>
-          <span>{price.toFixed(8)}</span>
+            Bitcoin Price <ChevronDown className="w-3 h-3 inline" />
+          </button>
         </div>
       </div>
 
-      {/* Right section: 24h stats */}
-      <div className="flex items-center gap-4 text-xs flex-nowrap flex-shrink-0 justify-end">
-        <div className="flex flex-col items-end min-w-[96px]">
-          <span className="text-[#707A8A]">24h Chg</span>
-          <div className="flex items-center gap-2">
-            <span className={cn(isPositive ? "text-success" : "text-destructive")}>
-              {priceChange > 0
-                ? `+${priceChange.toFixed(3)}`
-                : priceChange.toFixed(3)}
+      {/* Current Price */}
+      <div className="flex flex-col flex-shrink-0">
+        <span
+          className={cn(
+            "font-sans text-xl font-semibold",
+            isPositive ? "text-[#0ECB81]" : "text-[#F6465D]"
+          )}
+        >
+          {formatNumber(price, 2)}
+        </span>
+        <span className="font-sans text-[11px] text-[#707A8A]">
+          ${formatNumber(price, 2)}
+        </span>
+      </div>
+
+      {/* 24h Chg */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">24h Chg</span>
+        <span className={cn(
+          "font-sans text-xs",
+          isPositive ? "text-[#0ECB81]" : "text-[#F6465D]"
+        )}>
+          {formatNumber(actualPriceChange, 2)} {isPositive ? "+" : ""}{priceChange.toFixed(2)}%
+        </span>
+      </div>
+
+      {/* 24h High */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">24h High</span>
+        <span className="font-sans text-xs text-[#EAECEF]">{formatNumber(high24h, 2)}</span>
+      </div>
+
+      {/* 24h Low */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">24h Low</span>
+        <span className="font-sans text-xs text-[#EAECEF]">{formatNumber(low24h, 2)}</span>
+      </div>
+
+      {/* 24h Vol (Base) */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">24h Vol({baseSymbol})</span>
+        <span className="font-sans text-xs text-[#EAECEF]">{formatVolume(volume24h)}</span>
+      </div>
+
+      {/* 24h Vol (Quote) */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">24h Vol({quoteSymbol})</span>
+        <span className="font-sans text-xs text-[#EAECEF]">{formatVolume(actualVolQuote)}</span>
+      </div>
+
+      {/* Networks */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">Networks</span>
+        <span className="font-sans text-xs text-[#EAECEF]">{networks}</span>
+      </div>
+
+      {/* Token Tags */}
+      <div className="flex flex-col flex-shrink-0">
+        <span className="font-sans text-[11px] text-[#707A8A]">Token Tags</span>
+        <div className="flex items-center gap-1 flex-wrap">
+          {tokenTags.map((tag, index) => (
+            <span
+              key={index}
+              className={cn(
+                "px-1.5 py-0.5 rounded text-[10px] font-medium",
+                getTagColor(tag)
+              )}
+            >
+              {tag}
             </span>
-            <span className={cn(isPositive ? "text-success" : "text-destructive")}>
-              {isPositive ? "+" : ""}
-              {priceChange.toFixed(2)}%
-            </span>
-          </div>
-        </div>
-
-        <div className="flex flex-col items-end min-w-[88px]">
-          <span className="text-[#707A8A]">24h High</span>
-          <span className="text-[#EAECEF]">{formatPrice(high24h)}</span>
-        </div>
-
-        <div className="flex flex-col items-end min-w-[88px]">
-          <span className="text-[#707A8A]">24h Low</span>
-          <span className="text-[#EAECEF]">{formatPrice(low24h)}</span>
-        </div>
-
-        <div className="flex flex-col items-end min-w-[110px]">
-          <span className="text-[#707A8A]">24h Vol({baseSymbol})</span>
-          <span className="text-[#EAECEF]">{formatVolume(volume24h)}</span>
-        </div>
-
-        <div className="flex flex-col items-end min-w-[118px]">
-          <span className="text-[#707A8A]">24h Vol({quoteSymbol})</span>
-          <span className="text-[#EAECEF]">{formatVolume(volume24h)}</span>
+          ))}
         </div>
       </div>
     </div>

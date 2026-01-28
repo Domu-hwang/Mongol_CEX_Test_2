@@ -24,40 +24,40 @@ const HeroSection: React.FC = () => {
             {/* Hero Content */}
             <section className="relative min-h-[850px] flex items-center justify-center" style={{ zIndex: 1 }}>
                 <div className="text-center px-4 max-w-4xl mx-auto" style={{ marginTop: '-240px' }}>
-                {/* Beta Status Badge */}
+                {/* Status Badge */}
                 <Badge className="mb-6 bg-yellow-500/20 text-yellow-400 border-yellow-500/50 px-4 py-1 backdrop-blur-sm">
-                    Beta Test Now Live
+                    Mongolia's Premier Digital Asset Exchange
                 </Badge>
 
                 {/* Main Copy */}
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 text-white drop-shadow-lg">
-                    Raising the Standard for
+                    Trade Crypto with
                     <br />
-                    <span className="text-yellow-400">Digital Finance in Mongolia</span>
+                    <span className="text-yellow-400">Speed, Security & Trust</span>
                 </h1>
 
                 {/* Sub Copy */}
                 <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-                    Experience a secure, regulation-friendly trading environment built with proven global standards. Be the first to access the future of crypto trading.
+                    Buy, sell, and trade Bitcoin, Ethereum, and 50+ digital assets with industry-leading security. Low fees, instant deposits, and 24/7 support.
                 </p>
 
                 {/* CTA Button */}
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
-                    <Link to="/trade">
+                    <Link to="/register">
                         <Button variant="yellow" size="lg" className="px-8 py-6 text-lg font-semibold">
-                            Trade now
+                            Get Started Free
                         </Button>
                     </Link>
-                    <a href="#features">
-                        <Button variant="outline" size="lg" className="px-8 py-6 text-lg border-white/30 text-white hover:bg-white/10">
-                            Learn More
+                    <Link to="/trade">
+                        <Button size="lg" className="px-8 py-6 text-lg bg-white text-black hover:bg-white/90 font-semibold">
+                            View Markets
                         </Button>
-                    </a>
+                    </Link>
                 </div>
 
-                    {/* Emphasis Text */}
+                    {/* Trust Indicators */}
                     <p className="mt-8 text-sm text-gray-400">
-                        Product-level beta testing is currently underway.
+                        Trusted by 10,000+ traders  |  $50M+ daily volume  |  Bank-grade security
                     </p>
                 </div>
             </section>

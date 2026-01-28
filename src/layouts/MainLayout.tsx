@@ -14,7 +14,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
     const hideFooter = location.pathname === '/trade' || location.pathname === '/quick-swap';
 
-    const isFullWidthPage = location.pathname === '/' || location.pathname.startsWith('/trade');
+    const isFullWidthPage = location.pathname === '/' || location.pathname.startsWith('/trade') || location.pathname.startsWith('/landing');
 
     return (
         <div className="flex min-h-screen overflow-x-hidden">
