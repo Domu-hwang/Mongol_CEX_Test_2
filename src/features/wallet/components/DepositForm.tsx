@@ -28,7 +28,7 @@ import { copyToClipboard } from '@/utils/clipboard';
 import { VerticalStepper } from '@/components/ui/VerticalStepper'; // Import VerticalStepper
 
 interface DepositFormProps {
-    isLoading?: boolean;
+    isLoading?: boolean; 
 }
 
 const DepositForm: React.FC<DepositFormProps> = ({ isLoading = false }) => {
