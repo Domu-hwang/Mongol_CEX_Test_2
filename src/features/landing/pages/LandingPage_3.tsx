@@ -347,13 +347,13 @@ const HeroAnimation: React.FC = () => {
     return (
         <div
             ref={containerRef}
-            className="absolute inset-0 w-full h-full"
-            style={{ zIndex: 0, left: 0, right: 0 }}
+            className="absolute inset-0 w-full h-full m-0 p-0"
+            style={{ zIndex: 0, left: 0, right: 0, margin: 0, padding: 0 }}
         >
             <Canvas
                 camera={{ position: [0, 0, 8], fov: 110 }}
                 gl={{ antialias: true, alpha: true }}
-                style={{ background: 'transparent' }}
+                style={{ background: 'transparent', margin: 0, padding: 0 }}
             >
                 <ambientLight intensity={0.5} />
                 <group>
@@ -448,7 +448,7 @@ const AnimatedSection: React.FC<AnimatedSectionProps> = ({ children, className =
 // ============================================
 const HeroSection: React.FC = () => {
     return (
-        <section className="min-h-screen flex items-center justify-center relative px-6">
+        <section className="min-h-screen flex items-center justify-center relative px-6 overflow-visible">
             <HeroAnimation />
 
             <div className="max-w-5xl mx-auto text-center relative z-10">
@@ -616,7 +616,7 @@ const ProductShowcase: React.FC = () => {
                             {/* Image */}
                             <div className="rounded-xl overflow-hidden">
                                 <img
-                                    src={products[activeProduct].image}
+                                    src={`${import.meta.env.BASE_URL}${products[activeProduct].image.replace(/^\//, '')}`}
                                     alt={products[activeProduct].title}
                                     className="w-full h-auto rounded-xl transition-all duration-500"
                                 />
@@ -941,7 +941,7 @@ const Footer: React.FC = () => {
 // ============================================
 const LandingPage_3: React.FC = () => {
     return (
-        <div className="bg-black min-h-screen">
+        <div className="min-h-screen">
             <HeroSection />
             <StatsSection />
             <ProductShowcase />

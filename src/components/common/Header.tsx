@@ -59,6 +59,9 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
                     <Link to="/my-assets" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
                         Wallet
                     </Link>
+                    <Link to="/p2p/market" className="text-sm font-medium text-muted-foreground transition-colors hover:text-primary">
+                        P2P
+                    </Link>
                 </nav>
             </div>
 

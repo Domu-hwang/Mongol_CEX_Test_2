@@ -15,6 +15,9 @@ import DepositPage from '@/features/wallet/pages/DepositPage';
 import WithdrawPage from '@/features/wallet/pages/WithdrawPage';
 import OnboardingFlow from '@/features/kyc/components/OnboardingFlow';
 import AccountPage from '@/features/account/pages/AccountPage'; // Import AccountPage
+import P2pMarketPage from '@/features/p2p/pages/P2pMarketPage';
+import P2pMerchantApplicationPage from '@/features/p2p/pages/P2pMerchantApplicationPage';
+import P2pTradeDetailPage from '@/features/p2p/pages/P2pTradeDetailPage';
 
 // Shared pages
 import NotFoundPage from '@/pages/NotFoundPage';
@@ -37,6 +40,11 @@ function App() {
                 <Route path="/wallet/withdraw" element={<WithdrawPage />} />
                 <Route path="/account" element={<AccountPage />} />
                 <Route path="/onboarding/intro/*" element={<OnboardingFlow />} />
+                {/* P2P Routes */}
+                <Route path="/p2p" element={<P2pMarketPage />} />
+                <Route path="/p2p/market" element={<P2pMarketPage />} />
+                <Route path="/p2p/merchant/apply" element={<P2pMerchantApplicationPage />} />
+                <Route path="/p2p/trade/:tradeId" element={<P2pTradeDetailPage />} />
                 <Route path="*" element={<NotFoundPage />} />
                 {/* Add a route for /wallet/transfer that renders WalletPage for now */}
                 <Route path="/wallet/transfer" element={<WalletPage />} />

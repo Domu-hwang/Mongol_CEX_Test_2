@@ -4,6 +4,7 @@ import AssetList from '../components/AssetList';
 import { useNavigate } from 'react-router-dom';
 import TransactionHistory from '../components/TransactionHistory';
 import EstimatedBalanceSection from '@/features/account/components/EstimatedBalanceSection';
+import P2pWalletAccount from '../components/P2pWalletAccount'; // Import P2pWalletAccount
 
 const WalletPage: React.FC = () => {
     const navigate = useNavigate();
@@ -16,6 +17,9 @@ const WalletPage: React.FC = () => {
         { id: '4', name: 'Litecoin', symbol: 'LTC', balance: 10, usdValue: 70 * 10, price: 70, change24h: 0.02, logoUrl: 'https://cryptologos.cc/logos/litecoin-ltc-logo.png?v=026' },
     ];
 
+    // Mock P2P account balance
+    const mockP2PBalance = 1500; // Example USDT balance in P2P account
+
     const supportedCurrencies = [
         { name: 'USD', symbol: '$', conversionRate: 1 },
     ];
@@ -24,6 +28,11 @@ const WalletPage: React.FC = () => {
 
     const handleTradeClick = (symbol: string) => {
         navigate(`/trade/${symbol}`);
+    };
+
+    const handleP2PTransferClick = () => {
+        // TODO: Implement P2P transfer logic or navigate to a transfer page
+        console.log('P2P Transfer clicked');
     };
 
     return (
@@ -35,11 +44,16 @@ const WalletPage: React.FC = () => {
             <Tabs defaultValue="portfolio" className="space-y-4">
                 <TabsList className="bg-muted">
                     <TabsTrigger value="portfolio" className="text-lg px-6 py-2">My Portfolio</TabsTrigger>
+                    <TabsTrigger value="p2p-account" className="text-lg px-6 py-2">P2P Account</TabsTrigger>
                     <TabsTrigger value="history" className="text-lg px-6 py-2">History</TabsTrigger>
                 </TabsList>
                 <TabsContent value="portfolio" className="space-y-4">
                     <h2 className="text-2xl font-bold text-foreground">My assets</h2>
                     <AssetList assets={mockAssets} selectedCurrency={selectedCurrency} onTradeClick={handleTradeClick} />
+                </TabsContent>
+                <TabsContent value="p2p-account" className="space-y-4">
+                    <h2 className="text-2xl font-bold text-foreground">P2P Account</h2>
+                    <P2pWalletAccount balance={mockP2PBalance} currency="USDT" onTransferClick={handleP2PTransferClick} />
                 </TabsContent>
                 <TabsContent value="history" className="space-y-4">
                     <h2 className="text-2xl font-bold text-foreground">History</h2>

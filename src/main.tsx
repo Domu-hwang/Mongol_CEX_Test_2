@@ -10,7 +10,7 @@ import { Toaster } from './components/ui/toaster';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
     <React.StrictMode>
-        <BrowserRouter basename="/">
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
             <ThemeProvider>
                 <AuthProvider>
                     <App />

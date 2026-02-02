@@ -16,6 +16,9 @@ import {
     ChevronRight
 } from 'lucide-react';
 
+// Bitcoin image path with base URL
+const BITCOIN_IMAGE_URL = `${import.meta.env.BASE_URL}images/Bitcoin.svg`;
+
 // Bitcoin Fireworks Particle System
 interface Particle {
     x: number;
@@ -39,9 +42,13 @@ const BitcoinFireworks: React.FC = () => {
     useEffect(() => {
         // Load Bitcoin image
         const img = new Image();
-        img.src = '/images/Bitcoin.svg';
+        img.crossOrigin = 'anonymous';
+        img.src = BITCOIN_IMAGE_URL;
         img.onload = () => {
             imageRef.current = img;
+        };
+        img.onerror = (e) => {
+            console.error('Failed to load Bitcoin image:', e);
         };
 
         const canvas = canvasRef.current;
@@ -203,7 +210,7 @@ const FloatingBitcoin: React.FC = () => {
             }}
         >
             <img
-                src="/images/Bitcoin.svg"
+                src={BITCOIN_IMAGE_URL}
                 alt="Bitcoin"
                 className="w-[80px] h-[80px] drop-shadow-[0_0_15px_rgba(234,179,8,0.5)]"
             />
@@ -371,13 +378,13 @@ const ProductShowcase: React.FC = () => {
                                             {/* Screen Content */}
                                             <div className="aspect-[16/10] bg-zinc-900 overflow-hidden">
                                                 {product.mockupType === 'trade' && (
-                                                    <img src="/images/Trade.png" alt="Trade Interface" className="w-full h-full object-cover object-top" />
+                                                    <img src={`${import.meta.env.BASE_URL}images/Trade.png`} alt="Trade Interface" className="w-full h-full object-cover object-top" />
                                                 )}
                                                 {product.mockupType === 'swap' && (
-                                                    <img src="/images/QuickSwap.png" alt="Quick Swap Interface" className="w-full h-full object-cover object-top" />
+                                                    <img src={`${import.meta.env.BASE_URL}images/QuickSwap.png`} alt="Quick Swap Interface" className="w-full h-full object-cover object-top" />
                                                 )}
                                                 {product.mockupType === 'wallet' && (
-                                                    <img src="/images/Wallet.png" alt="Wallet Interface" className="w-full h-full object-cover object-top" />
+                                                    <img src={`${import.meta.env.BASE_URL}images/Wallet.png`} alt="Wallet Interface" className="w-full h-full object-cover object-top" />
                                                 )}
                                             </div>
                                         </div>
