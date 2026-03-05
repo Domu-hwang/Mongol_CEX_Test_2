@@ -60,7 +60,7 @@ const RoadmapSection: React.FC = () => {
     }, []);
 
     return (
-        <section className={cn(layoutPatterns.container, "py-16 md:py-24 bg-transparent")}>
+        <section className={cn(layoutPatterns.container, "py-[10vh] md:py-[20vh] bg-transparent")}>
             <div className="text-center mb-12 md:mb-16">
                 <h2 className="text-h2 font-bold leading-tight mb-4 text-foreground">
                     {t('landingPage.expandingTheEcosystemTitle')}

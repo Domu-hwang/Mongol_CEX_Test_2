@@ -54,7 +54,7 @@ const SecuritySection: React.FC = () => {
     });
 
     return (
-        <section className="py-16 md:py-24 bg-transparent">
+        <section className="py-[10vh] md:py-[20vh] bg-transparent">
             <div className="container mx-auto px-4 max-w-6xl">
                 {/* Section Header */}
                 <div ref={headerRef} className="text-center mb-12 md:mb-16">
@@ -77,11 +77,11 @@ const SecuritySection: React.FC = () => {
                     {securityPoints.map((point, index) => (
                         <div
                             key={index}
-                            className="flex flex-col items-center justify-center text-center gap-4 p-5 md:p-6 bg-white/5 border border-white/10 rounded-xl hover:border-yellow-500/50 hover:bg-white/10 transition-all duration-300 shadow-lg shadow-black/5 h-full backdrop-blur-sm"
+                            className="flex flex-col items-center justify-center text-center gap-4 p-5 md:p-6 bg-transparent border border-white/10 rounded-xl hover:border-yellow-500/50 transition-all duration-300 h-full"
                             style={getCardStyle(index)}
                         >
                             {point.icon && (
-                                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <div className="w-12 h-12 bg-transparent rounded-xl flex items-center justify-center flex-shrink-0">
                                     <point.icon className="w-6 h-6 text-yellow-500" />
                                 </div>
                             )}

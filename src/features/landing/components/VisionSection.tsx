@@ -56,10 +56,10 @@ const marketTrends = [
 const VisionSection: React.FC = () => {
     const navigate = useNavigate();
     const { t } = useTranslation();
-    const { ref: visionRef, isVisible } = useScrollAnimation({ threshold: 0.1 });
+    const { ref: visionRef, isVisible } = useScrollAnimation({ threshold: 0.2, rootMargin: '-50px' });
 
     // Animation settings - elegant and sophisticated
-    const duration = 1.2;
+    const duration = 2.0;
     const easeOutExpo = 'cubic-bezier(0.16, 1, 0.3, 1)';
 
     const titleStyle: React.CSSProperties = {
@@ -77,7 +77,7 @@ const VisionSection: React.FC = () => {
     return (
         <>
             {/* Vision Section */}
-            <section className="pt-20 pb-[72px] md:pt-60 md:pb-32 bg-[#050508]">
+            <section className="pt-[15vh] pb-[15vh] md:pt-[30vh] md:pb-[30vh] bg-black">
                 <div className="container mx-auto px-4">
                     <div ref={visionRef} className="text-center">
                         <h2
@@ -97,7 +97,7 @@ const VisionSection: React.FC = () => {
             </section>
 
             {/* Market Trends Section - Completely Separate */}
-            <section className="pb-48 md:pb-72 bg-[#050508]">
+            <section className="pb-24 md:pb-72 bg-black">
                 <div className="container mx-auto px-4">
                     <div className="max-w-5xl mx-auto">
                         {/* Section Header with Filters */}

@@ -5,7 +5,6 @@ import CoreFeaturesSection from '../components/CoreFeaturesSection';
 import SecuritySection from '../components/SecuritySection';
 import WhySummarySection from '../components/WhySummarySection';
 import RoadmapSection from '../components/RoadmapSection';
-import PartnershipSection from '../components/PartnershipSection';
 import FinalCTASection from '../components/FinalCTASection';
 const LandingPage: React.FC = () => {
     return (
@@ -27,9 +26,6 @@ const LandingPage: React.FC = () => {
 
             {/* Strategic Roadmap - Ecosystem */}
             <RoadmapSection />
-
-            {/* Partnership - Global + Local */}
-            <PartnershipSection />
 
             {/* Final CTA - Conversion */}
             <FinalCTASection />

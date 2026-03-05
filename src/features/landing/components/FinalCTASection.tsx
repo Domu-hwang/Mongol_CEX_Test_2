@@ -11,15 +11,16 @@ const FinalCTASection: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <section className="relative py-16 md:py-24 text-center overflow-hidden">
+        <section className="relative pt-[10vh] pb-[25vh] md:pt-[20vh] md:pb-[60vh] text-center overflow-hidden">
             <div
-                className="absolute inset-0 bg-cover bg-center"
+                className="absolute inset-0 bg-cover bg-bottom"
                 style={{
-                    backgroundImage: `url('/images/greg-rakozy-oMpAz-DN-9I-unsplash.jpg')`,
-                    filter: 'brightness(0.16) blur(12px)',
-                    transform: 'scale(1.05)'
+                    backgroundImage: `url('${import.meta.env.BASE_URL}images/greg-rakozy-oMpAz-DN-9I-unsplash.jpg')`,
+                    filter: 'brightness(0.4) blur(0.5px)',
+                    transform: 'scale(1.02)'
                 }}
             ></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-transparent" style={{ height: '40%' }}></div>
             <div className="container mx-auto px-4 max-w-6xl text-center z-10 relative">
                 <FadeInSection delay={0}>
                     <h2 className="text-h2 font-bold leading-tight mb-6 text-white">

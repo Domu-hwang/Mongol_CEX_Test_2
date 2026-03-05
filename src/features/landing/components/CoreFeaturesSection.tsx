@@ -82,18 +82,24 @@ const CoreFeaturesSection: React.FC = () => {
             }
         });
 
-        // Scroll distance per card - reduced by 30%
-        const scrollPerCard = isMobile ? 35 : 42;
+        // Calculate scroll distance based on container height + extra bottom spacing
+        const getScrollDistance = () => {
+            const containerHeight = container.offsetHeight;
+            const multiplier = isMobile ? 0.4 : 0.5;
+            const bottomSpacing = window.innerHeight * 0.5; // 50vh extra at bottom
+            return containerHeight * (features.length - 1) * multiplier + bottomSpacing;
+        };
 
         // Create main ScrollTrigger for pinning
         const scrollTrigger = ScrollTrigger.create({
             trigger: section,
-            start: 'top top',
-            end: `+=${features.length * scrollPerCard}vh`,
+            start: 'top 15%',
+            end: () => `+=${getScrollDistance()}`,
             pin: container,
-            scrub: isMobile ? 0.3 : 0.5, // Faster response on mobile
+            pinSpacing: true,
+            scrub: isMobile ? 0.3 : 0.5,
             anticipatePin: 1,
-            invalidateOnRefresh: true, // Recalculate on resize
+            invalidateOnRefresh: true,
             onUpdate: (self) => {
                 const progress = self.progress;
                 const totalCards = features.length;
@@ -153,16 +159,10 @@ const CoreFeaturesSection: React.FC = () => {
         };
     }, [features.length, isMobile]);
 
-    // Section height = scroll distance only (GSAP handles pin-spacer automatically)
-    const sectionHeight = isMobile
-        ? `${features.length * 35}vh`
-        : `${features.length * 42}vh`;
-
     return (
         <section
             ref={sectionRef}
             className="relative bg-black"
-            style={{ height: sectionHeight }}
         >
             {/* Sticky Container */}
             <div
@@ -170,7 +170,7 @@ const CoreFeaturesSection: React.FC = () => {
                 className="h-screen w-full flex flex-col overflow-hidden relative"
             >
                 {/* Section Header - Fixed at top */}
-                <div className="pt-8 sm:pt-10 md:pt-14 pb-2 sm:pb-3 md:pb-4 text-center px-4 sm:px-6">
+                <div className="pt-8 sm:pt-10 md:pt-12 pb-1 sm:pb-2 md:pb-2 text-center px-4 sm:px-6">
                     <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 md:mb-4">
                         {t('coreFeatures.title')}
                     </h2>
@@ -185,7 +185,7 @@ const CoreFeaturesSection: React.FC = () => {
                         <div
                             key={feature.id}
                             ref={(el) => (cardsRef.current[index] = el)}
-                            className="absolute inset-0 flex flex-col items-center justify-start pt-[20vh] text-center px-4 sm:px-6 md:px-8"
+                            className="absolute inset-0 flex flex-col items-center justify-start pt-[12vh] text-center px-4 sm:px-6 md:px-8"
                             style={{ willChange: 'transform, opacity' }}
                         >
                             <div className="max-w-4xl mx-auto">
@@ -213,18 +213,17 @@ const CoreFeaturesSection: React.FC = () => {
                 {/* Progress Indicator */}
                 <div
                     ref={progressRef}
-                    className="absolute bottom-20 sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3"
+                    className="absolute bottom-[25vh] sm:bottom-16 md:bottom-20 left-1/2 -translate-x-1/2 flex items-center gap-2 sm:gap-3"
                 >
                     {features.map((_, index) => (
                         <button
                             key={index}
-                            className={`h-1 sm:h-1.5 rounded-full transition-all duration-500 ease-out ${
-                                index === activeIndex
+                            className={`h-1 sm:h-1.5 rounded-full transition-all duration-500 ease-out ${index === activeIndex
                                     ? 'bg-yellow-500 w-6 sm:w-8 md:w-10'
                                     : index < activeIndex
-                                    ? 'bg-yellow-500/40 w-1 sm:w-1.5'
-                                    : 'bg-white/20 w-1 sm:w-1.5'
-                            }`}
+                                        ? 'bg-yellow-500/40 w-1 sm:w-1.5'
+                                        : 'bg-white/20 w-1 sm:w-1.5'
+                                }`}
                             aria-label={`Feature ${index + 1}`}
                         />
                     ))}
@@ -232,9 +231,8 @@ const CoreFeaturesSection: React.FC = () => {
 
                 {/* Scroll Hint - Hidden on very small screens */}
                 <div
-                    className={`absolute bottom-8 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-1 sm:gap-2 transition-opacity duration-500 hidden sm:flex ${
-                        activeIndex === 0 ? 'opacity-40' : 'opacity-0'
-                    }`}
+                    className={`absolute bottom-8 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-1 sm:gap-2 transition-opacity duration-500 hidden sm:flex ${activeIndex === 0 ? 'opacity-40' : 'opacity-0'
+                        }`}
                 >
                     <span className="text-white/50 text-[10px] sm:text-xs tracking-[0.2em] uppercase">
                         Scroll

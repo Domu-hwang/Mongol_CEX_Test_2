@@ -14,7 +14,7 @@ const WhySummarySection: React.FC = () => {
     ];
 
     return (
-        <section className="py-12 md:py-20 bg-muted/30">
+        <section className="py-[10vh] md:py-[20vh] bg-transparent">
             <div className="container mx-auto px-4">
                 <div className="max-w-4xl mx-auto">
                     <FadeInSection>
@@ -30,7 +30,7 @@ const WhySummarySection: React.FC = () => {
 
                     {/* Detailed List */}
                     <FadeInSection delay={0.2}>
-                        <div className="bg-card border border-border rounded-lg md:rounded-xl p-5 md:p-8">
+                        <div className="bg-transparent border border-border rounded-lg md:rounded-xl p-5 md:p-8">
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                                 {valuePropositions.map((prop, index) => (
                                     <div key={index} className="flex items-start gap-3">

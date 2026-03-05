@@ -204,23 +204,17 @@ const fragmentShader = `
     color = mix(color, warmBrown, atmosphereMix * 0.3 * noise1 * (1.0 + mouseInfluence));
     alpha = max(alpha, atmosphereMix * 0.5);
 
-    // Add golden glow near horizon (MOVING with mouse) - STRONGER and more spread
-    float goldenMix = smoothstep(0.45, 0.0, gradientAdjustedY - horizonY * 0.3);
-    goldenMix *= 1.2 + noise1 * 0.6 + mouseGlow * 2.5;
-    color = mix(color, goldenYellow, goldenMix * 1.0);
-    alpha = max(alpha, goldenMix * 0.95);
+    // Add golden glow near horizon (MOVING with mouse) - balanced
+    float goldenMix = smoothstep(0.38, 0.0, gradientAdjustedY - horizonY * 0.4);
+    goldenMix *= 1.0 + noise1 * 0.5 + mouseGlow * 2.0;
+    color = mix(color, goldenYellow, goldenMix * 0.85);
+    alpha = max(alpha, goldenMix * 0.9);
 
-    // Add bright gold at the very edge (slightly moving) - STRONGER
-    float brightMix = smoothstep(0.15, 0.0, mix(adjustedY, gradientAdjustedY, 0.3) - horizonY * 0.2);
-    brightMix *= 1.0 + noise3 * 0.5;
-    color = mix(color, brightGold, brightMix * 1.0);
-    alpha = max(alpha, brightMix);
-
-    // Add extra golden radiance spreading upward
-    float radianceMix = smoothstep(0.55, 0.15, gradientAdjustedY) * smoothstep(0.0, 0.2, gradientAdjustedY);
-    radianceMix *= 0.4 + noise1 * 0.2;
-    color += goldenYellow * radianceMix * 0.35;
-    alpha = max(alpha, radianceMix * 0.5);
+    // Add bright gold at the very edge (slightly moving) - balanced
+    float brightMix = smoothstep(0.12, 0.0, mix(adjustedY, gradientAdjustedY, 0.3) - horizonY * 0.25);
+    brightMix *= 0.9 + noise3 * 0.4;
+    color = mix(color, brightGold, brightMix * 0.9);
+    alpha = max(alpha, brightMix * 0.95);
 
     // Add subtle pulsing to the glow
     float pulse = sin(uTime * 0.5) * 0.1 + 0.9;
@@ -281,11 +275,10 @@ const fragmentShader = `
     float shimmerMask = smoothstep(curvedHorizonY, curvedHorizonY + 0.1, adjustedY) * smoothstep(curvedHorizonY + 0.45, curvedHorizonY + 0.2, adjustedY);
     color += auroraGold3 * verticalShimmer * shimmerMask * 0.15 * (1.0 + auroraMouseEffect);
 
-    // Dark ground at the bottom (STATIC)
+    // Ground at the bottom - transparent (STATIC)
     float groundMask = smoothstep(horizonY + 0.02, horizonY - 0.05, adjustedY);
-    vec3 groundColor = vec3(0.02, 0.02, 0.03);
-    color = mix(color, groundColor, groundMask);
-    alpha = mix(alpha, 0.95, groundMask);
+    color = mix(color, vec3(0.0), groundMask * 0.3);
+    alpha = mix(alpha, 0.0, groundMask);
 
     // Galaxy particle effects
     vec3 particleColor = vec3(0.0);
